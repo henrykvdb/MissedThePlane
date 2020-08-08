@@ -8,52 +8,26 @@ function Pilot(game, coords) {
     this.sprites[0].visible = true
 
     const speed = 0.03;
-    this.dir = [false, false, false, false]; //UP DOWN RIGHT LEFT
+    this.move = function (dir) {
+        //Return if no move
+        if (dir[0] == 0 && dir[1] == 0) return;
 
-    this.move = function () {
-        if (this.dir == [false, false, false, false].toString()) return;
-
-        var orientation;
-
-        if (this.dir == [true, false, false, false].toString()) { // N
-            orientation = 0
-            this.coords[0] -= speed/Math.SQRT2;
-            this.coords[1] -= speed/Math.SQRT2;
-        }
-        else if (this.dir == [true, false, true, false].toString()) { // NE
-            orientation = 1
-            this.coords[0] -= speed;
-        }
-        else if (this.dir == [false, false, true, false].toString()) { // E
-            orientation = 2
-            this.coords[0] -= speed/Math.SQRT2;
-            this.coords[1] += speed/Math.SQRT2;
-        }
-        else if (this.dir == [false, true, true, false].toString()) { // SE
-            orientation = 3
-            this.coords[1] += speed;
-        }
-        else if (this.dir == [false, true, false, false].toString()) { // S
-            orientation = 4
-            this.coords[0] += speed/Math.SQRT2;
-            this.coords[1] += speed/Math.SQRT2;
-        }
-        else if (this.dir == [false, true, false, true].toString()) { // SW
-            orientation = 5
-            this.coords[0] += speed;
-        }
-        else if (this.dir == [false, false, false, true].toString()) { // W
-            orientation = 6
-            this.coords[0] += speed/Math.SQRT2;
-            this.coords[1] -= speed/Math.SQRT2;
-        }
-        else if (this.dir == [true, false, false, true].toString()) { // NW
-            orientation = 7
-            this.coords[1] -= speed;
-        }
-
-        this.dir = [false, false, false, false]
+        //Update coords
+        var length = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1])
+        this.coords[0] += speed * dir[0] / length
+        this.coords[1] += speed * dir[1] / length
         this.coords = this.coords.map(c => Math.min(Math.max(c, 0), this.game.levelSize - 1))
+
+        //Update orientation
+        var orientation = 0
+        if (dir[0] < 0 && dir[1] < 0) orientation = 0
+        else if (dir[0] < 0 && dir[1] == 0) orientation = 1
+        else if (dir[0] < 0 && dir[1] > 0) orientation = 2
+        else if (dir[0] == 0 && dir[1] > 0) orientation = 3
+        else if (dir[0] > 0 && dir[1] > 0) orientation = 4
+        else if (dir[0] > 0 && dir[1] == 0) orientation = 5
+        else if (dir[0] > 0 && dir[1] < 0) orientation = 6
+        else if (dir[0] == 0 && dir[1] < 0) orientation = 7
 
         this.sprites.forEach((s, index) => {
             s.visible = index == orientation
