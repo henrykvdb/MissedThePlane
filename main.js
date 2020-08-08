@@ -19,21 +19,21 @@ var config = {
 var game = new Phaser.Game(config);
 
 var assets;
-function preload () {
+function preload() {
     this.load.image('G0', 'assets/tiles/grass0.png');
     this.load.image('G1', 'assets/tiles/grass1.png');
     this.load.image('W1', 'assets/tiles/water1.png');
     assets = {
-        'G': ['G0','G1'],
+        'G': ['G0', 'G1'],
         "W": ['W1']
     };
-    for (var i = 0; i < 4; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
+    for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
 }
 
 function getScreenCoords(game, levelX, levelY) {
     var scale = sizeY / game.levelSize / shiftY / 2.8
-    var posX = sizeX/2 + 1.02*scale*shiftX*(levelY-levelX)
-    var posY = sizeY/2 + 1.02*scale*shiftY*(levelY+levelX-game.levelSize)
+    var posX = sizeX / 2 + 1.02 * scale * shiftX * (levelY - levelX)
+    var posY = sizeY / 2 + 1.02 * scale * shiftY * (levelY + levelX - game.levelSize)
     return [posX, posY, scale] // sneakily add scale as well
 }
 
@@ -58,29 +58,23 @@ function createLevel(game, tiles) {
 }
 
 function randomTiles(size) {
-    return Array.from(Array(size)).map(()=>Array.from(Array(size)).map(()=>Phaser.Utils.Array.GetRandom(['W','G'])))
+    return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['W', 'G'])))
 }
 
-function create () {
+function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
+    this.cursors = this.input.keyboard.createCursorKeys();
     this.levelSize = 5 // todo level design fixen zodra we effectief mechanics hebben
     //createLevel(this, [['G','G','W'],['G','W','W'],['G','G','W']]);
     this.currentWorld = createLevel(this, randomTiles(this.levelSize));
-    this.currentPilot = new Pilot(this, [3, 3]);
-
-    var game = this;
-    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT).on('down',function(){processMovement(game)});
-    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT).on('down',function(){processMovement(game)});
-    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN).on('down',function(){processMovement(game)});
-    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP).on('down',function(){processMovement(game)});
+    this.pilot = new Pilot(this, [3, 3]);
 }
 
-function update () {
-}
+function update() {
+    if (this.cursors.up.isDown) this.pilot.dir[0] = true;
+    else if (this.cursors.down.isDown) this.pilot.dir[1] = true;
+    if (this.cursors.right.isDown) this.pilot.dir[2] = true;
+    else if (this.cursors.left.isDown) this.pilot.dir[3] = true;
 
-function processMovement(game) {
-    if (event.key == 'ArrowDown') game.currentPilot.move(0)
-    if (event.key == 'ArrowLeft') game.currentPilot.move(1)
-    if (event.key == 'ArrowUp') game.currentPilot.move(2)
-    if (event.key == 'ArrowRight') game.currentPilot.move(3)
+    this.pilot.move();
 }
