@@ -10,48 +10,48 @@ function Pilot(game, coords) {
     const speed = 0.05;
     this.dir = [false, false, false, false]; //UP DOWN RIGHT LEFT
 
-    this.move = function(){
-        if(this.dir == [false, false, false, false].toString()) return;
+    this.move = function () {
+        if (this.dir == [false, false, false, false].toString()) return;
 
         var orientation;
 
-        if(this.dir == [true, false, false, false].toString()){ // N
+        if (this.dir == [true, false, false, false].toString()) { // N
             orientation = 0
             this.coords[0] -= speed;
             this.coords[1] -= speed;
         }
-        else if(this.dir == [true, false, true, false].toString()){ // NE
+        else if (this.dir == [true, false, true, false].toString()) { // NE
             orientation = 1
             this.coords[0] -= speed;
         }
-        else if(this.dir == [false, false, true, false].toString()){ // E
+        else if (this.dir == [false, false, true, false].toString()) { // E
             orientation = 2
             this.coords[0] -= speed;
             this.coords[1] += speed;
         }
-        else if(this.dir == [false, true, true, false].toString()){ // SE
+        else if (this.dir == [false, true, true, false].toString()) { // SE
             orientation = 3
             this.coords[1] += speed;
         }
-        else if(this.dir == [false, true, false, false].toString()){ // S
+        else if (this.dir == [false, true, false, false].toString()) { // S
             orientation = 4
             this.coords[0] += speed;
             this.coords[1] += speed;
         }
-        else if(this.dir == [false, true, false, true].toString()){ // SW
+        else if (this.dir == [false, true, false, true].toString()) { // SW
             orientation = 5
             this.coords[0] += speed;
         }
-        else if(this.dir == [false, false, false, true].toString()){ // W
+        else if (this.dir == [false, false, false, true].toString()) { // W
             orientation = 6
             this.coords[0] += speed;
             this.coords[1] -= speed;
         }
-        else if(this.dir == [true, false, false, true].toString()){ // NW
+        else if (this.dir == [true, false, false, true].toString()) { // NW
             orientation = 7
             this.coords[1] -= speed;
         }
-        
+
         this.dir = [false, false, false, false]
         this.coords = this.coords.map(c => Math.min(Math.max(c, 0), this.game.levelSize - 1))
 
@@ -62,13 +62,4 @@ function Pilot(game, coords) {
             s.y = worldCoords[1]
         })
     }
-
-    /*this.updateSprites = function () {  // dit zou niet moeten met een eigen renderer :(
-        this.sprites.forEach((s, index) => {
-            s.visible = index == this.dir
-            var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
-            s.x = worldCoords[0]
-            s.y = worldCoords[1]
-        })
-    }*/
 }
