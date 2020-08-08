@@ -1,7 +1,7 @@
--plane
+v-plane
 -signposts
 -interaction
--smooth pilot
+v-smooth pilot
 -smooth plane
 -levels 
 -main menu

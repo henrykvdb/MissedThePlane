@@ -57,7 +57,7 @@ function createLevel(game, tiles) {
 }
 
 function randomTiles(size) {
-    return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['W', 'G'])))
+    return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['W','G','G','G']))) // bias xd
 }
 
 function create() {
