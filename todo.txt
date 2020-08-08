@@ -1,0 +1,12 @@
+-plane
+-signposts
+-interaction
+-smooth pilot
+-smooth plane
+-levels 
+-main menu
+-sound (!)
+-UI
+
+eventually
+-cutscenes/story
