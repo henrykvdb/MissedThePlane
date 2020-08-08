@@ -27,15 +27,20 @@ function preload () {
         'G': ['G0','G1'],
         "W": ['W1']
     };
-    for (var i = 0; i < 5; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
+    for (var i = 0; i < 4; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
+}
+
+function getScreenCoords(game, levelX, levelY) {
+    var scale = sizeY / game.levelSize / shiftY / 2.8
+    var posX = sizeX/2 + 1.02*scale*shiftX*(levelY-levelX)
+    var posY = sizeY/2 + 1.02*scale*shiftY*(levelY+levelX-game.levelSize)
+    return [posX, posY, scale] // sneakily add scale as well
 }
 
 function createSprite(game, levelX, levelY, asset) {
-    var scale = sizeY / game.levelSize / shiftY / 2.8
-    var posX = sizeX/2 + scale*shiftX*(levelY-levelX)
-    var posY = sizeY/2 + scale*shiftY*(levelY+levelX-game.levelSize)
-    var sprite = game.add.sprite(posX, posY, asset)
-    sprite.setScale(scale)
+    coords = getScreenCoords(game, levelX, levelY)
+    var sprite = game.add.sprite(coords[0], coords[1], asset)
+    sprite.setScale(coords[2])
     return sprite
 }
 
@@ -58,13 +63,38 @@ function randomTiles(size) {
 
 function create () {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
-    this.levelSize = 7
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.levelSize = 5 // todo level design fixen zodra we effectief mechanics hebben
     //createLevel(this, [['G','G','W'],['G','W','W'],['G','G','W']]);
-    createLevel(this, randomTiles(this.levelSize));
-    var pilot = new Pilot(this, [1, 1])
-   
+    this.currentWorld = createLevel(this, randomTiles(this.levelSize));
+    this.currentPilot = new Pilot(this, [3, 3])
 }
 
 function update() {
-    
+    processMovement(this)
+}
+
+var currentlyDown = [false, false, false, false] // to prevent 1000 triggers during a short keypress
+function processMovement(game) {
+    if (!currentlyDown[0] && game.cursors.left.isDown) {
+        game.currentPilot.rotate(true)
+        currentlyDown[0] = true
+    }
+    if (!currentlyDown[1] && game.cursors.right.isDown) {
+        game.currentPilot.rotate(false)
+        currentlyDown[1] = true
+    } 
+    if (!currentlyDown[2] && game.cursors.up.isDown) {
+        game.currentPilot.step(true)
+        currentlyDown[2] = true
+    }
+    if (!currentlyDown[3] && game.cursors.down.isDown) {
+        // todo achteruit bewegen is mss verwarrend?
+        game.currentPilot.step(false)
+        currentlyDown[3] = true
+    }
+    if (currentlyDown[0] && game.cursors.left.isUp)  currentlyDown[0] = false
+    if (currentlyDown[1] && game.cursors.right.isUp) currentlyDown[1] = false
+    if (currentlyDown[2] && game.cursors.up.isUp)    currentlyDown[2] = false
+    if (currentlyDown[3] && game.cursors.down.isUp)  currentlyDown[3] = false
 }
