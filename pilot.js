@@ -7,7 +7,7 @@ function Pilot(game, coords) {
     this.sprites.forEach(s => { s.setScale(s.scaleX / 1.5); s.visible = false })
     this.sprites[0].visible = true
 
-    const speed = 0.05;
+    const speed = 0.03;
     this.dir = [false, false, false, false]; //UP DOWN RIGHT LEFT
 
     this.move = function () {
@@ -17,8 +17,8 @@ function Pilot(game, coords) {
 
         if (this.dir == [true, false, false, false].toString()) { // N
             orientation = 0
-            this.coords[0] -= speed;
-            this.coords[1] -= speed;
+            this.coords[0] -= speed/Math.SQRT2;
+            this.coords[1] -= speed/Math.SQRT2;
         }
         else if (this.dir == [true, false, true, false].toString()) { // NE
             orientation = 1
@@ -26,8 +26,8 @@ function Pilot(game, coords) {
         }
         else if (this.dir == [false, false, true, false].toString()) { // E
             orientation = 2
-            this.coords[0] -= speed;
-            this.coords[1] += speed;
+            this.coords[0] -= speed/Math.SQRT2;
+            this.coords[1] += speed/Math.SQRT2;
         }
         else if (this.dir == [false, true, true, false].toString()) { // SE
             orientation = 3
@@ -35,8 +35,8 @@ function Pilot(game, coords) {
         }
         else if (this.dir == [false, true, false, false].toString()) { // S
             orientation = 4
-            this.coords[0] += speed;
-            this.coords[1] += speed;
+            this.coords[0] += speed/Math.SQRT2;
+            this.coords[1] += speed/Math.SQRT2;
         }
         else if (this.dir == [false, true, false, true].toString()) { // SW
             orientation = 5
@@ -44,8 +44,8 @@ function Pilot(game, coords) {
         }
         else if (this.dir == [false, false, false, true].toString()) { // W
             orientation = 6
-            this.coords[0] += speed;
-            this.coords[1] -= speed;
+            this.coords[0] += speed/Math.SQRT2;
+            this.coords[1] -= speed/Math.SQRT2;
         }
         else if (this.dir == [true, false, false, true].toString()) { // NW
             orientation = 7
