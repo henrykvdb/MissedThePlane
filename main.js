@@ -63,38 +63,24 @@ function randomTiles(size) {
 
 function create () {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
-    this.cursors = this.input.keyboard.createCursorKeys();
     this.levelSize = 5 // todo level design fixen zodra we effectief mechanics hebben
     //createLevel(this, [['G','G','W'],['G','W','W'],['G','G','W']]);
     this.currentWorld = createLevel(this, randomTiles(this.levelSize));
-    this.currentPilot = new Pilot(this, [3, 3])
+    this.currentPilot = new Pilot(this, [3, 3]);
+
+    var game = this;
+    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT).on('down',function(){processMovement(game)});
+    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT).on('down',function(){processMovement(game)});
+    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN).on('down',function(){processMovement(game)});
+    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP).on('down',function(){processMovement(game)});
 }
 
-function update() {
-    processMovement(this)
+function update () {
 }
 
-var currentlyDown = [false, false, false, false] // to prevent 1000 triggers during a short keypress
 function processMovement(game) {
-    if (!currentlyDown[0] && game.cursors.left.isDown) {
-        game.currentPilot.rotate(true)
-        currentlyDown[0] = true
-    }
-    if (!currentlyDown[1] && game.cursors.right.isDown) {
-        game.currentPilot.rotate(false)
-        currentlyDown[1] = true
-    } 
-    if (!currentlyDown[2] && game.cursors.up.isDown) {
-        game.currentPilot.step(true)
-        currentlyDown[2] = true
-    }
-    if (!currentlyDown[3] && game.cursors.down.isDown) {
-        // todo achteruit bewegen is mss verwarrend?
-        game.currentPilot.step(false)
-        currentlyDown[3] = true
-    }
-    if (currentlyDown[0] && game.cursors.left.isUp)  currentlyDown[0] = false
-    if (currentlyDown[1] && game.cursors.right.isUp) currentlyDown[1] = false
-    if (currentlyDown[2] && game.cursors.up.isUp)    currentlyDown[2] = false
-    if (currentlyDown[3] && game.cursors.down.isUp)  currentlyDown[3] = false
+    if (event.key == 'ArrowDown') game.currentPilot.move(0)
+    if (event.key == 'ArrowLeft') game.currentPilot.move(1)
+    if (event.key == 'ArrowUp') game.currentPilot.move(2)
+    if (event.key == 'ArrowRight') game.currentPilot.move(3)
 }
