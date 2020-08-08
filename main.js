@@ -70,10 +70,16 @@ function create() {
 }
 
 function update() {
-    if (this.cursors.up.isDown) this.pilot.dir[0] = true;
-    else if (this.cursors.down.isDown) this.pilot.dir[1] = true;
-    if (this.cursors.right.isDown) this.pilot.dir[2] = true;
-    else if (this.cursors.left.isDown) this.pilot.dir[3] = true;
+    var dir = [0, 0]
+    if (this.cursors.up.isDown) dir = addvector(dir, [-1, -1])
+    if (this.cursors.down.isDown) dir = addvector(dir, [1, 1])
+    if (this.cursors.right.isDown) dir = addvector(dir, [-1, 1])
+    if (this.cursors.left.isDown) dir = addvector(dir, [1, -1])
 
-    this.pilot.move();
+    
+    this.pilot.move(dir);
+}
+
+function addvector(a,b){
+    return a.map((e,i) => e + b[i]);
 }
