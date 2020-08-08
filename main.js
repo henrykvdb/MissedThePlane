@@ -20,11 +20,10 @@ var game = new Phaser.Game(config);
 
 var assets;
 function preload() {
-    this.load.image('G0', 'assets/tiles/grass0.png');
-    this.load.image('G1', 'assets/tiles/grass1.png');
+    for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png');
     this.load.image('W1', 'assets/tiles/water1.png');
     assets = {
-        'G': ['G0', 'G1'],
+        'G': Array.from(new Array(7),(v,i)=> "G" + i),
         "W": ['W1']
     };
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
