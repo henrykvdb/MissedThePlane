@@ -11,30 +11,45 @@ var config = {
     height: sizeY,
     scene: {
         preload: preload,
-        create: create
+        create: create,
+        update: update
     }
 };
 
 var game = new Phaser.Game(config);
 
 var assets;
-function preload ()
-{
+function preload () {
+    this.load.image('grass0', 'assets/tiles/grass0.png');
     this.load.image('grass1', 'assets/tiles/grass1.png');
-    this.load.image('heighttile', 'assets/tiles/heighttile.png');
     this.load.image('water1', 'assets/tiles/water1.png');
-    assets = ['grass1','heighttile','water1']
+    assets = ['grass0','grass1','water1']
 }
 
-function create ()
-{
-    this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
-
-    for(var j = -5; j<5; j++){
-        for(var i = -5; i<5; i++){
+function createLevel(game, size) {
+    var scale = sizeY / size / shiftY / 2.8
+    var level = []
+    for (var x = 0; x < size; x++) {
+        var column = []
+        for (var y = 0; y < size; y++) {
             var asset = assets[Math.floor(Math.random() * assets.length)];
-            var sprite = this.add.sprite(sizeX/2 + 0.26*shiftX*(i-j), sizeY/2 + 0.26*shiftY*(i+j), asset);
-            sprite.setScale(0.25);
+            var posX = sizeX/2 + scale*shiftX*(y-x)
+            var posY = sizeY/2 + scale*shiftY*(y+x-size)
+            var sprite = game.add.sprite(posX, posY, asset);
+            sprite.setScale(scale);
+            column.push(sprite)
         }
+        level.push(column)
     }
+    return level
+}
+
+function create () {
+    this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
+    createLevel(this, 6, 6)
+   
+}
+
+function update() {
+    
 }
