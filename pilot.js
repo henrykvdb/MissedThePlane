@@ -14,18 +14,19 @@ function Pilot(game, coords) {
     }
 
     this.step = function(forward) { // also a boolean
-        // todo, check out of bounds, collisions, etc
+        // todo collisions, etc
         if (this.dir == 0) this.coords[0] += forward ? 1 : - 1
         if (this.dir == 1) this.coords[1] -= forward ? 1 : - 1
         if (this.dir == 2) this.coords[0] -= forward ? 1 : - 1
         if (this.dir == 3) this.coords[1] += forward ? 1 : - 1
+        this.coords = this.coords.map(c => Math.min(Math.max(c, 0), this.game.levelSize - 1))
         this.updateSprites()
     }
 
     this.updateSprites = function() {  // dit zou niet moeten met een eigen renderer :(
         this.sprites.forEach((s, index)=>{
             s.visible = index == this.dir
-            var worldCoords = getScreenCoords(this.game, coords[0], coords[1])
+            var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
             s.x = worldCoords[0]
             s.y = worldCoords[1]
         })
