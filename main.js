@@ -20,33 +20,36 @@ var game = new Phaser.Game(config);
 
 var assets;
 function preload () {
-    this.load.image('grass0', 'assets/tiles/grass0.png');
-    this.load.image('grass1', 'assets/tiles/grass1.png');
-    this.load.image('water1', 'assets/tiles/water1.png');
-    assets = ['grass0','grass1','water1']
+    this.load.image('G0', 'assets/tiles/grass0.png');
+    this.load.image('G1', 'assets/tiles/grass1.png');
+    this.load.image('W1', 'assets/tiles/water1.png');
+    assets = {
+        'G': ['G0','G1'],
+        "W": ['W1']
+    };
 }
 
-function createLevel(game, size) {
-    var scale = sizeY / size / shiftY / 2.8
-    var level = []
-    for (var x = 0; x < size; x++) {
-        var column = []
-        for (var y = 0; y < size; y++) {
-            var asset = assets[Math.floor(Math.random() * assets.length)];
-            var posX = sizeX/2 + scale*shiftX*(y-x)
-            var posY = sizeY/2 + scale*shiftY*(y+x-size)
+function createLevel(game, tiles) {
+    var scale = sizeY / tiles.length / shiftY / 2.8
+    for (var x = 0; x < tiles.length; x++) {
+        for (var y = 0; y < tiles.length; y++) {
+            var posX = sizeX/2 + (scale*1.01)*shiftX*(y-x)
+            var posY = sizeY/2 + (scale*1.01)*shiftY*(y+x-tiles.length)
+            var asset = Phaser.Utils.Array.GetRandom(assets[tiles[x][y]])
             var sprite = game.add.sprite(posX, posY, asset);
             sprite.setScale(scale);
-            column.push(sprite)
         }
-        level.push(column)
     }
-    return level
+}
+
+function randomTiles(size) {
+    return Array.from(Array(size)).map(x=>Array.from(Array(size)).map(y=>Phaser.Utils.Array.GetRandom(['W','G'])))
 }
 
 function create () {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
-    createLevel(this, 6, 6)
+    //createLevel(this, [['G','G','W'],['G','W','W'],['G','G','W']]);
+    createLevel(this, randomTiles(5));
    
 }
 
