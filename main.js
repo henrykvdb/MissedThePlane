@@ -20,10 +20,13 @@ var game = new Phaser.Game(config);
 
 var assets;
 function preload () {
-    this.load.image('grass0', 'assets/tiles/grass0.png');
-    this.load.image('grass1', 'assets/tiles/grass1.png');
-    this.load.image('water1', 'assets/tiles/water1.png');
-    assets = ['grass0','grass1','water1']
+    this.load.image('G0', 'assets/tiles/grass0.png');
+    this.load.image('G1', 'assets/tiles/grass1.png');
+    this.load.image('W1', 'assets/tiles/water1.png');
+    assets = {
+        'G': ['G0','G1'],
+        "W": ['W1']
+    };
     for (var i = 0; i < 5; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
 }
 
@@ -36,25 +39,30 @@ function createSprite(game, levelX, levelY, asset) {
     return sprite
 }
 
-function createLevel(game) {
-    var size = game.levelSize
-    var level = []
-    for (var x = 0; x < size; x++) {
+function createLevel(game, tiles) {
+    var sprites = []
+    for (var x = 0; x < tiles.length; x++) {
         var column = []
-        for (var y = 0; y < size; y++) {
-            var asset = assets[Math.floor(Math.random() * assets.length)];
+        for (var y = 0; y < tiles[0].length; y++) {
+            var asset = Phaser.Utils.Array.GetRandom(assets[tiles[x][y]])
             column.push(createSprite(game, x, y, asset))
         }
-        level.push(column)
+        sprites.push(column)
     }
-    return level
+    return sprites
+}
+
+function randomTiles(size) {
+    return Array.from(Array(size)).map(()=>Array.from(Array(size)).map(()=>Phaser.Utils.Array.GetRandom(['W','G'])))
 }
 
 function create () {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF");
-    this.levelSize = 40
-    var world = createLevel(this)
+    this.levelSize = 7
+    //createLevel(this, [['G','G','W'],['G','W','W'],['G','G','W']]);
+    createLevel(this, randomTiles(this.levelSize));
     var pilot = new Pilot(this, [1, 1])
+   
 }
 
 function update() {
