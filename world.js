@@ -1,8 +1,4 @@
 // File for managing everything related to a world
-
-const IMPASSABLE_TILES = ['W', 'M']
-const IMPASSABLE_TILES_FLYING = ['M']
-
 function World(game, tiles) {
 
     this.createLevel = function (tiles) {
@@ -46,26 +42,16 @@ function World(game, tiles) {
         return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'G', 'G', 'G', 'W', 'M', 'B']))) // Ground bias xd
     }
 
-    this.isPassable = function (coords, edge, flying) {
+    this.collidesWith = function (coords, edge, collideList) {
         //Check world bounds
         if (coords[0] < edge || coords[1] < edge || coords[0] > this.game.levelSize - edge || coords[1] > this.game.levelSize - edge)
-            return flying
+            return collideList.includes('A')
 
         //Check tile collision
         var collisionTiles = [[edge, 0], [-edge, 0], [0, edge], [0, -edge]].map(v => addArray(v, coords))
         collisionTiles = collisionTiles.filter(v => v[0] % 1 != 0 && v[1] % 1 != 0) //Remove bounds to make collision exclusive (needed for plane collision)
-        console.log(collisionTiles) //TODO CLEANUP
         collisionTiles = collisionTiles.map(v => this.tiles[Math.ceil(v[0] - 1)][Math.ceil(v[1] - 1)])
-        if (flying) {
-            var output = !collisionTiles.map(v => IMPASSABLE_TILES_FLYING.includes(v)).includes(true)
-            console.log(output)
-            if (!output) { //TODO CLEANUP
-                console.log(collisionTiles)
-            }
-
-            return output
-        }
-        else return !collisionTiles.map(v => IMPASSABLE_TILES.includes(v)).includes(true)
+        return collisionTiles.map(v => collideList.includes(v)).includes(true)
     }
 
     this.isButton = function (coords) {

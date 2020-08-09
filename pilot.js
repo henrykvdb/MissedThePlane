@@ -1,5 +1,6 @@
 const TILE_EDGE = 0.1
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
+const IMPASSABLE_TILES = ['W', 'M','A'] // 'A' meaning 'Air'
 
 function Pilot(game, coords, dir) {
 
@@ -14,12 +15,12 @@ function Pilot(game, coords, dir) {
 
         //Move x
         this.coords[0] += PILOT_MOVE_SPEED * dt * dirVector[0] / length
-        if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords.slice()
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords.slice()
         else originalCoords = this.coords.slice()
 
         //Move y
         this.coords[1] += PILOT_MOVE_SPEED * dt * dirVector[1] / length
-        if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords
 
         //Update orientation
         var dir = 0

@@ -1,5 +1,6 @@
 const PLANE_MOVE_SPEED = 0.0005 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
+const IMPASSABLE_TILES_FLYING = ['M']
 
 function Plane(game, coords, dir) {
 
@@ -10,7 +11,7 @@ function Plane(game, coords, dir) {
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
         // Rotate if collision
-        if (!this.game.world.isPassable(this.coords, 0.5, true) || this.dir % 2 == 0) { //Check half a tile in advance so plane stays centered
+        if (this.game.world.collidesWith(this.coords, 0.5, IMPASSABLE_TILES_FLYING) || this.dir % 2 == 0) { //Check half a tile in advance so plane stays centered
             this.coords = originalCoords
             this.waitTime -= dt
 
