@@ -23,14 +23,15 @@ function preload() {
     //Add terain tile assets
     for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
     for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
-    this.load.image('shadow', 'assets/entities/shadow.png')
     this.load.image('W0', 'assets/tiles/water0.png')
     this.load.image('B0', 'assets/tiles/button0.png')
     this.load.image('B1', 'assets/tiles/button1.png')
+    this.load.image('F0', 'assets/tiles/heighttile.png')
     assets = {
         'G': Array.from(new Array(7), (v, i) => "G" + i),
         "W": ['W0'],
         'M': Array.from(new Array(4), (v, i) => "M" + i),
+        'F': ['F0'],
         'B0': ['B0'],
         'B1': ['B1']
     }
@@ -38,13 +39,14 @@ function preload() {
     //Add pilot assets
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
     for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
+    this.load.image('shadow', 'assets/entities/shadow.png')
 }
 
 function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
-    var levelIndex = 2 // choose level here
+    var levelIndex = 0 // choose level here
     var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 

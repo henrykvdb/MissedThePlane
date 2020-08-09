@@ -1,6 +1,7 @@
 const PLANE_MOVE_SPEED = 0.0005 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
-const IMPASSABLE_TILES_FLYING = ['M']
+const PLANE_IMPASSABLE_TILES = ['M']
+const PLANE_FINISH = ['F']
 
 function Plane(game, coords, dir) {
 
@@ -11,7 +12,7 @@ function Plane(game, coords, dir) {
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
         // Rotate if collision
-        if (this.game.world.collidesWith(this.coords, 0.5, IMPASSABLE_TILES_FLYING) || this.dir % 2 == 0) { //Check half a tile in advance so plane stays centered
+        if (this.game.world.collidesWith(this.coords, 0.5, PLANE_IMPASSABLE_TILES) || this.dir % 2 == 0) { //Check half a tile in advance so plane stays centered
             this.coords = originalCoords
             this.waitTime -= dt
 
@@ -32,20 +33,21 @@ function Plane(game, coords, dir) {
             }
         }
 
+        //Check finish
+        if(!this.finished && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH)){
+            this.finished = true
+            console.log("victory!") //TODO victory text + sound
+        }
+
         // Update sprites
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
-        this.shadow.x = worldCoords[0];
-        this.shadow.y = worldCoords[1];
+        this.shadow.x = worldCoords[0]
+        this.shadow.y = worldCoords[1]
         this.sprites.forEach((s, index) => {
             s.visible = index == this.dir
             s.x = worldCoords[0]
             s.y = worldCoords[1]
         })
-    }
-
-    this.interact = function () {
-        if (!this.game.world.isButton(this.coords)) return // silly user, there's no button here
-        this.game.world.triggerButton(this.coords) // TODO this is maybe pointless if but maybe we can show a message to the user or something
     }
 
     // Init code of plane
@@ -54,6 +56,7 @@ function Plane(game, coords, dir) {
     this.game = game
     this.dirVector = [-1, 0]
     this.waitTime = PLANE_WAIT_TIME
+    this.finished = false
 
     // Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])

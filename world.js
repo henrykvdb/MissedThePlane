@@ -30,12 +30,12 @@ function World(game, tiles) {
     }
 
     this.createTileSprite = function (x, y, tileType) {  // tileType is "G", "W", etc
-        var asset = Phaser.Utils.Array.GetRandom(assets[tileType]);
-        coords = getScreenCoords(this.game, x, y);
-        var sprite = this.game.add.sprite(coords[0], coords[1], asset);
-        sprite.setScale(this.game.tileScale);
-        sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800);
-        return sprite;
+        var asset = Phaser.Utils.Array.GetRandom(assets[tileType])
+        coords = getScreenCoords(this.game, x, y)
+        var sprite = this.game.add.sprite(coords[0], coords[1], asset)
+        sprite.setScale(this.game.tileScale)
+        sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
+        return sprite
     }
 
     this.randomTiles = function (size) {
@@ -45,12 +45,13 @@ function World(game, tiles) {
     this.collidesWith = function (coords, edge, collideList) {
         //Check world bounds
         if (coords[0] < edge || coords[1] < edge || coords[0] > this.game.levelSize - edge || coords[1] > this.game.levelSize - edge)
-            return collideList.includes('A')
+            if (collideList.includes('A')) return true
 
         //Check tile collision
         var collisionTiles = [[edge, 0], [-edge, 0], [0, edge], [0, -edge]].map(v => addArray(v, coords))
         collisionTiles = collisionTiles.filter(v => v[0] % 1 != 0 && v[1] % 1 != 0) //Remove bounds to make collision exclusive (needed for plane collision)
-        collisionTiles = collisionTiles.map(v => this.tiles[Math.ceil(v[0] - 1)][Math.ceil(v[1] - 1)])
+        collisionTiles = collisionTiles.filter(v => v[0] >= 0 && v[1] >= 0 && v[0] < this.game.levelSize && v[1] < this.game.levelSize) // remove tiles that are out of the map
+        collisionTiles = collisionTiles.map(v => this.tiles[Math.floor(v[0])][Math.floor(v[1])])
         return collisionTiles.map(v => collideList.includes(v)).includes(true)
     }
 
@@ -81,9 +82,9 @@ function World(game, tiles) {
     }
 
     // Init code of world
-    this.game = game;
-    if (tiles == undefined) tiles = this.randomTiles(5);
-    this.tiles = tiles;
+    this.game = game
+    if (tiles == undefined) tiles = this.randomTiles(5)
+    this.tiles = tiles
     this.sprites = this.createLevel(tiles)
 }
 

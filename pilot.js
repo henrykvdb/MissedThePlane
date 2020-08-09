@@ -34,8 +34,8 @@ function Pilot(game, coords, dir) {
         else if (dirVector[0] == 0 && dirVector[1] < 0) dir = 7
 
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
-        this.shadow.x = worldCoords[0];
-        this.shadow.y = worldCoords[1];
+        this.shadow.x = worldCoords[0]
+        this.shadow.y = worldCoords[1]
         this.sprites.forEach((s, index) => {
             s.visible = index == dir
             s.x = worldCoords[0]
