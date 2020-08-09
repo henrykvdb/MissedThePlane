@@ -9,17 +9,12 @@ const ALL_LEVELS = [{
     plane: { coords: [4, 0.5], dir: 1 }
 },
 {
-    world: [
-        ['G', 'G', 'G', 'G'],
-        ['G', 'B', 'G', 'G'],
-        ['G', 'G', 'G', 'G'],
-        ['G', 'G', 'G', 'G']
-    ],
-    pilot: { coords: [3.5, 0.5], dir: 3 },
-    plane: { coords: [5, 1.5], dir: 1 }
+    // no tiles, this is the random level!
+    pilot: { coords: [0.5, 0.5], dir: 3 },
+    plane: { coords: [-1.5, 1.5], dir: 5 }
 },
 {
-    world: [
+    tiles: [
         ['G', 'M', 'G', 'G', 'G', 'G', 'G'],
         ['G', 'B', 'W', 'W', 'G', 'G', 'G'],
         ['G', 'W', 'W', 'W', 'M', 'G', 'G'],
@@ -29,6 +24,6 @@ const ALL_LEVELS = [{
         ['G', 'G', 'G', 'W', 'G', 'W', 'G']
     ],
     pilot: { coords: [3.5, 0.5], dir: 3 },
-    plane: { coords: [5, 1.5], dir: 1 }
+    plane: { coords: [7, 1.5], dir: 1 }
 }
 ]

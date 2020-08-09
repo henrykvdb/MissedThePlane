@@ -1,5 +1,4 @@
 -airport voxel
--Z sort for height tiles
 -levels
 -main menu
 -sound (!)

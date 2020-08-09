@@ -62,7 +62,7 @@ function World(game, tiles) {
 
     this.getNeighbourCoords = function (coords) {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
-        var neighbours = [] // beautiful formatting, ahem ahem
+        var neighbours = []
         if (tilePos[0] != 0) neighbours.push([tilePos[0] - 1, tilePos[1]])
         if (tilePos[0] != this.tiles.length - 1) neighbours.push([tilePos[0] + 1, tilePos[1]])
         if (tilePos[1] != 0) neighbours.push([tilePos[0], tilePos[1] - 1])

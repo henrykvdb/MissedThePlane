@@ -1,4 +1,4 @@
-const TILE_EDGE = 0.1
+const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
 const IMPASSABLE_TILES = ['W', 'M','A'] // 'A' meaning 'Air'
 
@@ -36,12 +36,12 @@ function Pilot(game, coords, dir) {
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
         this.shadow.x = worldCoords[0];
         this.shadow.y = worldCoords[1];
-        this.shadow.setDepth(this.coords[0] + this.coords[1])
+        this.shadow.setDepth(this.coords[0] + this.coords[1]+0.2)
         this.sprites.forEach((s, index) => {
             s.visible = index == dir
             s.x = worldCoords[0]
             s.y = worldCoords[1]
-            s.setDepth(this.coords[0] + this.coords[1])
+            s.setDepth(this.coords[0] + this.coords[1]+0.2)
         })
     }
 
@@ -59,7 +59,7 @@ function Pilot(game, coords, dir) {
     var screenCoords = getScreenCoords(game, coords[0], coords[1])
 
     var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
-    shadow.setScale(game.tileScale / 4)
+    shadow.setScale(game.tileScale / 6)
     shadow.setOrigin(0.5, (800 - 405) / 800)
     shadow.alpha = 0.2
     shadow.setDepth(coords[0] + coords[1])
