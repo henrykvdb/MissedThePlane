@@ -8,12 +8,17 @@ function Pilot(game, coords, dir) {
         //Return if no move
         if (dir[0] == 0 && dir[1] == 0) return
 
-        //Update coords
+        //Calculate move vars
         var length = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1])
         var originalCoords = this.coords.slice()
-        this.coords[0] += MOVE_SPEED * dir[0] / length
-        this.coords[1] += MOVE_SPEED * dir[1] / length
 
+        //Move x
+        this.coords[0] += MOVE_SPEED * dir[0] / length
+        if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords.slice()
+        else originalCoords = this.coords.slice()
+
+        //Move y
+        this.coords[1] += MOVE_SPEED * dir[1] / length
         if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords
 
         //Update orientation
