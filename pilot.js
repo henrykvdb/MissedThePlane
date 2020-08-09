@@ -35,10 +35,12 @@ function Pilot(game, coords, dir) {
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
         this.shadow.x = worldCoords[0];
         this.shadow.y = worldCoords[1];
+        this.shadow.setDepth(this.coords[0] + this.coords[1])
         this.sprites.forEach((s, index) => {
             s.visible = index == orientation
             s.x = worldCoords[0]
             s.y = worldCoords[1]
+            s.setDepth(this.coords[0] + this.coords[1])
         })
     }
 
@@ -58,6 +60,7 @@ function Pilot(game, coords, dir) {
     shadow.setScale(game.tileScale / 4)
     shadow.setOrigin(0.5, (800 - 405) / 800)
     shadow.alpha = 0.2
+    shadow.setDepth(coords[0] + coords[1])
     this.shadow = shadow
 
     this.sprites = []
@@ -66,6 +69,7 @@ function Pilot(game, coords, dir) {
         pilotSprite.setScale(game.tileScale / 1.5)
         pilotSprite.setOrigin(0.5, (800 - 265) / 800)
         pilotSprite.visible = false
+        pilotSprite.setDepth(coords[0] + coords[1])
         this.sprites.push(pilotSprite)
     }
 

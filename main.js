@@ -43,11 +43,11 @@ function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
-    var levelIndex = 2 // choose level here
+    var levelIndex = 1 // choose level here
     var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 
-    this.world = new World(this, undefined)
+    this.world = new World(this, level.world)
     this.pilot = new Pilot(this, level.pilot.coords, level.pilot.dir)
 
     var pilot = this.pilot

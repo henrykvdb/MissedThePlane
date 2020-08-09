@@ -38,6 +38,7 @@ function World(game, tiles) {
         var sprite = this.game.add.sprite(coords[0], coords[1], asset);
         sprite.setScale(this.game.tileScale);
         sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800);
+        sprite.setDepth(x+y + (tileType == "M" ? 1 : 0))
         return sprite;
     }
 
