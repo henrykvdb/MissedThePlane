@@ -32,9 +32,11 @@ function Pilot(game, coords, dir) {
         else if (dirVector[0] > 0 && dirVector[1] < 0) dir = 6
         else if (dirVector[0] == 0 && dirVector[1] < 0) dir = 7
 
+        var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
+        this.shadow.x = worldCoords[0];
+        this.shadow.y = worldCoords[1];
         this.sprites.forEach((s, index) => {
             s.visible = index == dir
-            var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
             s.x = worldCoords[0]
             s.y = worldCoords[1]
         })
@@ -50,15 +52,23 @@ function Pilot(game, coords, dir) {
     this.game = game
 
     //Create sprites
+    var screenCoords = getScreenCoords(game, coords[0], coords[1])
+
+    var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
+    shadow.setScale(game.tileScale / 4)
+    shadow.setOrigin(0.5, (800 - 405) / 800)
+    shadow.alpha = 0.2
+    this.shadow = shadow
+
     this.sprites = []
     for (var i = 0; i < 8; i++) {
-        var screenCoords = getScreenCoords(game, coords[0], coords[1])
-        var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
-        sprite.setScale(game.tileScale / 1.5)
-        sprite.setOrigin(0.5, (800 - 265) / 800)
-        sprite.visible = false
-        this.sprites.push(sprite)
+        var pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
+        pilotSprite.setScale(game.tileScale / 1.5)
+        pilotSprite.setOrigin(0.5, (800 - 265) / 800)
+        pilotSprite.visible = false
+        this.sprites.push(pilotSprite)
     }
+
     this.sprites[dir].visible = true
 
 }
