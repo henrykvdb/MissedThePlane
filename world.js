@@ -20,6 +20,10 @@ function World(game, tiles) {
                     tileSprites.push(this.createTileSprite(x, y, "G")) // Always first grass
                     tileSprites.push(this.createTileSprite(x, y, "M"))
                     tileSprites[tiles[x][y] == "M" ? 0 : 1].visible = false
+                } else if (tiles[x][y] == "B") {
+                    tileSprites.push(this.createTileSprite(x, y, "B0")) // Always first grass
+                    tileSprites.push(this.createTileSprite(x, y, "B1"))
+                    tileSprites[1].visible = false
                 } else tileSprites.push(this.createTileSprite(x, y, tiles[x][y]))
                 tileSprites.tileType = tiles[x][y]
                 sprites[x][y] = tileSprites
@@ -38,12 +42,12 @@ function World(game, tiles) {
     }
 
     this.randomTiles = function(size) {
-        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'G', 'G', 'G', 'W', 'M']))) // Ground bias xd
+        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'G', 'G', 'G', 'W', 'M', 'B']))) // Ground bias xd
     }
 
     this.isPassable = function (coords, edge) {
         //Check world bounds
-        if (coords[0] < edge || coords[1] < edge || coords[0] > this.game.levelSize - edge || coords[0] > this.game.levelSize - edge)
+        if (coords[0] < edge || coords[1] < edge || coords[0] > this.game.levelSize - edge || coords[1] > this.game.levelSize - edge)
             return false;
 
         //Check tile collision
@@ -69,6 +73,7 @@ function World(game, tiles) {
     this.triggerButton = function(coords) {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         if (this.tiles[tilePos[0]][tilePos[1]] != "B") return // todo maybe throw error here or something
+        this.sprites[tilePos[0]][tilePos[1]].forEach(s => s.visible = !s.visible)
 
         // We switch neighbouring tiles from grass to mountain and vice versa
         this.getNeighbourCoords(tilePos).map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))

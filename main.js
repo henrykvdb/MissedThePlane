@@ -30,7 +30,8 @@ function preload() {
         'G': Array.from(new Array(7), (v, i) => "G" + i),
         "W": ['W0'],
         'M': Array.from(new Array(4), (v, i) => "M" + i),
-        'B': ['B0']
+        'B0': ['B0'],
+        'B1': ['B1']
     }
 
     //Add pilot assets
@@ -45,7 +46,7 @@ function create() {
     var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 
-    this.world = new World(this, level.world)
+    this.world = new World(this, undefined)
     this.pilot = new Pilot(this, level.pilot.coords, level.pilot.dir)
 
     var pilot = this.pilot

@@ -1,9 +1,9 @@
--mountain tile
 -mail to Marcus Wood
 -airport tile
--button tile 
 -button implementation
--interaction system
+-perpendicular movement against tilted edges
+-Z sort for height tiles
+-shadow under pilot and plane
 -smooth plane
 -levels 
 -main menu
