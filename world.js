@@ -72,6 +72,8 @@ function World(game, tiles) {
 
     this.triggerButton = function(coords) {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
+        if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
+            coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
         if (this.tiles[tilePos[0]][tilePos[1]] != "B") return // todo maybe throw error here or something
         this.sprites[tilePos[0]][tilePos[1]].forEach(s => s.visible = !s.visible)
 

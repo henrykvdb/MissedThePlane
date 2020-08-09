@@ -23,6 +23,7 @@ function preload() {
     //Add terain tile assets
     for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
     for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
+    this.load.image('shadow', 'assets/entities/shadow.png')
     this.load.image('W0', 'assets/tiles/water0.png')
     this.load.image('B0', 'assets/tiles/button0.png')
     this.load.image('B1', 'assets/tiles/button1.png')
