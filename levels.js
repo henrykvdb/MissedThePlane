@@ -1,9 +1,9 @@
 
 const ALL_LEVELS = [{
     tiles: [
-        ['M', 'G', 'G'],
-        ['G', 'G', 'M'],
-        ['G', 'G', 'G']
+        ['M', 'G', 'M'],
+        ['G', 'G', 'G'],
+        ['G', 'G', 'M']
     ],
     pilot: {coords: [0.5, 1.5], dir: 3},
     plane: {coords: [4, 0.5], dir: 1 }

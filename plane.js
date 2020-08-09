@@ -10,7 +10,7 @@ function Plane(game, coords, dir) {
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
         // Rotate if collision
-        if (!this.game.world.isPassable(this.coords, 0.4999, true)){ //Check half a tile in advance (exclusive bounds yuck)
+        if (!this.game.world.isPassable(this.coords, 0.5, true)){ //Check half a tile in advance (exclusive bounds yuck)
             this.coords = originalCoords
             this.waitTime -= dt
 
@@ -19,16 +19,24 @@ function Plane(game, coords, dir) {
                 this.dir = (++this.dir)%8
 
                 if(this.dir%2==1){
+                    //Rotate right
                     var oldDir = this.dirVector.slice()
                     this.dirVector[0] = oldDir[1]
                     this.dirVector[1] = -oldDir[0]
+
+                    //Put the plane at exact the right spot so it doesn't accidently collide with other stuff
+                    this.coords[0] = 0.5 + Math.round(this.coords[0]-0.5)
+                    this.coords[1] = 0.5 + Math.round(this.coords[1]-0.5)
                 }
             }
         }
 
+        // Update sprites
+        var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
+        this.shadow.x = worldCoords[0];
+        this.shadow.y = worldCoords[1];
         this.sprites.forEach((s, index) => {
             s.visible = index == this.dir
-            var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
             s.x = worldCoords[0]
             s.y = worldCoords[1]
         })
@@ -46,13 +54,20 @@ function Plane(game, coords, dir) {
     this.dirVector = [-1, 0]
     this.waitTime = PLANE_WAIT_TIME
 
-    //Create sprites
+    // Create sprites
+    var screenCoords = getScreenCoords(game, coords[0], coords[1])
+
+    var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
+    shadow.setScale(game.tileScale / 4)
+    shadow.setOrigin(0.5, (800 - 405) / 800)
+    shadow.alpha = 0.2
+    this.shadow = shadow
+
     this.sprites = []
     for (var i = 0; i < 8; i++) {
-        var screenCoords = getScreenCoords(game, coords[0], coords[1])
         var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'plane' + i)
         sprite.setScale(game.tileScale / 2)
-        sprite.setOrigin(0.5, (800 - 330) / 800)
+        sprite.setOrigin(0.5, (800 - 200) / 800)
         sprite.visible = false
         this.sprites.push(sprite)
     }

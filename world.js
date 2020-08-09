@@ -53,8 +53,18 @@ function World(game, tiles) {
 
         //Check tile collision
         var collisionTiles = [[edge, 0], [-edge, 0], [0, edge], [0, -edge]].map(v => addArray(v, coords))
-        collisionTiles = collisionTiles.map(v => this.tiles[Math.floor(v[0])][Math.floor(v[1])])
-        if (flying) return !collisionTiles.map(v => IMPASSABLE_TILES_FLYING.includes(v)).includes(true)
+        collisionTiles = collisionTiles.filter(v => v[0]%1 != 0 && v[1]%1 != 0) //Remove bounds to make collision exclusive (needed for plane collision)
+        console.log(collisionTiles) //TODO CLEANUP
+        collisionTiles = collisionTiles.map(v => this.tiles[Math.ceil(v[0]-1)][Math.ceil(v[1]-1)])
+        if (flying) {
+            var output = !collisionTiles.map(v => IMPASSABLE_TILES_FLYING.includes(v)).includes(true)
+            console.log(output)
+            if(!output){ //TODO CLEANUP
+                console.log(collisionTiles)
+            }
+
+            return output
+        }
         else return !collisionTiles.map(v => IMPASSABLE_TILES.includes(v)).includes(true)
     }
 
