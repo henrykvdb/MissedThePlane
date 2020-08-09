@@ -22,10 +22,12 @@ var assets
 function preload() {
     //Add terain tile assets
     for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
-    this.load.image('W1', 'assets/tiles/water1.png')
+    for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
+    this.load.image('W0', 'assets/tiles/water0.png')
     assets = {
         'G': Array.from(new Array(7), (v, i) => "G" + i),
-        "W": ['W1']
+        "W": ['W0'],
+        'M': Array.from(new Array(4), (v, i) => "M" + i),
     }
 
     //Add pilot assets
@@ -40,7 +42,7 @@ function create() {
     var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 
-    this.world = new World(this, level.world)
+    this.world = new World(this, undefined)
     this.pilot = new Pilot(this, level.pilot.coords, level.pilot.dir)
 }
 

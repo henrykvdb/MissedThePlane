@@ -1,4 +1,4 @@
-const TILE_EDGE = 0.2
+const TILE_EDGE = 0.1
 const MOVE_SPEED = 0.03
 
 function Pilot(game, coords, dir) {

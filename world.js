@@ -1,6 +1,6 @@
 // File for managing everything related to a world
 
-const IMPASSABLE_TILES = ['W']
+const IMPASSABLE_TILES = ['W','M']
 
 function World(game, tiles) {
 
@@ -27,7 +27,7 @@ function World(game, tiles) {
     }
 
     this.randomTiles = function (size) {
-        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'W'])))
+        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'W','M'])))
     }
 
     this.isPassable = function (coords, edge) {
@@ -43,7 +43,7 @@ function World(game, tiles) {
 
     // Init code of world
     this.game = game;
-    if (tiles == undefined) tiles = randomTiles(5);
+    if (tiles == undefined) tiles = this.randomTiles(5);
     this.tiles = tiles;
     this.world = this.createLevel(tiles)
 }
