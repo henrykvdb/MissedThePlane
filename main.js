@@ -32,46 +32,17 @@ function preload() {
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
 }
 
-// Returns screen coordinate of the top of the tile
-function getScreenCoords(game, levelX, levelY) {
-    var posX = SIZE_X / 2 + game.shiftX * (levelY - levelX)
-    var posY = SIZE_Y / 2 + game.shiftY * (levelY + levelX - game.levelSize - 0.5)
-    return [posX, posY]
-}
-
-function createLevel(game, tiles) {
-    //Define game drawing constants
-    game.levelSize = tiles.length
-    game.tileScale = SIZE_Y / game.levelSize / 240
-    game.shiftX = 1.02 * game.tileScale * SHIFT_X
-    game.shiftY = 1.02 * game.tileScale * SHIFT_Y
-
-    //Create tile sprites
-    var sprites = Array(game.levelSize).fill(Array(game.levelSize))
-    for (var x = 0; x < tiles.length; x++) {
-        for (var y = 0; y < tiles[0].length; y++) {
-            var asset = Phaser.Utils.Array.GetRandom(assets[tiles[x][y]])
-            coords = getScreenCoords(game, x, y)
-            var sprite = game.add.sprite(coords[0], coords[1], asset)
-            sprite.setScale(game.tileScale)
-            sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
-            sprites[x][y] = sprite
-        }
-    }
-    return sprites
-}
-
-function randomTiles(size) {
-    return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'W'])))
-}
 
 function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
-    //createLevel(this, [['G','G','W'],['G','W','W'],['G','G','W']])
-    this.currentWorld = createLevel(this, randomTiles(5))
-    this.pilot = new Pilot(this, [1, 1])
+    var levelIndex = 2 // choose level here
+    var level = ALL_LEVELS[levelIndex] 
+    this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
+
+    this.world = new World(this, level.world)
+    this.pilot = new Pilot(this, level.pilot.coords, level.pilot.dir)
 }
 
 //Handle input
@@ -85,6 +56,6 @@ function update() {
     this.pilot.move(dir)
 }
 
-function addvector(a, b) {
+function addvector(a, b) { // quality magic tbh
     return a.map((e, i) => e + b[i]) //Magic, don't touch
 }

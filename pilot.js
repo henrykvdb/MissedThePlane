@@ -1,21 +1,7 @@
 const TILE_EDGE = 0.2
 const MOVE_SPEED = 0.03
 
-function Pilot(game, coords) {
-    this.coords = coords
-    this.game = game
-
-    //Create sprites
-    this.sprites = []
-    for (var i = 0; i < 8; i++) {
-        var screenCoords = getScreenCoords(game, coords[0], coords[1])
-        var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
-        sprite.setScale(game.tileScale / 1.5)
-        sprite.setOrigin(0.5, (800 - 265) / 800)
-        sprite.visible = false
-        this.sprites.push(sprite)
-    }
-    this.sprites[0].visible = true
+function Pilot(game, coords, dir) {
 
     //Move sprite in given dir
     this.move = function (dir) {
@@ -24,9 +10,11 @@ function Pilot(game, coords) {
 
         //Update coords
         var length = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1])
+        var originalCoords = this.coords.slice()
         this.coords[0] += MOVE_SPEED * dir[0] / length
         this.coords[1] += MOVE_SPEED * dir[1] / length
-        this.coords = this.coords.map(c => Math.min(Math.max(c, TILE_EDGE), this.game.levelSize - TILE_EDGE))
+        if (!this.game.world.isPassable(this.coords)) this.coords = originalCoords
+        else this.coords = this.coords.map(c => Math.min(Math.max(c, TILE_EDGE), this.game.levelSize - TILE_EDGE))
 
         //Update orientation
         var orientation = 0
@@ -46,4 +34,21 @@ function Pilot(game, coords) {
             s.y = worldCoords[1]
         })
     }
+
+    // Init code of pilot
+    this.coords = coords
+    this.game = game
+
+    //Create sprites
+    this.sprites = []
+    for (var i = 0; i < 8; i++) {
+        var screenCoords = getScreenCoords(game, coords[0], coords[1])
+        var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
+        sprite.setScale(game.tileScale / 1.5)
+        sprite.setOrigin(0.5, (800 - 265) / 800)
+        sprite.visible = false
+        this.sprites.push(sprite)
+    }
+    this.sprites[dir].visible = true
+
 }
