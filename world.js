@@ -56,13 +56,13 @@ function World(game, tiles) {
         return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])] == "B"
     }
 
-    this.getNeighbourTiles = function(coords) {
+    this.getNeighbourCoords = function(coords) {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         var neighbours = [] // beautiful formatting, ahem ahem
-        if (tilePos[0] != 0)                    neighbours.push(this.sprites[tilePos[0]-1][tilePos[1]])
-        if (tilePos[0] != this.tiles.length-1)  neighbours.push(this.sprites[tilePos[0]+1][tilePos[1]])
-        if (tilePos[1] != 0)                    neighbours.push(this.sprites[tilePos[0]][tilePos[1]-1])
-        if (tilePos[1] != this.tiles.length-1)  neighbours.push(this.sprites[tilePos[0]][tilePos[1]+1])
+        if (tilePos[0] != 0)                    neighbours.push([tilePos[0]-1, tilePos[1]])
+        if (tilePos[0] != this.tiles.length-1)  neighbours.push([tilePos[0]+1, tilePos[1]])
+        if (tilePos[1] != 0)                    neighbours.push([tilePos[0], tilePos[1]-1])
+        if (tilePos[1] != this.tiles.length-1)  neighbours.push([tilePos[0], tilePos[1]+1])
         return neighbours
     }
 
@@ -71,7 +71,8 @@ function World(game, tiles) {
         if (this.tiles[tilePos[0]][tilePos[1]] != "B") return // todo maybe throw error here or something
 
         // We switch neighbouring tiles from grass to mountain and vice versa
-        this.getNeighbourTiles(tilePos).filter(n=>["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
+        this.getNeighbourCoords(tilePos).map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
+        this.getNeighbourCoords(tilePos).forEach(c => {if (["M", "G"].includes(this.tiles[c[0]][c[1]])) this.tiles[c[0]][c[1]] = (this.tiles[c[0]][c[1]] == "M" ? "G" : "M")}) // Swap M to G and other way around in tiles
     }
 
     // Init code of world
