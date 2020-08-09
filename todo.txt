@@ -1,8 +1,6 @@
--airport tile
+-airport voxel
 -Z sort for height tiles
--shadow under and plane
--smooth plane
--levels 
+-levels
 -main menu
 -sound (!)
 -UI

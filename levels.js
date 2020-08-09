@@ -1,12 +1,12 @@
 
 const ALL_LEVELS = [{
-    world: [
-        ['G', 'G', 'W'],
-        ['G', 'W', 'W'],
-        ['G', 'G', 'W']
+    tiles: [
+        ['M', 'G', 'B'],
+        ['G', 'G', 'F'],
+        ['G', 'M', 'W']
     ],
-    pilot: {coords: [0.5, 0.5], dir: 3},
-    plane: ['somePath']
+    pilot: { coords: [0.5, 1.5], dir: 3 },
+    plane: { coords: [4, 0.5], dir: 1 }
 },
 {
     world: [
@@ -15,8 +15,8 @@ const ALL_LEVELS = [{
         ['G', 'G', 'G', 'G'],
         ['G', 'G', 'G', 'G']
     ],
-    pilot: {coords: [3.5, 0.5], dir: 3 },
-    plane: ['somePath']
+    pilot: { coords: [3.5, 0.5], dir: 3 },
+    plane: { coords: [5, 1.5], dir: 1 }
 },
 {
     world: [
@@ -28,7 +28,7 @@ const ALL_LEVELS = [{
         ['G', 'G', 'G', 'W', 'G', 'W', 'G'],
         ['G', 'G', 'G', 'W', 'G', 'W', 'G']
     ],
-    pilot: {coords: [3.5, 0.5], dir: 3 },
-    plane: ['somePath']
+    pilot: { coords: [3.5, 0.5], dir: 3 },
+    plane: { coords: [5, 1.5], dir: 1 }
 }
 ]

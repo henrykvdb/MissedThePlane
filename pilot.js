@@ -1,52 +1,54 @@
 const TILE_EDGE = 0.1
-const MOVE_SPEED = 0.03
+const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
+const IMPASSABLE_TILES = ['W', 'M','A'] // 'A' meaning 'Air'
 
 function Pilot(game, coords, dir) {
 
     //Move sprite in given dir
-    this.move = function (dir) {
+    this.move = function (dirVector, dt) {
         //Return if no move
-        if (dir[0] == 0 && dir[1] == 0) return
+        if (dirVector[0] == 0 && dirVector[1] == 0) return
 
         //Calculate move vars
-        var length = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1])
+        var length = Math.sqrt(dirVector[0] * dirVector[0] + dirVector[1] * dirVector[1])
         var originalCoords = this.coords.slice()
 
         //Move x
-        this.coords[0] += MOVE_SPEED * dir[0] / length
-        if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords.slice()
+        this.coords[0] += PILOT_MOVE_SPEED * dt * dirVector[0] / length
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords.slice()
         else originalCoords = this.coords.slice()
 
         //Move y
-        this.coords[1] += MOVE_SPEED * dir[1] / length
-        if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords
+        this.coords[1] += PILOT_MOVE_SPEED * dt * dirVector[1] / length
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords
 
         //Update orientation
-        var orientation = 0
-        if (dir[0] < 0 && dir[1] < 0) orientation = 0
-        else if (dir[0] < 0 && dir[1] == 0) orientation = 1
-        else if (dir[0] < 0 && dir[1] > 0) orientation = 2
-        else if (dir[0] == 0 && dir[1] > 0) orientation = 3
-        else if (dir[0] > 0 && dir[1] > 0) orientation = 4
-        else if (dir[0] > 0 && dir[1] == 0) orientation = 5
-        else if (dir[0] > 0 && dir[1] < 0) orientation = 6
-        else if (dir[0] == 0 && dir[1] < 0) orientation = 7
+        var dir = 0
+        if (dirVector[0] < 0 && dirVector[1] < 0) dir = 0
+        else if (dirVector[0] < 0 && dirVector[1] == 0) dir = 1
+        else if (dirVector[0] < 0 && dirVector[1] > 0) dir = 2
+        else if (dirVector[0] == 0 && dirVector[1] > 0) dir = 3
+        else if (dirVector[0] > 0 && dirVector[1] > 0) dir = 4
+        else if (dirVector[0] > 0 && dirVector[1] == 0) dir = 5
+        else if (dirVector[0] > 0 && dirVector[1] < 0) dir = 6
+        else if (dirVector[0] == 0 && dirVector[1] < 0) dir = 7
 
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
         this.shadow.x = worldCoords[0];
         this.shadow.y = worldCoords[1];
         this.shadow.setDepth(this.coords[0] + this.coords[1])
         this.sprites.forEach((s, index) => {
-            s.visible = index == orientation
+            s.visible = index == dir
             s.x = worldCoords[0]
             s.y = worldCoords[1]
             s.setDepth(this.coords[0] + this.coords[1])
         })
     }
 
-    this.interact = function() {
+    this.interact = function () {
         if (!this.game.world.isButton(this.coords)) return // silly user, there's no button here
         this.game.world.triggerButton(this.coords) // todo this is maybe pointless if but maybe we can show a message to the user or something
+        this.game.sound.add('button').play()
     }
 
     // Init code of pilot
@@ -66,7 +68,7 @@ function Pilot(game, coords, dir) {
     this.sprites = []
     for (var i = 0; i < 8; i++) {
         var pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
-        pilotSprite.setScale(game.tileScale / 1.5)
+        pilotSprite.setScale(game.tileScale / 2)
         pilotSprite.setOrigin(0.5, (800 - 265) / 800)
         pilotSprite.visible = false
         pilotSprite.setDepth(coords[0] + coords[1])

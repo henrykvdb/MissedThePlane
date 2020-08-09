@@ -17,52 +17,65 @@ var config = {
 }
 
 var game = new Phaser.Game(config)
-
 var assets
+var music
+
 function preload() {
     //Add terain tile assets
     for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
     for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
-    this.load.image('shadow', 'assets/entities/shadow.png')
     this.load.image('W0', 'assets/tiles/water0.png')
     this.load.image('B0', 'assets/tiles/button0.png')
     this.load.image('B1', 'assets/tiles/button1.png')
+    this.load.image('F0', 'assets/tiles/heighttile.png')
     assets = {
         'G': Array.from(new Array(7), (v, i) => "G" + i),
         "W": ['W0'],
         'M': Array.from(new Array(4), (v, i) => "M" + i),
+        'F': ['F0'],
         'B0': ['B0'],
         'B1': ['B1']
     }
 
     //Add pilot assets
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
+    for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
+    this.load.image('shadow', 'assets/entities/shadow.png')
+
+    //Load audio
+    this.load.audio('music', ['assets/audio/music.wav'])
+    this.load.audio('button', ['assets/audio/button.wav'])
 }
 
 function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
-    var levelIndex = 1 // choose level here
+    var levelIndex = 0 // choose level here
     var level = ALL_LEVELS[levelIndex]
-    this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
+    this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50)
 
-    this.world = new World(this, level.world)
+    this.world = new World(this, level.tiles)
     this.pilot = new Pilot(this, level.pilot.coords, level.pilot.dir)
+    this.plane = new Plane(this, level.plane.coords, level.plane.dir)
 
     var pilot = this.pilot
-    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down',function(){pilot.interact()});
+    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
+
+    music = this.sound.add('music',{ loop: true })
+    music.play()
 }
 
 //Handle input
-function update() {
-    var dir = [0, 0]
-    if (this.cursors.up.isDown) dir = addArray(dir, [-1, -1])
-    if (this.cursors.down.isDown) dir = addArray(dir, [1, 1])
-    if (this.cursors.right.isDown) dir = addArray(dir, [-1, 1])
-    if (this.cursors.left.isDown) dir = addArray(dir, [1, -1])
+function update(_, dt) {
+    var dirVector = [0, 0]
+    if (this.cursors.up.isDown) dirVector = addArray(dirVector, [-1, -1])
+    if (this.cursors.down.isDown) dirVector = addArray(dirVector, [1, 1])
+    if (this.cursors.right.isDown) dirVector = addArray(dirVector, [-1, 1])
+    if (this.cursors.left.isDown) dirVector = addArray(dirVector, [1, -1])
 
-    this.pilot.move(dir)
+    this.pilot.move(dirVector, dt)
+    this.plane.move(dt)
 }
 
 function addArray(a, b) { // quality magic tbh
