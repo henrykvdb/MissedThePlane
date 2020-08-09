@@ -13,8 +13,8 @@ function Pilot(game, coords, dir) {
         var originalCoords = this.coords.slice()
         this.coords[0] += MOVE_SPEED * dir[0] / length
         this.coords[1] += MOVE_SPEED * dir[1] / length
-        if (!this.game.world.isPassable(this.coords)) this.coords = originalCoords
-        else this.coords = this.coords.map(c => Math.min(Math.max(c, TILE_EDGE), this.game.levelSize - TILE_EDGE))
+
+        if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords
 
         //Update orientation
         var orientation = 0

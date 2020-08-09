@@ -32,13 +32,12 @@ function preload() {
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
 }
 
-
 function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
     var levelIndex = 2 // choose level here
-    var level = ALL_LEVELS[levelIndex] 
+    var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 
     this.world = new World(this, level.world)
@@ -48,14 +47,14 @@ function create() {
 //Handle input
 function update() {
     var dir = [0, 0]
-    if (this.cursors.up.isDown) dir = addvector(dir, [-1, -1])
-    if (this.cursors.down.isDown) dir = addvector(dir, [1, 1])
-    if (this.cursors.right.isDown) dir = addvector(dir, [-1, 1])
-    if (this.cursors.left.isDown) dir = addvector(dir, [1, -1])
+    if (this.cursors.up.isDown) dir = addArray(dir, [-1, -1])
+    if (this.cursors.down.isDown) dir = addArray(dir, [1, 1])
+    if (this.cursors.right.isDown) dir = addArray(dir, [-1, 1])
+    if (this.cursors.left.isDown) dir = addArray(dir, [1, -1])
 
     this.pilot.move(dir)
 }
 
-function addvector(a, b) { // quality magic tbh
+function addArray(a, b) { // quality magic tbh
     return a.map((e, i) => e + b[i]) //Magic, don't touch
 }
