@@ -44,7 +44,7 @@ function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
-    var levelIndex = 0 // choose level here
+    var levelIndex = 2 // choose level here
     var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 

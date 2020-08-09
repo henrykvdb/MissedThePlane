@@ -42,7 +42,7 @@ function Pilot(game, coords, dir) {
         })
     }
 
-    this.interact = function() {
+    this.interact = function () {
         if (!this.game.world.isButton(this.coords)) return // silly user, there's no button here
         this.game.world.triggerButton(this.coords) // todo this is maybe pointless if but maybe we can show a message to the user or something
     }
@@ -63,7 +63,7 @@ function Pilot(game, coords, dir) {
     this.sprites = []
     for (var i = 0; i < 8; i++) {
         var pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
-        pilotSprite.setScale(game.tileScale / 1.5)
+        pilotSprite.setScale(game.tileScale / 2)
         pilotSprite.setOrigin(0.5, (800 - 265) / 800)
         pilotSprite.visible = false
         this.sprites.push(pilotSprite)

@@ -10,23 +10,23 @@ function Plane(game, coords, dir) {
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
         // Rotate if collision
-        if (!this.game.world.isPassable(this.coords, 0.5, true)){ //Check half a tile in advance (exclusive bounds yuck)
+        if (!this.game.world.isPassable(this.coords, 0.5, true) || this.dir % 2 == 0) { //Check half a tile in advance so plane stays centered
             this.coords = originalCoords
             this.waitTime -= dt
 
-            if (this.waitTime < 0){
+            if (this.waitTime < 0) {
                 this.waitTime = PLANE_WAIT_TIME
-                this.dir = (++this.dir)%8
+                this.dir = (++this.dir) % 8
 
-                if(this.dir%2==1){
+                if (this.dir % 2 == 1) {
                     //Rotate right
                     var oldDir = this.dirVector.slice()
                     this.dirVector[0] = oldDir[1]
                     this.dirVector[1] = -oldDir[0]
 
                     //Put the plane at exact the right spot so it doesn't accidently collide with other stuff
-                    this.coords[0] = 0.5 + Math.round(this.coords[0]-0.5)
-                    this.coords[1] = 0.5 + Math.round(this.coords[1]-0.5)
+                    this.coords[0] = 0.5 + Math.round(this.coords[0] - 0.5)
+                    this.coords[1] = 0.5 + Math.round(this.coords[1] - 0.5)
                 }
             }
         }
