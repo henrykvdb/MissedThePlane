@@ -36,6 +36,7 @@ function preload() {
 
     //Add pilot assets
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
+    for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
 }
 
 function create() {
@@ -46,22 +47,24 @@ function create() {
     var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 
-    this.world = new World(this, undefined)
+    this.world = new World(this, level.tiles)
     this.pilot = new Pilot(this, level.pilot.coords, level.pilot.dir)
+    this.plane = new Plane(this, level.plane.coords, level.plane.dir)
 
     var pilot = this.pilot
-    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down',function(){pilot.interact()});
+    this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() });
 }
 
 //Handle input
-function update() {
-    var dir = [0, 0]
-    if (this.cursors.up.isDown) dir = addArray(dir, [-1, -1])
-    if (this.cursors.down.isDown) dir = addArray(dir, [1, 1])
-    if (this.cursors.right.isDown) dir = addArray(dir, [-1, 1])
-    if (this.cursors.left.isDown) dir = addArray(dir, [1, -1])
+function update(_, dt) {
+    var dirVector = [0, 0]
+    if (this.cursors.up.isDown) dirVector = addArray(dirVector, [-1, -1])
+    if (this.cursors.down.isDown) dirVector = addArray(dirVector, [1, 1])
+    if (this.cursors.right.isDown) dirVector = addArray(dirVector, [-1, 1])
+    if (this.cursors.left.isDown) dirVector = addArray(dirVector, [1, -1])
 
-    this.pilot.move(dir)
+    this.pilot.move(dirVector, dt)
+    this.plane.move(dt)
 }
 
 function addArray(a, b) { // quality magic tbh

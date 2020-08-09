@@ -1,10 +1,6 @@
--mail to Marcus Wood
 -airport tile
--button implementation
--perpendicular movement against tilted edges
 -Z sort for height tiles
--shadow under pilot and plane
--smooth plane
+-shadow under plane
 -levels 
 -main menu
 -sound (!)

@@ -1,39 +1,39 @@
 const TILE_EDGE = 0.1
-const MOVE_SPEED = 0.03
+const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
 
 function Pilot(game, coords, dir) {
 
     //Move sprite in given dir
-    this.move = function (dir) {
+    this.move = function (dirVector, dt) {
         //Return if no move
-        if (dir[0] == 0 && dir[1] == 0) return
+        if (dirVector[0] == 0 && dirVector[1] == 0) return
 
         //Calculate move vars
-        var length = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1])
+        var length = Math.sqrt(dirVector[0] * dirVector[0] + dirVector[1] * dirVector[1])
         var originalCoords = this.coords.slice()
 
         //Move x
-        this.coords[0] += MOVE_SPEED * dir[0] / length
+        this.coords[0] += PILOT_MOVE_SPEED * dt * dirVector[0] / length
         if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords.slice()
         else originalCoords = this.coords.slice()
 
         //Move y
-        this.coords[1] += MOVE_SPEED * dir[1] / length
+        this.coords[1] += PILOT_MOVE_SPEED * dt * dirVector[1] / length
         if (!this.game.world.isPassable(this.coords, TILE_EDGE)) this.coords = originalCoords
 
         //Update orientation
-        var orientation = 0
-        if (dir[0] < 0 && dir[1] < 0) orientation = 0
-        else if (dir[0] < 0 && dir[1] == 0) orientation = 1
-        else if (dir[0] < 0 && dir[1] > 0) orientation = 2
-        else if (dir[0] == 0 && dir[1] > 0) orientation = 3
-        else if (dir[0] > 0 && dir[1] > 0) orientation = 4
-        else if (dir[0] > 0 && dir[1] == 0) orientation = 5
-        else if (dir[0] > 0 && dir[1] < 0) orientation = 6
-        else if (dir[0] == 0 && dir[1] < 0) orientation = 7
+        var dir = 0
+        if (dirVector[0] < 0 && dirVector[1] < 0) dir = 0
+        else if (dirVector[0] < 0 && dirVector[1] == 0) dir = 1
+        else if (dirVector[0] < 0 && dirVector[1] > 0) dir = 2
+        else if (dirVector[0] == 0 && dirVector[1] > 0) dir = 3
+        else if (dirVector[0] > 0 && dirVector[1] > 0) dir = 4
+        else if (dirVector[0] > 0 && dirVector[1] == 0) dir = 5
+        else if (dirVector[0] > 0 && dirVector[1] < 0) dir = 6
+        else if (dirVector[0] == 0 && dirVector[1] < 0) dir = 7
 
         this.sprites.forEach((s, index) => {
-            s.visible = index == orientation
+            s.visible = index == dir
             var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
             s.x = worldCoords[0]
             s.y = worldCoords[1]
