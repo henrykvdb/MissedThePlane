@@ -1,22 +1,32 @@
+const TILE_EDGE = 0.2
+const MOVE_SPEED = 0.03
+
 function Pilot(game, coords) {
     this.coords = coords
     this.game = game
 
+    //Create sprites
     this.sprites = []
-    for (var i = 0; i < 8; i++) this.sprites.push(createSprite(game, coords[0], coords[1], 'pilot' + i))
-    this.sprites.forEach(s => { s.setScale(s.scaleX / 1.5); s.visible = false })
+    for (var i = 0; i < 8; i++) {
+        var screenCoords = getScreenCoords(game, coords[0], coords[1])
+        var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
+        sprite.setScale(game.tileScale / 1.5)
+        sprite.setOrigin(0.5, (800 - 265) / 800)
+        sprite.visible = false
+        this.sprites.push(sprite)
+    }
     this.sprites[0].visible = true
 
-    const speed = 0.03;
+    //Move sprite in given dir
     this.move = function (dir) {
         //Return if no move
-        if (dir[0] == 0 && dir[1] == 0) return;
+        if (dir[0] == 0 && dir[1] == 0) return
 
         //Update coords
         var length = Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1])
-        this.coords[0] += speed * dir[0] / length
-        this.coords[1] += speed * dir[1] / length
-        this.coords = this.coords.map(c => Math.min(Math.max(c, 0), this.game.levelSize - 1))
+        this.coords[0] += MOVE_SPEED * dir[0] / length
+        this.coords[1] += MOVE_SPEED * dir[1] / length
+        this.coords = this.coords.map(c => Math.min(Math.max(c, TILE_EDGE), this.game.levelSize - TILE_EDGE))
 
         //Update orientation
         var orientation = 0
