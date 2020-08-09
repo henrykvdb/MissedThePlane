@@ -1,10 +1,10 @@
 // File for managing everything related to a world
 
-const IMPASSABLE_TILES = ['W']
+const IMPASSABLE_TILES = ['W','M']
 
 function World(game, tiles) {
 
-    this.createLevel = function(tiles) {
+    this.createLevel = function (tiles) {
         //Define game drawing constants
         this.game.levelSize = tiles.length
         this.game.tileScale = SIZE_Y / this.game.levelSize / 240
@@ -38,11 +38,18 @@ function World(game, tiles) {
     }
 
     this.randomTiles = function(size) {
-        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'W'])))
+        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'G', 'G', 'G', 'W', 'M']))) // Ground bias xd
     }
 
-    this.isPassable = function(coords) {
-        return !IMPASSABLE_TILES.includes(this.tiles[Math.floor(coords[0])][Math.floor(coords[1])])
+    this.isPassable = function (coords, edge) {
+        //Check world bounds
+        if (coords[0] < edge || coords[1] < edge || coords[0] > this.game.levelSize - edge || coords[0] > this.game.levelSize - edge)
+            return false;
+
+        //Check tile collision
+        var collisionTiles = [[edge, 0], [-edge, 0], [0, edge], [0, -edge]].map(v => addArray(v, coords))
+        collisionTiles = collisionTiles.map(v => this.tiles[Math.floor(v[0])][Math.floor(v[1])])
+        return !collisionTiles.map(v => IMPASSABLE_TILES.includes(v)).includes(true)
     }
 
     this.isButton = function(coords) {
@@ -69,7 +76,7 @@ function World(game, tiles) {
 
     // Init code of world
     this.game = game;
-    if (tiles == undefined) tiles = randomTiles(5);
+    if (tiles == undefined) tiles = this.randomTiles(5);
     this.tiles = tiles;
     this.sprites = this.createLevel(tiles)
 }

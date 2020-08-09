@@ -22,28 +22,27 @@ var assets
 function preload() {
     //Add terain tile assets
     for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
-    this.load.image('W1', 'assets/tiles/water1.png')
+    for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
+    this.load.image('W0', 'assets/tiles/water0.png')
     this.load.image('B0', 'assets/tiles/button0.png')
     this.load.image('B1', 'assets/tiles/button1.png')
-    this.load.image('M0', 'assets/tiles/heighttile.png')
     assets = {
         'G': Array.from(new Array(7), (v, i) => "G" + i),
-        "W": ['W1'], // haha we are going to have multiple water tiles right
-        "B": ['B0'],
-        "M": ['M0']
+        "W": ['W0'],
+        'M': Array.from(new Array(4), (v, i) => "M" + i),
+        'B': ['B0']
     }
 
     //Add pilot assets
     for (var i = 0; i < 8; i++) this.load.image('pilot' + i, 'assets/entities/pilot' + i + '.png')
 }
 
-
 function create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
     this.cursors = this.input.keyboard.createCursorKeys()
 
     var levelIndex = 2 // choose level here
-    var level = ALL_LEVELS[levelIndex] 
+    var level = ALL_LEVELS[levelIndex]
     this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50);
 
     this.world = new World(this, level.world)
@@ -56,14 +55,14 @@ function create() {
 //Handle input
 function update() {
     var dir = [0, 0]
-    if (this.cursors.up.isDown) dir = addvector(dir, [-1, -1])
-    if (this.cursors.down.isDown) dir = addvector(dir, [1, 1])
-    if (this.cursors.right.isDown) dir = addvector(dir, [-1, 1])
-    if (this.cursors.left.isDown) dir = addvector(dir, [1, -1])
+    if (this.cursors.up.isDown) dir = addArray(dir, [-1, -1])
+    if (this.cursors.down.isDown) dir = addArray(dir, [1, 1])
+    if (this.cursors.right.isDown) dir = addArray(dir, [-1, 1])
+    if (this.cursors.left.isDown) dir = addArray(dir, [1, -1])
 
     this.pilot.move(dir)
 }
 
-function addvector(a, b) { // quality magic tbh
+function addArray(a, b) { // quality magic tbh
     return a.map((e, i) => e + b[i]) //Magic, don't touch
 }
