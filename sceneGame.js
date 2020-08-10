@@ -19,7 +19,7 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.cursors = this.input.keyboard.createCursorKeys()
         this.graphics = this.add.graphics();
-        this.volumeSlider = [undefined, undefined]
+        this.volumeSlider = []
 
         // Start music
         //this.music = this.sound.add('music', { loop: true })
@@ -39,21 +39,31 @@ class GameScene extends Phaser.Scene {
             gameScene.scene.restart({ levelIndex: gameScene.levelIndex })
         });
 
+        // Draw sound change bar
+        gameScene.graphics.fillStyle(0x000000, 0.4);
+        var sliderTop = VOL_POS_Y - VOL_LENGTH - VOL_OFFSET;
+        gameScene.volumeSlider.push(gameScene.graphics.fillRect(VOL_POS_X - VOL_THICKNESS / 2, sliderTop, VOL_THICKNESS, VOL_LENGTH).setInteractive())
+        gameScene.volumeSlider.push(gameScene.add.sprite(VOL_POS_X, sliderTop + VOL_LENGTH / 2, 'btn_volume_head'))
+        gameScene.volumeSlider[0].visible = false
+        gameScene.volumeSlider[1].setScale(2 * VOL_THICKNESS / 16).setInteractive({ draggable: true }).visible = false
+        gameScene.volumeSlider[1].on('drag', function (pointer, dragX, dragY) {
+            gameScene.volumeSlider[1].setPosition(gameScene.volumeSlider[1].x, Math.min(Math.max(dragY, VOL_POS_Y - VOL_LENGTH - VOL_OFFSET), VOL_POS_Y - VOL_OFFSET));
+            var volume = 1 - (gameScene.volumeSlider[1].y - sliderTop) / VOL_LENGTH;
+            console.log('volume: ', volume)
+            //TODO actually update volume
+        })
+
         // Sound change button
         this.btnVolume = this.add.sprite(VOL_POS_X, VOL_POS_Y, 'btn_volume').setScale(0.25).setInteractive();
         this.btnVolume.on('pointerdown', function (pointer) {
-            //Draw bar
-            gameScene.graphics.fillStyle(0x000000, 0.4);
-            var sliderTop = VOL_POS_Y - VOL_LENGTH - VOL_OFFSET;
-            gameScene.volumeSlider[0] = gameScene.graphics.fillRect(VOL_POS_X - VOL_THICKNESS / 2, sliderTop, VOL_THICKNESS, VOL_LENGTH).setInteractive()
-
-            gameScene.volumeHead = gameScene.add.sprite(VOL_POS_X, sliderTop + VOL_LENGTH / 2, 'btn_volume_head').setScale(2 * VOL_THICKNESS / 16)
-            gameScene.volumeHead.setInteractive({ draggable: true }).on('drag', function (pointer, dragX, dragY) {
-                gameScene.volumeHead.setPosition(gameScene.volumeHead.x, Math.min(Math.max(dragY, VOL_POS_Y - VOL_LENGTH - VOL_OFFSET), VOL_POS_Y - VOL_OFFSET));
-                var volume = 1 - (gameScene.volumeHead.y - sliderTop) / VOL_LENGTH;
-                console.log("Set volume to ", volume)
-            })
-            //TODO create slider
+            if (gameScene.volumeSlider[0].visible || gameScene.volumeSlider[0].visible) {
+                gameScene.volumeSlider[0].visible = false
+                gameScene.volumeSlider[1].visible = false
+            }
+            else {
+                gameScene.volumeSlider[0].visible = true
+                gameScene.volumeSlider[1].visible = true
+            }
         });
 
         // Level change button

@@ -8,7 +8,6 @@
 - compress music
 - menu
     - new assets
-    - volume slider
     - level popup
     - fancy animations
 - sound effects
