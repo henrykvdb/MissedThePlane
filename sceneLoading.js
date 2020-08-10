@@ -8,9 +8,8 @@ class LoadingScene extends Phaser.Scene {
     preload() {
         //Draw loading scene
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        this.text = this.add.text(500, 300, '', { fill: '#000000' }).setOrigin(0.5, 0.5)
-        this.text.text = "loading scene lul";
-
+        this.add.text(500, 300, 'loading scene lul"', { fill: '#000000' }).setOrigin(0.5, 0.5)
+        
         //this.scene.stop('GameScene');
         this.load.image('btn_next', 'assets/menu/button_next.png');
         this.load.image('btn_restart', 'assets/menu/button_restart.png');

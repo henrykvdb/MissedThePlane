@@ -50,7 +50,7 @@ class GameScene extends Phaser.Scene {
 
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
-        if(this.levelIndex) this.world = new World(this, undefined)
+        if(level.tiles==undefined) this.world = new World(this, undefined)
         else this.world = new World(this, level.tiles.map(row => row.slice()))
         this.pilot = new Pilot(this, level.pilot.coords.slice(), level.pilot.dir)
         this.plane = new Plane(this, level.plane.coords.slice(), level.plane.dir)

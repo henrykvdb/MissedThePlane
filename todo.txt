@@ -1,5 +1,8 @@
 - levels
 - tutorial
+- landing
+    - direction check bug
+    - landing on short runways
 - game complete/lose trigger
 - music: instant/repeat load fix
 - compress music
