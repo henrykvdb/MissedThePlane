@@ -1,8 +1,8 @@
--airport voxel
--levels
--main menu
--sound (!)
--UI
+- levels
+- menu pause/close game
+- menu buttons
+- menu animations
+- sound instant load fix
 
 eventually
--cutscenes/story
+- cutscenes/story

@@ -1,12 +1,36 @@
 // File for managing everything related to a world
 function World(game, tiles) {
 
+    // Given a list of tiles, convert the runway's E and R to R0, R1, etc
+    this.convertRunwayTiles = function (worldTiles) {
+        var endCoords = this.findCoord(worldTiles, "E")
+        if (endCoords == undefined) {console.log("No end tile found!"); return}
+        var neighbourRunway = this.getNeighbourCoords(endCoords).filter(c => worldTiles[c[0]][c[1]] == "R")[0]
+        var dir = endCoords.map((e, i) => e - neighbourRunway[i])
+        worldTiles[endCoords[0]][endCoords[1]] = "R" + ((dir[0] == 0 ? 5 : 4) + (dir[0] - dir[1] > 0 ? 2 : 0)) // replace with ending piece
+        while (worldTiles[endCoords[0] - dir[0]] != undefined && worldTiles[endCoords[0] - dir[0]][endCoords[1] - dir[1]] == "R") {
+            endCoords = [endCoords[0] - dir[0], endCoords[1] - dir[1]]
+            worldTiles[endCoords[0]][endCoords[1]] = "R" + (8 + (dir[0] == 0)) // replace with runway piece
+        }
+        worldTiles[endCoords[0]][endCoords[1]] = "R" + ((dir[0] - dir[1] > 0 ? 2 : 0) + (dir[0] == 0)) // replace with start piece
+        return worldTiles
+    }
+
+    this.findCoord = function (worldTiles, tileType) {
+        for (var x = 0; x < worldTiles.length; x++) {
+            var y = worldTiles[x].indexOf(tileType);
+            if (y > -1) return [x, y];
+        }
+    }
+
     this.createLevel = function (tiles) {
         //Define game drawing constants
         this.game.levelSize = tiles.length
         this.game.tileScale = SIZE_Y / this.game.levelSize / 240
         this.game.shiftX = 1.02 * this.game.tileScale * SHIFT_X
         this.game.shiftY = 1.02 * this.game.tileScale * SHIFT_Y
+
+        tiles = this.convertRunwayTiles(tiles)
 
         //Create tile sprites
         var sprites = Array.from(Array(tiles.length)).map(() => Array.from(Array(tiles.length)).map(() => undefined))
@@ -30,7 +54,7 @@ function World(game, tiles) {
     }
 
     this.createTileSprite = function (x, y, tileType) {  // tileType is "G", "W", etc
-        var asset = Phaser.Utils.Array.GetRandom(assets[tileType])
+        var asset = assets[tileType] == undefined ? tileType : Phaser.Utils.Array.GetRandom(assets[tileType])
         coords = getScreenCoords(this.game, x, y)
         var sprite = this.game.add.sprite(coords[0], coords[1], asset)
         sprite.setScale(this.game.tileScale)
