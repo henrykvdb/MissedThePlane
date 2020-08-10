@@ -67,6 +67,11 @@ function World(game, tiles) {
         return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'G', 'G', 'G', 'W', 'M', 'B']))) // Ground bias xd
     }
 
+    this.getTile = function (coords) {
+        if (coords[0] >= this.tiles.length || coords[0] < 0 || coords[1] >= this.tiles[0].length || coords[1] < 0) return 'A'
+        return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])]
+    }
+
     this.collidesWith = function (coords, edge, collideList) {
         //Check world bounds
         if (coords[0] < edge || coords[1] < edge || coords[0] > this.game.levelSize - edge || coords[1] > this.game.levelSize - edge)
@@ -76,12 +81,8 @@ function World(game, tiles) {
         var collisionTiles = [[edge, 0], [-edge, 0], [0, edge], [0, -edge]].map(v => addArray(v, coords))
         collisionTiles = collisionTiles.filter(v => v[0] % 1 != 0 && v[1] % 1 != 0) //Remove bounds to make collision exclusive (needed for plane collision)
         collisionTiles = collisionTiles.filter(v => v[0] >= 0 && v[1] >= 0 && v[0] < this.game.levelSize && v[1] < this.game.levelSize) // remove tiles that are out of the map
-        collisionTiles = collisionTiles.map(v => this.tiles[Math.floor(v[0])][Math.floor(v[1])])
+        collisionTiles = collisionTiles.map(v => this.getTile(v))
         return collisionTiles.map(v => collideList.includes(v)).includes(true)
-    }
-
-    this.isButton = function (coords) {
-        return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])] == "B"
     }
 
     this.getNeighbourCoords = function (coords) {
@@ -98,20 +99,21 @@ function World(game, tiles) {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
             coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
-        if (this.tiles[tilePos[0]][tilePos[1]] != "B") return // todo maybe throw error here or something
+        if (this.getTile(tilePos) != "B") return // todo maybe throw error here or something
 
         var neighbours = this.getNeighbourCoords(tilePos)
         if (neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) && 
                                    c[1] == Math.floor(this.game.plane.coords[1]) && 
-                                   ["M", "G"].includes(this.tiles[c[0]][c[1]])).length > 0) {
+                                   ["M", "G"].includes(this.getTile(c))).length > 0) {
             // TODO play error sound effect
             return
         }
+        this.buttonSounds[this.sprites[tilePos[0]][tilePos[1]][0].visible ? 0 : 1].play()
         this.sprites[tilePos[0]][tilePos[1]].forEach(s => s.visible = !s.visible)
 
         // We switch neighbouring tiles from grass to mountain and vice versa
         neighbours.map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
-        neighbours.forEach(c => { if (["M", "G"].includes(this.tiles[c[0]][c[1]])) this.tiles[c[0]][c[1]] = (this.tiles[c[0]][c[1]] == "M" ? "G" : "M") }) // Swap M to G and other way around in tiles
+        neighbours.forEach(c => { if (["M", "G"].includes(this.getTile(c))) this.tiles[c[0]][c[1]] = (this.getTile(c) == "M" ? "G" : "M") }) // Swap M to G and other way around in tiles
     }
 
     // Init code of world
@@ -119,6 +121,7 @@ function World(game, tiles) {
     if (tiles == undefined) tiles = this.randomTiles(9)
     this.tiles = tiles
     this.sprites = this.createLevel(tiles)
+    this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp')]
 }
 
 // Returns screen coordinate of the top of the tile

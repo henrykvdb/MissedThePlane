@@ -45,9 +45,9 @@ const ALL_LEVELS = [{
         ['W', 'W', 'W', 'G', 'G'],
         ['W', 'W', 'W', 'G', 'G'],
         ['B', 'G', 'B', 'G', 'G'],
-        ['G', 'G', 'G', 'G', 'G'],
+        ['R', 'R', 'E', 'G', 'G'],
         ['G', 'G', 'G', 'G', 'G'],
     ],
     pilot: { coords: [3.5, 3.5], dir: 3 },
-    plane: { coords: [-1.5, 0.5], dir: 5 }
+    plane: { coords: [-1.5, 2.5], dir: 5 }
 }]

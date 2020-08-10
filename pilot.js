@@ -46,9 +46,8 @@ function Pilot(game, coords, dir) {
     }
 
     this.interact = function () {
-        if (!this.game.world.isButton(this.coords)) return // silly user, there's no button here
+        if (this.game.world.getTile(this.coords) != "B") return // silly user, there's no button here
         this.game.world.triggerButton(this.coords) // todo this is maybe pointless if but maybe we can show a message to the user or something
-        this.game.sound.add('button').play()
     }
 
     // Init code of pilot

@@ -1,6 +1,6 @@
 const PLANE_MOVE_SPEED = 0.0005 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
-const PLANE_LANDING_LENGTH = 2 // [tiles] // TODO eventually: base this on strip length (although maybe even better to simply drive over ground after tile 2)
+const PLANE_LANDING_LENGTH = 1.7 // [tiles] // TODO eventually: base this on strip length (although maybe even better to simply drive over ground after tile 2)
 const PLANE_HEIGHT = 120 // [px]
 const PLANE_IMPASSABLE_TILES = ['M']
 const PLANE_FINISH = ['R0', 'R1', 'R2', 'R3']
@@ -15,7 +15,8 @@ function Plane(game, coords, dir) {
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
         // Rotate if collision
-        if (this.game.world.collidesWith(this.coords, 0.5, PLANE_IMPASSABLE_TILES) || this.dir % 2 == 0) { //Check half a tile in advance so plane stays centered
+        if (this.dir % 2 == 0 || (this.game.world.collidesWith(this.coords, 0.5, PLANE_IMPASSABLE_TILES) &&  //Check half a tile in advance so plane stays centered
+            PLANE_IMPASSABLE_TILES.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
             this.coords = originalCoords
             this.waitTime -= dt
 
@@ -38,7 +39,8 @@ function Plane(game, coords, dir) {
 
         // handle landing of plane
         if (this.height != PLANE_HEIGHT && this.height > 0) this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
-        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH)) {
+        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH) &&
+            this.game.world.getTile(addArray(this.coords, this.dirVector)) == "R") {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
             this.height -= 0.001 // uhh, well, i mean
         }
