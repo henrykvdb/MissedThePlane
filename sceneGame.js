@@ -27,7 +27,7 @@ class GameScene extends Phaser.Scene {
 
         // Next button
         var gameScene = this
-        this.btnNext = this.add.sprite(900, 100, 'btn_next').setScale(0.5).setInteractive();
+        this.btnNext = this.add.sprite(900, 100, 'btn_next').setScale(0.25).setInteractive();
         this.btnNext.visible = false;
         this.btnNext.on('pointerdown', function (pointer) {
             gameScene.scene.restart({ levelIndex: ++gameScene.levelIndex })

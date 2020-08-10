@@ -67,8 +67,8 @@ function Pilot(game, coords, dir) {
     this.sprites = []
     for (var i = 0; i < 8; i++) {
         var pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot' + i)
-        pilotSprite.setScale(game.tileScale / 2)
-        pilotSprite.setOrigin(0.5, (800 - 265) / 800)
+        pilotSprite.setScale(game.tileScale / 4)
+        pilotSprite.setOrigin(0.5, (800 - 204) / 800)
         pilotSprite.visible = false
         pilotSprite.setDepth(coords[0] + coords[1])
         this.sprites.push(pilotSprite)
