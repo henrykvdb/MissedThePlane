@@ -101,7 +101,9 @@ function World(game, tiles) {
         if (this.tiles[tilePos[0]][tilePos[1]] != "B") return // todo maybe throw error here or something
 
         var neighbours = this.getNeighbourCoords(tilePos)
-        if (neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) && c[1] == Math.floor(this.game.plane.coords[1])).length > 0) {
+        if (neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) && 
+                                   c[1] == Math.floor(this.game.plane.coords[1]) && 
+                                   ["M", "G"].includes(this.tiles[c[0]][c[1]])).length > 0) {
             // TODO play error sound effect
             return
         }

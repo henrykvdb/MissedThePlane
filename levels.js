@@ -40,5 +40,15 @@ const ALL_LEVELS = [{
     ],
     pilot: { coords: [3.5, 3.5], dir: 3 },
     plane: { coords: [8.5, 4.5], dir: 1 }
-}
-]
+},
+{
+    tiles: [
+        ['W', 'W', 'W', 'G', 'G'],
+        ['W', 'W', 'W', 'G', 'G'],
+        ['B', 'G', 'B', 'G', 'G'],
+        ['G', 'G', 'G', 'G', 'G'],
+        ['G', 'G', 'G', 'G', 'G'],
+    ],
+    pilot: { coords: [3.5, 3.5], dir: 3 },
+    plane: { coords: [-1.5, 0.5], dir: 5 }
+}]
