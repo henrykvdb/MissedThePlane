@@ -4,7 +4,7 @@ function World(game, tiles) {
     // Given a list of tiles, convert the runway's E and R to R0, R1, etc
     this.convertRunwayTiles = function (worldTiles) {
         var endCoords = this.findCoord(worldTiles, "E")
-        if (endCoords == undefined) {console.log("No end tile found!"); return}
+        if (endCoords == undefined) {console.log("No end tile found!"); return worldTiles}
         var neighbourRunway = this.getNeighbourCoords(endCoords).filter(c => worldTiles[c[0]][c[1]] == "R")[0]
         var dir = endCoords.map((e, i) => e - neighbourRunway[i])
         worldTiles[endCoords[0]][endCoords[1]] = "R" + ((dir[0] == 0 ? 5 : 4) + (dir[0] - dir[1] > 0 ? 2 : 0)) // replace with ending piece
@@ -108,7 +108,7 @@ function World(game, tiles) {
 
     // Init code of world
     this.game = game
-    if (tiles == undefined) tiles = this.randomTiles(5)
+    if (tiles == undefined) tiles = this.randomTiles(9)
     this.tiles = tiles
     this.sprites = this.createLevel(tiles)
 }

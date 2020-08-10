@@ -23,7 +23,7 @@ class GameScene extends Phaser.Scene {
         });
 
         // GAME SETTINGS
-        var levelIndex = 2 // choose level here
+        var levelIndex = 3 // choose level here
         var level = ALL_LEVELS[levelIndex]
         this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50)
 
@@ -33,7 +33,6 @@ class GameScene extends Phaser.Scene {
 
         // Add pilot control listeners
         var pilot = this.pilot
-        console.log(pilot)
         this.cursors = this.input.keyboard.createCursorKeys()
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
     }
