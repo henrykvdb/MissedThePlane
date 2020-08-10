@@ -42,7 +42,7 @@ function World(game, tiles) {
                     tileSprites.push(this.createTileSprite(x, y, "M"))
                     tileSprites[tiles[x][y] == "M" ? 0 : 1].visible = false
                 } else if (tiles[x][y] == "B") {
-                    tileSprites.push(this.createTileSprite(x, y, "B0")) // Always first grass
+                    tileSprites.push(this.createTileSprite(x, y, "B0"))
                     tileSprites.push(this.createTileSprite(x, y, "B1"))
                     tileSprites[1].visible = false
                 } else tileSprites.push(this.createTileSprite(x, y, tiles[x][y]))
@@ -99,11 +99,19 @@ function World(game, tiles) {
         if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
             coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
         if (this.tiles[tilePos[0]][tilePos[1]] != "B") return // todo maybe throw error here or something
+
+        var neighbours = this.getNeighbourCoords(tilePos)
+        if (neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) && 
+                                   c[1] == Math.floor(this.game.plane.coords[1]) && 
+                                   ["M", "G"].includes(this.tiles[c[0]][c[1]])).length > 0) {
+            // TODO play error sound effect
+            return
+        }
         this.sprites[tilePos[0]][tilePos[1]].forEach(s => s.visible = !s.visible)
 
         // We switch neighbouring tiles from grass to mountain and vice versa
-        this.getNeighbourCoords(tilePos).map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
-        this.getNeighbourCoords(tilePos).forEach(c => { if (["M", "G"].includes(this.tiles[c[0]][c[1]])) this.tiles[c[0]][c[1]] = (this.tiles[c[0]][c[1]] == "M" ? "G" : "M") }) // Swap M to G and other way around in tiles
+        neighbours.map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
+        neighbours.forEach(c => { if (["M", "G"].includes(this.tiles[c[0]][c[1]])) this.tiles[c[0]][c[1]] = (this.tiles[c[0]][c[1]] == "M" ? "G" : "M") }) // Swap M to G and other way around in tiles
     }
 
     // Init code of world

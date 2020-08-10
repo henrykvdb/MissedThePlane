@@ -1,12 +1,15 @@
 const PLANE_MOVE_SPEED = 0.0005 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
+const PLANE_LANDING_LENGTH = 2 // [tiles] // TODO eventually: base this on strip length (although maybe even better to simply drive over ground after tile 2)
+const PLANE_HEIGHT = 120 // [px]
 const PLANE_IMPASSABLE_TILES = ['M']
-const PLANE_FINISH = ['F']
+const PLANE_FINISH = ['R0', 'R1', 'R2', 'R3']
 
 function Plane(game, coords, dir) {
 
     //Move sprite in given dir
     this.move = function (dt) {
+        if (this.finished) return
         var originalCoords = this.coords.slice()
         this.coords[0] += PLANE_MOVE_SPEED * dt * this.dirVector[0]
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
@@ -33,12 +36,17 @@ function Plane(game, coords, dir) {
             }
         }
 
-        //Check finish
-        if (!this.finished && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH)) {
-            this.finished = true
-            console.log("victory!") //TODO victory text + sound
-            this.btnRestart.visible = false;
-            this.btnNext.visible = true;
+        // handle landing of plane
+        if (this.height != PLANE_HEIGHT && this.height > 0) this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
+        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH)) {
+            console.log("Starting with landing!")
+            this.height -= 0.001 // uhh, well, i mean
+        }
+        if (this.height <= 0 && !this.finished) {
+            console.log("Victory!") //TODO victory text + sound
+            this.finished = true;
+            game.btnRestart.visible = false;
+            game.btnNext.visible = true;
         }
 
         // Update sprites
@@ -50,7 +58,8 @@ function Plane(game, coords, dir) {
             s.visible = index == this.dir
             s.x = worldCoords[0]
             s.y = worldCoords[1]
-            s.setDepth(this.coords[0] + this.coords[1] + 2)
+            s.setOrigin(0.5, (800 - 320 + this.height) / 800)
+            s.setDepth(this.coords[0] + this.coords[1] + 2) // TODO base this on height, although it will always look awkward without player collision
         })
     }
 
@@ -58,9 +67,13 @@ function Plane(game, coords, dir) {
     this.dir = dir
     this.coords = coords
     this.game = game
-    this.dirVector = [-1, 0]
+    if      (dir == 1) this.dirVector = [-1, 0]
+    else if (dir == 3) this.dirVector = [0, 1]
+    else if (dir == 5) this.dirVector = [1, 0]
+    else if (dir == 7) this.dirVector = [0, -1]
     this.waitTime = PLANE_WAIT_TIME
-    this.finished = false
+    this.height = PLANE_HEIGHT
+    this.finished = false;
 
     // Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])
@@ -76,7 +89,7 @@ function Plane(game, coords, dir) {
     for (var i = 0; i < 8; i++) {
         var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'plane' + i)
         sprite.setScale(game.tileScale / 2)
-        sprite.setOrigin(0.5, (800 - 200) / 800)
+        sprite.setOrigin(0.5, (800 - 320 + this.height) / 800)
         sprite.visible = false
         sprite.setDepth(coords[0] + coords[1] + 2)
         this.sprites.push(sprite)
