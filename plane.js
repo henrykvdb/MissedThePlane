@@ -48,7 +48,7 @@ function Plane(game, coords, dir) {
             s.visible = index == this.dir
             s.x = worldCoords[0]
             s.y = worldCoords[1]
-            s.setDepth(this.coords[0] + this.coords[1])
+            s.setDepth(this.coords[0] + this.coords[1] + 2)
         })
     }
 
@@ -67,6 +67,7 @@ function Plane(game, coords, dir) {
     shadow.setScale(game.tileScale / 4)
     shadow.setOrigin(0.5, (800 - 405) / 800)
     shadow.alpha = 0.2
+    shadow.setDepth(coords[0], coords[1])
     this.shadow = shadow
 
     this.sprites = []
@@ -75,6 +76,7 @@ function Plane(game, coords, dir) {
         sprite.setScale(game.tileScale / 2)
         sprite.setOrigin(0.5, (800 - 200) / 800)
         sprite.visible = false
+        sprite.setDepth(coords[0] + coords[1] + 2)
         this.sprites.push(sprite)
     }
     this.sprites[dir].visible = true
