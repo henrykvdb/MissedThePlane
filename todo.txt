@@ -1,9 +1,15 @@
 - levels
 - tutorial
 - menu pause/close game
+- landing animations
+- game complete/lose trigger
 - menu buttons
 - menu animations
 - sound instant load fix
+- sound effects
+    - button blocked
+    - level complete
+    - menu button click
 
 eventually
 - cutscenes/story

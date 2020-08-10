@@ -23,7 +23,7 @@ class GameScene extends Phaser.Scene {
         });
 
         // GAME SETTINGS
-        var levelIndex = 3 // choose level here
+        var levelIndex = 2 // choose level here
         var level = ALL_LEVELS[levelIndex]
         this.add.text(10, 10, 'Level ' + levelIndex).setColor("0").setFontSize(50)
 
