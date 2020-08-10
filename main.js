@@ -9,7 +9,7 @@ var config = {
     type: Phaser.AUTO,
     width: SIZE_X,
     height: SIZE_Y,
-    scene: [ MenuScene, GameScene ]
+    scene: [ LoadingScene, GameScene, LevelSelectScene ]
 }
 
 var game = new Phaser.Game(config)

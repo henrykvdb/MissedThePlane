@@ -2,7 +2,7 @@
 const ALL_LEVELS = [{
     tiles: [
         ['M', 'G', 'B'],
-        ['G', 'G', 'F'],
+        ['G', 'R', 'E'],
         ['G', 'M', 'W']
     ],
     pilot: { coords: [0.5, 1.5], dir: 3 },

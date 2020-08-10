@@ -34,9 +34,11 @@ function Plane(game, coords, dir) {
         }
 
         //Check finish
-        if(!this.finished && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH)){
+        if (!this.finished && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH)) {
             this.finished = true
             console.log("victory!") //TODO victory text + sound
+            this.btnRestart.visible = false;
+            this.btnNext.visible = true;
         }
 
         // Update sprites
