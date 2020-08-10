@@ -40,7 +40,7 @@ function Plane(game, coords, dir) {
         // handle landing of plane
         if (this.height != PLANE_HEIGHT && this.height > 0) this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
         if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH) &&
-            this.game.world.getTile(addArray(this.coords, this.dirVector)) == "R") {  // check if the next tile is a runway as well
+            this.game.world.getTile(addArray(this.coords, this.dirVector))[0] == "R") {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
             this.height -= 0.001 // uhh, well, i mean
         }
