@@ -1,5 +1,6 @@
 - levels
 - tutorial
+- plane rotate from collision behind bug fix
 - landing
     - direction check bug
     - landing on short runways
@@ -9,7 +10,6 @@
 - menu
     - new assets
     - level popup
-    - fancy animations
 - sound effects
     - button blocked
     - level complete
@@ -17,3 +17,4 @@
 
 eventually
 - cutscenes/story
+- menu animations?
