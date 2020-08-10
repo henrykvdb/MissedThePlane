@@ -1,11 +1,13 @@
 - levels
 - tutorial
-- menu pause/close game
 - game complete/lose trigger
-- menu buttons
-- menu animations
-- sound instant load fix
+- music: instant/repeat load fix
 - compress music
+- menu
+    - new assets
+    - volume slider
+    - level popup
+    - fancy animations
 - sound effects
     - button blocked
     - level complete
