@@ -14,6 +14,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_next', 'assets/menu/button_next.png');
         this.load.image('btn_restart', 'assets/menu/button_restart.png');
         this.load.image('btn_volume', 'assets/menu/button_volume.png');
+        this.load.image('btn_volume_head', 'assets/menu/button_volume_head.png');
         this.load.image('btn_levels', 'assets/menu/button_levels.png');
 
         //Add terain tile assets
@@ -34,7 +35,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('shadow', 'assets/entities/shadow.png')
 
         //Load audio
-        this.load.audio('music', ['assets/audio/music.wav'])
+        //this.load.audio('music', ['assets/audio/music.wav'])
         this.load.audio('button', ['assets/audio/button.wav'])
 
         //On complete listener

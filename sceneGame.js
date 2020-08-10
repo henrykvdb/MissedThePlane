@@ -1,3 +1,9 @@
+VOL_POS_X = 900 // Slider width in pixels
+VOL_POS_Y = 500 // Slider width in pixels
+VOL_THICKNESS = 20 // Slider width in pixels
+VOL_LENGTH = 100 // Slider width in pixels
+VOL_OFFSET = 45 // Slider width in pixels
+
 class GameScene extends Phaser.Scene {
 
     constructor() {
@@ -12,6 +18,8 @@ class GameScene extends Phaser.Scene {
         //this.scene.stop('MenuScene');
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.cursors = this.input.keyboard.createCursorKeys()
+        this.graphics = this.add.graphics();
+        this.volumeSlider = [undefined, undefined]
 
         // Start music
         //this.music = this.sound.add('music', { loop: true })
@@ -32,8 +40,19 @@ class GameScene extends Phaser.Scene {
         });
 
         // Sound change button
-        this.btnVolume = this.add.sprite(900, 500, 'btn_volume').setScale(0.25).setInteractive();
+        this.btnVolume = this.add.sprite(VOL_POS_X, VOL_POS_Y, 'btn_volume').setScale(0.25).setInteractive();
         this.btnVolume.on('pointerdown', function (pointer) {
+            //Draw bar
+            gameScene.graphics.fillStyle(0x000000, 0.4);
+            var sliderTop = VOL_POS_Y - VOL_LENGTH - VOL_OFFSET;
+            gameScene.volumeSlider[0] = gameScene.graphics.fillRect(VOL_POS_X - VOL_THICKNESS / 2, sliderTop, VOL_THICKNESS, VOL_LENGTH).setInteractive()
+
+            gameScene.volumeHead = gameScene.add.sprite(VOL_POS_X, sliderTop + VOL_LENGTH / 2, 'btn_volume_head').setScale(2 * VOL_THICKNESS / 16)
+            gameScene.volumeHead.setInteractive({ draggable: true }).on('drag', function (pointer, dragX, dragY) {
+                gameScene.volumeHead.setPosition(gameScene.volumeHead.x, Math.min(Math.max(dragY, VOL_POS_Y - VOL_LENGTH - VOL_OFFSET), VOL_POS_Y - VOL_OFFSET));
+                var volume = 1 - (gameScene.volumeHead.y - sliderTop) / VOL_LENGTH;
+                console.log("Set volume to ", volume)
+            })
             //TODO create slider
         });
 
@@ -50,7 +69,7 @@ class GameScene extends Phaser.Scene {
 
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
-        if(level.tiles==undefined) this.world = new World(this, undefined)
+        if (level.tiles == undefined) this.world = new World(this, undefined)
         else this.world = new World(this, level.tiles.map(row => row.slice()))
         this.pilot = new Pilot(this, level.pilot.coords.slice(), level.pilot.dir)
         this.plane = new Plane(this, level.plane.coords.slice(), level.plane.dir)
