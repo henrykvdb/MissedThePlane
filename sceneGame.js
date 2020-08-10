@@ -57,6 +57,7 @@ class GameScene extends Phaser.Scene {
 
         // Add pilot control listeners
         var pilot = this.pilot
+        this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
     }
 

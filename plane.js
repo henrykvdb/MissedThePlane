@@ -45,8 +45,9 @@ function Plane(game, coords, dir) {
         if (this.height <= 0 && !this.finished) {
             console.log("Victory!") //TODO victory text + sound
             this.finished = true;
+
             game.btnRestart.visible = false;
-            game.btnNext.visible = true;
+            if (game.levelIndex < ALL_LEVELS.length - 1) game.btnNext.visible = true;
         }
 
         // Update sprites
@@ -67,7 +68,7 @@ function Plane(game, coords, dir) {
     this.dir = dir
     this.coords = coords
     this.game = game
-    if      (dir == 1) this.dirVector = [-1, 0]
+    if (dir == 1) this.dirVector = [-1, 0]
     else if (dir == 3) this.dirVector = [0, 1]
     else if (dir == 5) this.dirVector = [1, 0]
     else if (dir == 7) this.dirVector = [0, -1]

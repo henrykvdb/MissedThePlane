@@ -38,12 +38,11 @@ class LoadingScene extends Phaser.Scene {
         this.load.audio('button', ['assets/audio/button.wav'])
 
         //On complete listener
-        var hello = this;
         this.load.on('complete', this.complete, { scene: this.scene });
     }
 
     complete(game) {
-        this.scene.start('GameScene',{ levelIndex: 0});
+        this.scene.start('GameScene',{ levelIndex: 3});
         this.scene.stop()
     }
 }

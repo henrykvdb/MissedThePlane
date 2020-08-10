@@ -1,4 +1,3 @@
-
 const ALL_LEVELS = [{
     tiles: [
         ['M', 'G', 'B'],
