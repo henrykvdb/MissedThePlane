@@ -48,8 +48,8 @@ function Plane(game, coords, dir) {
             console.log("Victory!") //TODO victory text + sound
             this.finished = true;
 
-            game.btnRestart.visible = false;
-            if (game.levelIndex < ALL_LEVELS.length - 1) game.btnNext.visible = true;
+            game.ui.btnRestart.visible = false;
+            if (game.levelIndex < ALL_LEVELS.length - 1) game.ui.btnNext.visible = true;
         }
 
         // Update sprites

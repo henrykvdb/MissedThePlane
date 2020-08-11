@@ -24,16 +24,23 @@ const ALL_LEVELS = [{
     difficulty: 0
 },
 {
-    // no tiles, this is the random level!
-    pilot: { coords: [3.5, 3.5], dir: 3 },
-    plane: { coords: [-1.5, 2.5], dir: 5 },
-    difficulty: 'todo' //TODO
+    tiles: [ // level 3 - Simple level with base mechanics
+        ['G', 'M', 'G', 'G', 'G', 'G'],
+        ['M', 'G', 'G', 'G', 'G', 'G'],
+        ['B', 'G', 'W', 'G', 'M', 'B'],
+        ['G', 'W', 'W', 'R', 'R', 'E'],
+        ['M', 'W', 'W', 'W', 'W', 'G'],
+        ['W', 'W', 'W', 'W', 'M', 'G'],
+    ],
+    pilot: { coords: [5.5, 5.5], dir: 3 },
+    plane: { coords: [4.5, 6.5], dir: 7 },
+    difficulty: 1
 },
 {
     tiles: [ // level 4 - Explain plane trapping
         ['G', 'E', 'M', 'W', 'W', 'W'],
         ['G', 'R', 'G', 'G', 'M', 'W'],
-        ['G', 'R', 'G', 'G', 'M', 'W'],
+        ['G', 'R', 'G', 'G', 'G', 'M'],
         ['G', 'G', 'B', 'G', 'G', 'M'],
         ['M', 'G', 'G', 'G', 'M', 'G'],
         ['W', 'W', 'G', 'G', 'B', 'G']

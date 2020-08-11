@@ -9,6 +9,7 @@ We should make this
 - compress music properly
 - fix earth pattern under mountains
 - center pilot
+- plane starts landing earlier
 - indicate button block visually
 - sound effects
     - button blocked
@@ -16,6 +17,7 @@ We should make this
     - menu button click
 
 Nice to have
+- wasd also moves pilot
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
 - water mountains
