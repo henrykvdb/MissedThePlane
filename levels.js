@@ -2,7 +2,7 @@ const ALL_LEVELS = [{
     tiles: [
         ['M', 'G', 'G','G'],
         ['G', 'G', 'G','M'],
-        ['E', 'R', 'G','G'],
+        ['E', 'R', 'R','G'],
         ['G', 'G', 'M','G']
     ],
     pilot: { coords: [0.5, 1.5], dir: 5 },
@@ -21,20 +21,19 @@ const ALL_LEVELS = [{
     ],
     pilot: { coords: [5.5, 1.5], dir: 1 },
     plane: { coords: [8.5, 3.5], dir: 1 },
-    difficulty: 1
+    difficulty: 0
 },
-{
+{ // level 3 - short level showing plane trapping
     tiles: [
-        ['G', 'M', 'G', 'G', 'G', 'G', 'G'],
-        ['G', 'B', 'W', 'W', 'G', 'G', 'G'],
-        ['G', 'W', 'W', 'W', 'M', 'M', 'B'],
-        ['G', 'G', 'W', 'W', 'W', 'G', 'G'],
-        ['G', 'G', 'W', 'G', 'W', 'R', 'G'],
-        ['G', 'G', 'W', 'G', 'W', 'R', 'G'],
-        ['G', 'G', 'W', 'G', 'W', 'E', 'G']
+        ['G', 'E', 'M', 'W', 'W', 'W'],
+        ['G', 'R', 'G', 'G', 'M', 'W'],
+        ['G', 'R', 'G', 'G', 'M', 'W'],
+        ['G', 'G', 'B', 'G', 'G', 'M'],
+        ['M', 'G', 'G', 'G', 'M', 'G'],
+        ['W', 'W', 'G', 'G', 'B', 'G']
     ],
-    pilot: { coords: [3.5, 0.5], dir: 3 },
-    plane: { coords: [7, 1.5], dir: 1 },
+    pilot: { coords: [5.5, 4.5], dir: 3 },
+    plane: { coords: [10, 4.5], dir: 1 },
     difficulty: 1
 },
 {
