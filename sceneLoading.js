@@ -1,4 +1,5 @@
 var assets
+var text
 class LoadingScene extends Phaser.Scene {
 
     constructor() {
@@ -8,7 +9,7 @@ class LoadingScene extends Phaser.Scene {
     preload() {
         //Draw loading scene
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        this.add.text(500, 300, 'loading scene lul"', { fill: '#000000' }).setOrigin(0.5, 0.5)
+        text = this.add.text(500, 300, 'Loading assets...', { fill: '#000000' }).setOrigin(0.5, 0.5)
         
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next1.png');
@@ -48,12 +49,17 @@ class LoadingScene extends Phaser.Scene {
 
         // On complete load listener
         this.load.on('complete', this.complete, { scene: this.scene });
+
     }
 
     complete(game) {
-        this.scene.start('GameScene',{ levelIndex: 3 - 1});
-        this.scene.stop()
+        game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
+            game.scene.scene.start('GameScene',{ levelIndex: 3 - 1});
+            game.scene.sound.add('music', { loop: true}).play()
+            game.scene.sound.setVolume(0.5)
+            game.scene.sound.pauseOnBlur = false
+        })
+        text.text = "[Press space to start]"
     }
-
-    musicEnabled = false
 }

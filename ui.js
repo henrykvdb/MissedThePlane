@@ -27,9 +27,7 @@ function UI(gameScene) {
     gameScene.volumeSlider[1].setScale(2 * VOL_THICKNESS / 800).setInteractive({ draggable: true }).visible = false
     gameScene.volumeSlider[1].on('drag', function (pointer, dragX, dragY) {
         gameScene.volumeSlider[1].setPosition(gameScene.volumeSlider[1].x, Math.min(Math.max(dragY, VOL_POS_Y - VOL_LENGTH - VOL_OFFSET), VOL_POS_Y - VOL_OFFSET));
-        var volume = 1 - (gameScene.volumeSlider[1].y - sliderTop) / VOL_LENGTH;
-        console.log('volume: ', volume)
-        //TODO actually update volume
+        gameScene.sound.volume = 1 - (gameScene.volumeSlider[1].y - sliderTop) / VOL_LENGTH
     })
 
     // Sound change button
