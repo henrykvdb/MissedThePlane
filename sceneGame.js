@@ -75,8 +75,7 @@ class GameScene extends Phaser.Scene {
         });
 
         // Add level text
-        if (this.levelIndex == 0) this.add.text(10, 10, 'Tutorial').setColor("0").setFontSize(50)
-        else this.add.text(10, 10, 'Level ' + this.levelIndex + "/" + (ALL_LEVELS.length - 1)).setColor("0").setFontSize(50)
+        this.add.text(10, 10, 'Level ' + (this.levelIndex + 1) + "/" + ALL_LEVELS.length).setColor("0").setFontSize(50)
 
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
