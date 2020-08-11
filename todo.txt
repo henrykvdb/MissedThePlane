@@ -1,5 +1,8 @@
+Absolutely essential
 - levels
 - tutorial
+
+We should make this
 - game complete/lose trigger
 - music: instant/repeat load fix
 - compress music properly
@@ -13,10 +16,11 @@
     - level complete
     - menu button click
 
-eventually
+Nice to have
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
 - pilot
     - animations
     - make mouth more dark/red (almost skincolor now)
 - water animations
+- sine wave through level (or make level go up and down)
