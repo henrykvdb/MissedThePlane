@@ -69,8 +69,10 @@ class GameScene extends Phaser.Scene {
         // Level change button
         this.btnLevels = this.add.sprite(90, 90, 'btn_levels').setScale(0.25).setInteractive();
         this.btnLevels.on('pointerdown', function (pointer) {
-            var nextLevelIndex = Math.floor(Math.random() * ALL_LEVELS.length) // Test your luck with random level selection
-            gameScene.scene.restart({ levelIndex: nextLevelIndex }) //TODO ACTUAL LEVEL SELECT MENU
+            //var nextLevelIndex = Math.floor(Math.random() * ALL_LEVELS.length) // Test your luck with random level selection
+            //gameScene.scene.restart({ levelIndex: nextLevelIndex }) //TODO ACTUAL LEVEL SELECT MENU
+            gameScene.scene.start('LevelSelectScene');
+            gameScene.scene.stop();
         });
 
         // Add level text

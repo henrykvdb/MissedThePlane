@@ -14,5 +14,7 @@
 eventually
 - cutscenes/story -> imo basic story this should be in todo, everyone finds concept hilarious
 - menu animations?
-- pilot animations
+- pilot
+    - animations
+    - make mouth more dark/red (almost skincollor now)
 - water animations
