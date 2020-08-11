@@ -15,7 +15,6 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        //this.scene.stop('MenuScene');
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.cursors = this.input.keyboard.createCursorKeys()
         this.graphics = this.add.graphics();
@@ -71,8 +70,8 @@ class GameScene extends Phaser.Scene {
         this.btnLevels.on('pointerdown', function (pointer) {
             //var nextLevelIndex = Math.floor(Math.random() * ALL_LEVELS.length) // Test your luck with random level selection
             //gameScene.scene.restart({ levelIndex: nextLevelIndex }) //TODO ACTUAL LEVEL SELECT MENU
-            gameScene.scene.start('LevelSelectScene');
-            gameScene.scene.stop();
+            gameScene.scene.pause();
+            gameScene.scene.launch('LevelSelectScene');
         });
 
         // Add level text
