@@ -16,14 +16,14 @@ class LevelSelectScene extends Phaser.Scene {
 
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        text = this.add.text(X_START, Y_START/3, 'Select a level to play', { fill: '#000000', fontSize: 40, fontStyle: 'bold' })
+        text = this.add.text(X_START / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40, fontStyle: 'bold' })
 
         // Close button
         var LevelSelectScene = this;
         this.btnRestart = this.add.sprite(900, 100, 'btn_close').setScale(0.25).setInteractive().setDepth(100);
         this.btnRestart.on('pointerdown', function (pointer) {
-            LevelSelectScene.scene.start('GameScene');
-            LevelSelectScene.scene.stop();
+            LevelSelectScene.scene.resume('GameScene');
+            LevelSelectScene.scene.stop()
         });
 
         // Level buttons
