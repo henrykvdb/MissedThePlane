@@ -3,14 +3,13 @@ Absolutely essential
 - tutorial
 
 We should make this
-- game complete/lose trigger
+- game complete/lose trigger + text
 - music: instant/repeat load fix
+- sound bar fix
 - compress music properly
 - fix earth pattern under mountains
 - center pilot
 - indicate button block visually
-- menu
-    - level popup
 - sound effects
     - button blocked
     - level complete
