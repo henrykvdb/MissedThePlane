@@ -1,5 +1,7 @@
 var assets
 var text
+var volumeIndex = 2
+const VOLUME_STEP = 0.4
 class LoadingScene extends Phaser.Scene {
 
     constructor() {
@@ -12,17 +14,13 @@ class LoadingScene extends Phaser.Scene {
         text = this.add.text(500, 300, 'Loading assets...', { fill: '#000000' }).setOrigin(0.5, 0.5)
         
         // Load menu assets
-        this.load.image('btn_next', 'assets/menu/button_next1.png');
-        this.load.image('btn_restart', 'assets/menu/button_restart1.png');
-        this.load.image('btn_volume', 'assets/menu/button_volume1.png');
-        this.load.image('btn_volume_head', 'assets/menu/button_volume_head.png');
+        this.load.image('btn_next', 'assets/menu/button_next.png');
+        this.load.image('btn_restart', 'assets/menu/button_restart.png');
+        this.load.image('btn_volume', 'assets/menu/button_volume.png');
         this.load.image('btn_levels', 'assets/menu/button_levels.png');
         this.load.image('btn_close', 'assets/menu/button_close.png');
-        this.load.image('btn_level_0', 'assets/menu/button_level_0.png');
-        this.load.image('btn_level_1', 'assets/menu/button_level_1.png');
-        this.load.image('btn_level_2', 'assets/menu/button_level_2.png');
-        this.load.image('btn_level_3', 'assets/menu/button_level_3.png');
-        this.load.image('btn_level_4', 'assets/menu/button_level_4.png');
+        for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')
+        for (var i = 0; i < 4; i++) this.load.image('btn_volume_' + i, 'assets/menu/button_volume_' + i + '.png')
         this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png');
         this.load.image('level_complete', 'assets/menu/level_complete.png');
         this.load.image('level_failed', 'assets/menu/level_failed.png');
@@ -59,7 +57,7 @@ class LoadingScene extends Phaser.Scene {
         game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
             game.scene.scene.start('GameScene',{ levelIndex: 3 - 1});
             game.scene.sound.add('music', { loop: true}).play()
-            game.scene.sound.setVolume(0.5)
+            game.scene.sound.setVolume(volumeIndex*VOLUME_STEP)
             game.scene.sound.pauseOnBlur = false
         })
         text.text = "[Press space to start]"

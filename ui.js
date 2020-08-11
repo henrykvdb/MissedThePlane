@@ -1,9 +1,11 @@
+// Volume slider settings
+VOL_POS_X = 900
+VOL_POS_Y = 500
+VOL_THICKNESS = 40
+VOL_LENGTH = 200
+VOL_OFFSET = 70
+
 function UI(gameScene) {
-
-    // Start music
-    //this.music = this.sound.add('music', { loop: true })
-    //this.music.play()
-
     // Next button
     this.btnNext = gameScene.add.sprite(900, 100, 'btn_next').setScale(0.25).setInteractive().setDepth(100);
     this.btnNext.visible = false;
@@ -17,31 +19,20 @@ function UI(gameScene) {
         gameScene.scene.restart({ levelIndex: gameScene.levelIndex })
     });
 
-    // Draw sound change bar
-    gameScene.volumeSlider = []
-    gameScene.graphics.fillStyle(0x000000, 0.4);
-    var sliderTop = VOL_POS_Y - VOL_LENGTH - VOL_OFFSET;
-    gameScene.volumeSlider.push(gameScene.graphics.fillRect(VOL_POS_X - VOL_THICKNESS / 2, sliderTop, VOL_THICKNESS, VOL_LENGTH).setInteractive().setDepth(100))
-    gameScene.volumeSlider.push(gameScene.add.sprite(VOL_POS_X, sliderTop + VOL_LENGTH / 2, 'btn_volume_head'))
-    gameScene.volumeSlider[0].visible = false
-    gameScene.volumeSlider[1].setScale(2 * VOL_THICKNESS / 800).setInteractive({ draggable: true }).visible = false
-    gameScene.volumeSlider[1].on('drag', function (pointer, dragX, dragY) {
-        gameScene.volumeSlider[1].setPosition(gameScene.volumeSlider[1].x, Math.min(Math.max(dragY, VOL_POS_Y - VOL_LENGTH - VOL_OFFSET), VOL_POS_Y - VOL_OFFSET));
-        gameScene.sound.volume = 1 - (gameScene.volumeSlider[1].y - sliderTop) / VOL_LENGTH
-    })
-
     // Sound change button
-    this.btnVolume = gameScene.add.sprite(VOL_POS_X, VOL_POS_Y, 'btn_volume').setScale(0.25).setInteractive().setDepth(100);
-    this.btnVolume.on('pointerdown', function (pointer) {
-        if (gameScene.volumeSlider[0].visible || gameScene.volumeSlider[0].visible) {
-            gameScene.volumeSlider[0].visible = false
-            gameScene.volumeSlider[1].visible = false
-        }
-        else {
-            gameScene.volumeSlider[0].visible = true
-            gameScene.volumeSlider[1].visible = true
-        }
-    });
+    buttons = []
+    for (var i = 0; i < 4; i++) {
+        var button = gameScene.add.sprite(VOL_POS_X, VOL_POS_Y, 'btn_volume_' + i).setScale(0.25).setInteractive().setDepth(100)
+        buttons.push(button)
+        button.visible = false
+        button.on('pointerdown', function (pointer) {
+            buttons[volumeIndex].visible = false
+            volumeIndex = ++volumeIndex%4
+            buttons[volumeIndex].visible = true
+            gameScene.sound.volume = VOLUME_STEP * volumeIndex
+        });
+    }
+    buttons[volumeIndex].visible = true
 
     // Level change button
     this.btnLevels = gameScene.add.sprite(90, 90, 'btn_levels').setScale(0.25).setInteractive().setDepth(100);
