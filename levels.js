@@ -8,7 +8,7 @@ const ALL_LEVELS = [{
     plane: { coords: [4, 0.5], dir: 1 },
     difficulty: 0
 },
-{
+{ // level 2 - learning buttons
     tiles: [
         ['M', 'M', 'G', 'M', 'G', 'G', 'G'],
         ['B', 'M', 'G', 'W', 'R', 'R', 'E'],
@@ -36,7 +36,23 @@ const ALL_LEVELS = [{
     plane: { coords: [7, 1.5], dir: 1 },
     difficulty: 1
 },
-{
+{ // level 4 - generic medium difficulty level
+    tiles: [
+        ['G', 'M', 'W', 'W', 'G', 'G', 'B', 'G', 'G'],
+        ['G', 'W', 'W', 'W', 'G', 'G', 'G', 'G', 'G'],
+        ['W', 'W', 'W', 'G', 'B', 'G', 'G', 'G', 'M'],
+        ['W', 'W', 'W', 'G', 'G', 'W', 'R', 'R', 'E'],
+        ['W', 'W', 'G', 'G', 'W', 'G', 'W', 'W', 'W'],
+        ['M', 'G', 'G', 'G', 'M', 'B', 'M', 'G', 'G'],
+        ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'],
+        ['B', 'G', 'G', 'M', 'G', 'G', 'G', 'M', 'G'],
+        ['M', 'G', 'G', 'G', 'G', 'M', 'G', 'G', 'G'],
+    ],
+    pilot: { coords: [0.5, 8.5], dir: 7 },
+    plane: { coords: [1.5, 1.5], dir: 3 },
+    difficulty: 2
+},
+{ // level 5 - water level, teaches mid-turn toggle
     tiles: [
         ['W', 'W', 'M', 'W', 'W', 'W', 'G', 'G', 'G'],
         ['W', 'W', 'W', 'W', 'W', 'W', 'M', 'G', 'G'],

@@ -19,6 +19,7 @@ We should make this
 Nice to have
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
+- water mountains
 - pilot
     - animations
     - make mouth more dark/red (almost skincolor now)

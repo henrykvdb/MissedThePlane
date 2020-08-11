@@ -50,7 +50,7 @@ class LoadingScene extends Phaser.Scene {
     }
 
     complete(game) {
-        this.scene.start('GameScene',{ levelIndex: 3});
+        this.scene.start('GameScene',{ levelIndex: 4 - 1});
         this.scene.stop()
     }
 }
