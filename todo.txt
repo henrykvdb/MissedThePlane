@@ -3,11 +3,7 @@ Absolutely essential
 - tutorial
 
 We should make this
-- music: instant/repeat load fix
-- sound bar fix
 - compress music properly
-- fix earth pattern under mountains
-- center pilot
 - plane starts landing earlier
 - indicate button block visually
 - sound effects
