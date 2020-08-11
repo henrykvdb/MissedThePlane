@@ -1,9 +1,3 @@
-VOL_POS_X = 900 // Slider width in pixels
-VOL_POS_Y = 500 // Slider width in pixels
-VOL_THICKNESS = 20 // Slider width in pixels
-VOL_LENGTH = 100 // Slider width in pixels
-VOL_OFFSET = 45 // Slider width in pixels
-
 class GameScene extends Phaser.Scene {
 
     constructor() {
