@@ -15,9 +15,11 @@ We should make this
     - button blocked
     - level complete
     - menu button click
+- epic thumbnail
 
 Nice to have
 - wasd also moves pilot
+- no plane shadow when out of map
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
 - water mountains
