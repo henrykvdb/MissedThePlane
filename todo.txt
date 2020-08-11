@@ -15,7 +15,6 @@ We should make this
     - level complete
     - menu button click
 - epic thumbnail
-- favicon.ico
 
 Nice to have
 - wasd also moves pilot

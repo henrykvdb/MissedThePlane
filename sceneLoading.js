@@ -16,7 +16,6 @@ class LoadingScene extends Phaser.Scene {
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png');
         this.load.image('btn_restart', 'assets/menu/button_restart.png');
-        this.load.image('btn_volume', 'assets/menu/button_volume.png');
         this.load.image('btn_levels', 'assets/menu/button_levels.png');
         this.load.image('btn_close', 'assets/menu/button_close.png');
         for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')

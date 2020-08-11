@@ -7,6 +7,18 @@ const PLANE_FINISH = ['R0', 'R1', 'R2', 'R3']
 
 function Plane(game, coords, dir) {
 
+    this.toggleShadow = function() {
+        var target = (this.shadow.alpha > 0.1 ? 0 : 0.2)
+        console.log(target)
+        this.game.tweens.add({ // fade out shadow
+            targets: this.shadow,
+            alpha: target,
+            duration: 200,
+            ease: 'Linear',
+            delay: 0
+        });
+    }
+
     //Move sprite in given dir
     this.move = function (dt) {
         if (this.finished) return
@@ -57,14 +69,13 @@ function Plane(game, coords, dir) {
             this.coords[0] < 0 && this.dir == 1 || this.coords[0] > this.game.world.tiles.length && this.dir == 5 || 
             this.coords[1] < 0 && this.dir == 7 || this.coords[1] > this.game.world.tiles[0].length && this.dir == 3)) {
                 this.game.ui.startPopupAnimation(false)
-                this.game.tweens.add({ // fade out shadow
-                    targets: this.shadow,
-                    alpha: 0,
-                    duration: 300,
-                    ease: 'Linear',
-                    delay: 0
-                });
+                this.toggleShadow()
                 this.escaped = true;
+        }
+
+        if (this.escaped && this.game.world.getTile(this.coords) != "A") {
+            this.toggleShadow()
+            this.escaped = false;
         }
 
         // Update sprites
@@ -92,7 +103,7 @@ function Plane(game, coords, dir) {
     this.waitTime = PLANE_WAIT_TIME
     this.height = PLANE_HEIGHT
     this.finished = false;
-    this.escaped = false;
+    this.escaped = true; // we set this to true so we can detect we arrive on the main land for the first time, to enable our shadow
 
     // Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])
@@ -100,7 +111,7 @@ function Plane(game, coords, dir) {
     var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
     shadow.setScale(game.tileScale / 4)
     shadow.setOrigin(0.5, (800 - 405) / 800)
-    shadow.alpha = 0.2
+    shadow.alpha = 0
     shadow.setDepth(coords[0], coords[1])
     this.shadow = shadow
 
