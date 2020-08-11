@@ -3,7 +3,6 @@ Absolutely essential
 - tutorial
 
 We should make this
-- game complete/lose trigger + text
 - music: instant/repeat load fix
 - sound bar fix
 - compress music properly
@@ -20,7 +19,6 @@ We should make this
 
 Nice to have
 - wasd also moves pilot
-- no plane shadow when out of map
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
 - water mountains

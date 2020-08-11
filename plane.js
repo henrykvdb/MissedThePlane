@@ -45,11 +45,26 @@ function Plane(game, coords, dir) {
             this.height -= 0.001 // uhh, well, i mean
         }
         if (this.height <= 0 && !this.finished) {
-            console.log("Victory!") //TODO victory text + sound
+            console.log("Victory!") //TODO sound
             this.finished = true;
-
             game.ui.btnRestart.visible = false;
+            game.ui.startPopupAnimation(true)
             if (game.levelIndex < ALL_LEVELS.length - 1) game.ui.btnNext.visible = true;
+        }
+
+        // Check if plane is leaving world
+        if (!this.escaped && (
+            this.coords[0] < 0 && this.dir == 1 || this.coords[0] > this.game.world.tiles.length && this.dir == 5 || 
+            this.coords[1] < 0 && this.dir == 7 || this.coords[1] > this.game.world.tiles[0].length && this.dir == 3)) {
+                this.game.ui.startPopupAnimation(false)
+                this.game.tweens.add({ // fade out shadow
+                    targets: this.shadow,
+                    alpha: 0,
+                    duration: 300,
+                    ease: 'Linear',
+                    delay: 0
+                });
+                this.escaped = true;
         }
 
         // Update sprites
@@ -77,6 +92,7 @@ function Plane(game, coords, dir) {
     this.waitTime = PLANE_WAIT_TIME
     this.height = PLANE_HEIGHT
     this.finished = false;
+    this.escaped = false;
 
     // Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])

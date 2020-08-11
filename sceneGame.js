@@ -43,6 +43,7 @@ class GameScene extends Phaser.Scene {
 
         this.pilot.move(dirVector, dt)
         this.plane.move(dt)
+        this.ui.updatePopup(dt)
     }
 }
 

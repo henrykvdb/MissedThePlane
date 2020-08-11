@@ -52,6 +52,29 @@ function UI(gameScene) {
         gameScene.scene.launch('LevelSelectScene');
     });
 
+    // Level completed/failed messages
+    const BOTTOM_HEIGHT = 50
+    const MOVE_TIME = 1200 // [ms]
+    var complete = gameScene.add.sprite(SIZE_X/2, -BOTTOM_HEIGHT, 'level_complete').setScale(0.45).setDepth(100)
+    var failed = gameScene.add.sprite(SIZE_X/2, -BOTTOM_HEIGHT, 'level_failed').setScale(0.45).setDepth(100)
+    complete.visible = failed.visible = false
+    this.popups = {}
+    this.popups.sprites = [complete, failed]
+
+    this.startPopupAnimation = function(success) {
+        this.popups.typePopup = success
+        this.popups.sprites[success ? 0 : 1].visible = true
+        this.popups.timeAnimating = 1
+    }
+
+    this.updatePopup = function(dt) {
+        if (this.popups.timeAnimating <= 0) return
+        this.popups.timeAnimating += dt
+        var newYPos = BOTTOM_HEIGHT * Math.sin(this.popups.timeAnimating / MOVE_TIME * Math.PI - Math.PI / 2)
+        this.popups.sprites[this.popups.typePopup ? 0 : 1].y = newYPos
+        if (this.popups.timeAnimating >= MOVE_TIME) this.popups.timeAnimating = 0
+    }
+
     // Add level text
-    gameScene.add.text(10, 10, 'Level ' + (gameScene.levelIndex + 1) + "/" + ALL_LEVELS.length).setColor("0").setFontSize(50)
+    gameScene.add.text(10, 10, 'Level ' + (gameScene.levelIndex + 1) + "/" + ALL_LEVELS.length).setColor("0").setFontSize(50).setDepth(100)
 }
