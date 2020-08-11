@@ -2,7 +2,7 @@ const PLANE_MOVE_SPEED = 0.001 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
 const PLANE_LANDING_LENGTH = 1.7 // [tiles] // TODO eventually: base this on strip length (although maybe even better to simply drive over ground after tile 2)
 const PLANE_HEIGHT = 120 // [px]
-const PLANE_IMPASSABLE_TILES = ['M']
+const PLANE_IMPASSABLE_TILES = ['M','Q']
 const PLANE_FINISH = ['R0', 'R1', 'R2', 'R3']
 
 function Plane(game, coords, dir) {

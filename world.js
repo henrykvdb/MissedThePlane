@@ -63,10 +63,6 @@ function World(game, tiles) {
         return sprite
     }
 
-    this.randomTiles = function (size) {
-        return Array.from(Array(size)).map(() => Array.from(Array(size)).map(() => Phaser.Utils.Array.GetRandom(['G', 'G', 'G', 'G', 'W', 'M', 'B']))) // Ground bias xd
-    }
-
     this.getTile = function (coords) {
         if (coords[0] >= this.tiles.length || coords[0] < 0 || coords[1] >= this.tiles[0].length || coords[1] < 0) return 'A'
         return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])]
@@ -118,7 +114,6 @@ function World(game, tiles) {
 
     // Init code of world
     this.game = game
-    if (tiles == undefined) tiles = this.randomTiles(9)
     this.tiles = tiles
     this.sprites = this.createLevel(tiles)
     this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp')]

@@ -51,14 +51,14 @@ const ALL_LEVELS = [{
 },
 { // level 5 - water level, teaches mid-turn toggle
     tiles: [
-        ['W', 'W', 'M', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ['W', 'W', 'W', 'W', 'W', 'W', 'M', 'W', 'W'],
-        ['W', 'M', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-        ['M', 'W', 'W', 'G', 'G', 'G', 'W', 'M', 'W'],
-        ['W', 'M', 'W', 'G', 'B', 'G', 'W', 'W', 'W'],
+        ['W', 'W', 'Q', 'W', 'W', 'W', 'W', 'W', 'W'],
+        ['W', 'W', 'W', 'W', 'W', 'W', 'Q', 'W', 'W'],
+        ['W', 'Q', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+        ['Q', 'W', 'W', 'G', 'G', 'G', 'W', 'Q', 'W'],
+        ['W', 'Q', 'W', 'G', 'B', 'G', 'W', 'W', 'W'],
         ['W', 'W', 'W', 'G', 'G', 'G', 'W', 'W', 'M'],
         ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'R', 'G'],
-        ['W', 'W', 'M', 'W', 'W', 'W', 'G', 'R', 'G'],
+        ['W', 'W', 'Q', 'W', 'W', 'W', 'G', 'R', 'G'],
         ['W', 'W', 'W', 'W', 'W', 'G', 'M', 'E', 'G'],
     ],
     pilot: { coords: [3.5, 3.5], dir: 3 },
@@ -82,25 +82,25 @@ const ALL_LEVELS = [{
     difficulty: 3
 },
 {
-    // no tiles, this is the random level!
+    tiles: [['G']],
     pilot: { coords: [0.5, 0.5], dir: 3 },
     plane: { coords: [7.5, 1.5], dir: 1 },
     difficulty: 'todo' //TODO
 },
 {
-    // no tiles, this is the random level!
+    tiles: [['G']],
     pilot: { coords: [0.5, 0.5], dir: 3 },
     plane: { coords: [7.5, 1.5], dir: 1 },
     difficulty: 'todo' //TODO
 },
 {
-    // no tiles, this is the random level!
+    tiles: [['G']],
     pilot: { coords: [0.5, 0.5], dir: 3 },
     plane: { coords: [7.5, 1.5], dir: 1 },
     difficulty: 'todo'//TODO
 },
 {
-    // no tiles, this is the random level!
+    tiles: [['G']],
     pilot: { coords: [0.5, 0.5], dir: 3 },
     plane: { coords: [7.5, 1.5], dir: 1 },
     difficulty: 'todo'//TODO
