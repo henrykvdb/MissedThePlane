@@ -11,7 +11,7 @@ class LoadingScene extends Phaser.Scene {
     preload() {
         //Draw loading scene
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        text = this.add.text(500, 300, 'Loading assets...', { fill: '#000000' }).setOrigin(0.5, 0.5)
+        this.add.sprite(0, 0, 'splash').setOrigin(0, 0).setDepth(100);
         
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png');
@@ -61,6 +61,6 @@ class LoadingScene extends Phaser.Scene {
             game.scene.sound.setVolume(volumeIndex*VOLUME_STEP)
             game.scene.sound.pauseOnBlur = false
         })
-        text.text = "[Press space to start]"
+        game.scene.add.text(500, 30, '[Press space to start]', { fill: '#FF0000', fontSize: 30, fontStyle: 'bold'}).setOrigin(0.5, 0.5).setDepth(200)
     }
 }

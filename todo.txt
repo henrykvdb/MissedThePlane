@@ -3,14 +3,14 @@ Absolutely essential
 - tutorial
 
 We should make this
-- compress music properly
 - plane starts landing earlier
 - indicate button block visually
-- sound effects
+- sound
     - button blocked
     - level complete
     - menu button click
-- epic thumbnail
+    - compress music properly
+- favicon.ico
 
 Nice to have
 - wasd also moves pilot
