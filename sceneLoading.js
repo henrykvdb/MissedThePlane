@@ -61,6 +61,6 @@ class LoadingScene extends Phaser.Scene {
             game.scene.sound.setVolume(volumeIndex*VOLUME_STEP)
             game.scene.sound.pauseOnBlur = false
         })
-        game.scene.add.text(500, 30, '[Press space to start]', { fill: '#FF0000', fontSize: 30, fontStyle: 'bold'}).setOrigin(0.5, 0.5).setDepth(200)
+        game.scene.add.text(500, 30, '[Press space to start]', { fill: '#a92a17', fontSize: 30, fontStyle: 'bold'}).setOrigin(0.5, 0.5).setDepth(200)
     }
 }
