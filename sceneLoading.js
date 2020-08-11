@@ -17,11 +17,12 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_volume_head', 'assets/menu/button_volume_head.png');
         this.load.image('btn_levels', 'assets/menu/button_levels.png');
         this.load.image('btn_close', 'assets/menu/button_close.png');
-        this.load.image('btn_level0', 'assets/menu/button_level0.png');
-        this.load.image('btn_level1', 'assets/menu/button_level1.png');
-        this.load.image('btn_level2', 'assets/menu/button_level2.png');
-        this.load.image('btn_level3', 'assets/menu/button_level3.png');
-        this.load.image('btn_level4', 'assets/menu/button_level4.png');
+        this.load.image('btn_level_0', 'assets/menu/button_level_0.png');
+        this.load.image('btn_level_1', 'assets/menu/button_level_1.png');
+        this.load.image('btn_level_2', 'assets/menu/button_level_2.png');
+        this.load.image('btn_level_3', 'assets/menu/button_level_3.png');
+        this.load.image('btn_level_4', 'assets/menu/button_level_4.png');
+        this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png');
 
         // Load terain tile assets
         for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
