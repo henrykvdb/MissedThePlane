@@ -10,13 +10,11 @@ We should make this
     - level complete
     - menu button click
     - compress music properly
-- favicon.ico
 
 Nice to have
 - wasd also moves pilot
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
-- water mountains
 - pilot
     - animations
     - make mouth more dark/red (almost skincolor now)
