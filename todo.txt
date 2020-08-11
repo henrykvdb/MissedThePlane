@@ -15,6 +15,7 @@ We should make this
     - button blocked
     - level complete
     - menu button click
+- favicon.ico
 
 Nice to have
 - wasd also moves pilot

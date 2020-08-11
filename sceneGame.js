@@ -20,6 +20,14 @@ class GameScene extends Phaser.Scene {
         this.graphics = this.add.graphics();
         this.ui = new UI(this)
 
+        // Trigger music
+        var loadingScene = this.scene.get('LoadingScene')
+        if(!loadingScene.musicEnabled){
+            loadingScene.musicEnabled = true
+            loadingScene.music = loadingScene.sound.add('music', { loop: true })
+            loadingScene.music.play()
+        }
+
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
         if (level.tiles == undefined) this.world = new World(this, undefined)

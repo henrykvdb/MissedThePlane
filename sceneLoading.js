@@ -42,7 +42,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('shadow', 'assets/entities/shadow.png')
 
         // Load audio
-        //this.load.audio('music', ['assets/audio/music.wav'])
+        this.load.audio('music', ['assets/audio/music.wav'])
         this.load.audio('buttonUp', ['assets/audio/buttonUp.wav'])
         this.load.audio('buttonDown', ['assets/audio/buttonDown.wav'])
 
@@ -54,4 +54,6 @@ class LoadingScene extends Phaser.Scene {
         this.scene.start('GameScene',{ levelIndex: 3 - 1});
         this.scene.stop()
     }
+
+    musicEnabled = false
 }
