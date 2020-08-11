@@ -20,7 +20,7 @@ class LevelSelectScene extends Phaser.Scene {
 
         // Close button
         var LevelSelectScene = this;
-        this.btnRestart = this.add.sprite(900, 100, 'btn_close').setScale(0.5).setInteractive();
+        this.btnRestart = this.add.sprite(900, 100, 'btn_close').setScale(0.25).setInteractive();
         this.btnRestart.on('pointerdown', function (pointer) {
             LevelSelectScene.scene.start('GameScene');
             LevelSelectScene.scene.stop();

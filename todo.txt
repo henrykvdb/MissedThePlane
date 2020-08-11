@@ -7,7 +7,6 @@
 - center pilot
 - indicate button block visually
 - menu
-    - new assets
     - level popup
 - sound effects
     - button blocked
