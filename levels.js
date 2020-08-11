@@ -9,20 +9,28 @@ const ALL_LEVELS = [{
     difficulty: 0
 },
 {
-    // no tiles, this is the random level!
-    pilot: { coords: [0.5, 0.5], dir: 3 },
-    plane: { coords: [7.5, 1.5], dir: 1 },
+    tiles: [
+        ['M', 'M', 'G', 'M', 'G', 'G', 'G'],
+        ['B', 'M', 'G', 'M', 'R', 'R', 'E'],
+        ['G', 'W', 'G', 'B', 'G', 'G', 'G'],
+        ['G', 'W', 'W', 'M', 'G', 'G', 'G'],
+        ['G', 'B', 'W', 'W', 'W', 'W', 'M'],
+        ['G', 'G', 'M', 'W', 'W', 'W', 'G'],
+        ['G', 'G', 'W', 'W', 'W', 'M', 'G']
+    ],
+    pilot: { coords: [5.5, 1.5], dir: 1 },
+    plane: { coords: [8.5, 3.5], dir: 1 },
     difficulty: 1
 },
 {
     tiles: [
         ['G', 'M', 'G', 'G', 'G', 'G', 'G'],
-        ['G', 'B', 'W', 'W', 'G', 'G', 'M'],
-        ['G', 'W', 'W', 'W', 'M', 'G', 'B'],
-        ['G', 'E', 'W', 'W', 'W', 'G', 'G'],
-        ['G', 'R', 'G', 'W', 'W', 'W', 'G'],
-        ['G', 'R', 'G', 'W', 'G', 'W', 'G'],
-        ['G', 'G', 'G', 'W', 'G', 'W', 'G']
+        ['G', 'B', 'W', 'W', 'G', 'G', 'G'],
+        ['G', 'W', 'W', 'W', 'M', 'M', 'B'],
+        ['G', 'G', 'W', 'W', 'W', 'G', 'G'],
+        ['G', 'G', 'W', 'G', 'W', 'R', 'G'],
+        ['G', 'G', 'W', 'G', 'W', 'R', 'G'],
+        ['G', 'G', 'W', 'G', 'W', 'E', 'G']
     ],
     pilot: { coords: [3.5, 0.5], dir: 3 },
     plane: { coords: [7, 1.5], dir: 1 },

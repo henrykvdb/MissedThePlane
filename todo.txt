@@ -3,6 +3,9 @@
 - game complete/lose trigger
 - music: instant/repeat load fix
 - compress music properly
+- fix earth pattern under mountains
+- center pilot
+- indicate button block visually
 - menu
     - new assets
     - level popup
@@ -12,9 +15,9 @@
     - menu button click
 
 eventually
-- cutscenes/story -> imo basic story this should be in todo, everyone finds concept hilarious
+- cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
 - menu animations?
 - pilot
     - animations
-    - make mouth more dark/red (almost skincollor now)
+    - make mouth more dark/red (almost skincolor now)
 - water animations
