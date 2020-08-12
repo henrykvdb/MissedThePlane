@@ -41,7 +41,7 @@ function World(game, tiles) {
                 if (tiles[x][y] == "M" || tiles[x][y] == "G") {
                     tileSprites.push(this.createTileSprite(x, y, "G")) // Always first grass
                     tileSprites.push(this.createTileSprite(x, y, "M"))
-                    tileSprites[tiles[x][y] == "M" ? 0 : 1].visible = false
+                    if (tiles[x][y] != "M") tileSprites[1].visible = false
                 } else if (tiles[x][y] == "B") {
                     tileSprites.push(this.createTileSprite(x, y, "B0"))
                     tileSprites.push(this.createTileSprite(x, y, "B1"))
@@ -57,11 +57,37 @@ function World(game, tiles) {
     this.createTileSprite = function (x, y, tileType) {  // tileType is "G", "W", etc
         var asset = assets[tileType] == undefined ? tileType : Phaser.Utils.Array.GetRandom(assets[tileType])
         coords = getScreenCoords(this.game, x, y)
-        var sprite = this.game.add.sprite(coords[0], coords[1], asset)
+        if (tileType == "M") var sprite = this.createMountainSprite(coords)
+        else var sprite = this.game.add.sprite(coords[0], coords[1], asset)
         sprite.setScale(this.game.tileScale)
         sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
         sprite.setDepth(x+y + (HIGHER_TILES.includes(tileType) ? 1 : 0))
         return sprite
+    }
+
+    this.createAnimations = function() {
+        for (var i = 0; i < 4; i++) { // loop through each angle
+            this.game.anims.create({
+                key: 'shrink' + i,
+                frames: [{ key: 'mountain0' + i}, { key: 'mountain1' + i}, { key: 'mountain2' + i}, { key: 'mountain3' + i}],
+                frameRate: 18,
+                hideOnComplete: true,
+                repeat: 0
+            })
+            this.game.anims.create({
+                key: 'grow' + i,
+                frames: [{ key: 'mountain3' + i}, { key: 'mountain2' + i}, { key: 'mountain1' + i}, { key: 'mountain0' + i}],
+                frameRate: 18,
+                repeat: 0
+            })
+        }
+    }
+
+    this.createMountainSprite = function(coords) {
+        var angle = Math.floor(Math.random() * 3);
+        var mountainSprite = this.game.add.sprite(coords[0], coords[1], 'mountain0' + angle)
+        mountainSprite.angle = angle
+        return mountainSprite
     }
 
     this.getTile = function (coords) {
@@ -120,8 +146,23 @@ function World(game, tiles) {
         this.sprites[tilePos[0]][tilePos[1]].forEach(s => s.visible = !s.visible)
 
         // We switch neighbouring tiles from grass to mountain and vice versa
-        neighbours.map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
-        neighbours.forEach(c => { if (["M", "G"].includes(this.getTile(c))) this.tiles[c[0]][c[1]] = (this.getTile(c) == "M" ? "G" : "M") }) // Swap M to G and other way around in tiles
+        // neighbours.map(c => this.sprites[c[0]][c[1]]).filter(n => ["G", "M"].includes(n.tileType)).forEach(sprites => sprites.forEach(s => s.visible = !s.visible))
+        neighbours.filter(c => ["M", "G"].includes(this.sprites[c[0]][c[1]].tileType)).forEach(c => {
+            var sprite = this.sprites[c[0]][c[1]]
+            if (sprite.tileType == "M") {
+                sprite[1].anims.play('shrink'+sprite[1].angle, true)
+                console.log(sprite[1])
+            } else {
+                sprite[1].visible = true
+                sprite[1].anims.play('grow'+sprite[1].angle, true)
+            }
+        })
+        neighbours.forEach(c => { // Swap M to G and other way around in tiles and sprites
+            if (["M", "G"].includes(this.getTile(c))) {
+                this.tiles[c[0]][c[1]] = this.getTile(c) == "M" ? "G" : "M"
+                this.sprites[c[0]][c[1]].tileType = this.sprites[c[0]][c[1]].tileType  == "M" ? "G" : "M"
+            }
+        })
     }
 
     // Init code of world
@@ -129,6 +170,7 @@ function World(game, tiles) {
     this.tiles = tiles
     this.sprites = this.createLevel(tiles)
     this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp')]
+    this.createAnimations();
 }
 
 // Returns screen coordinate of the top of the tile

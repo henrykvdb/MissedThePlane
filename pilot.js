@@ -13,13 +13,13 @@ function Pilot(game, coords, dir, speedMod) {
         }
         
         // Play directional walk animation
-        if (dirVector[0] < 0 && dirVector[1] < 0) this.dir = 0
+        if (dirVector[0] < 0 && dirVector[1] < 0)       this.dir = 0
         else if (dirVector[0] < 0 && dirVector[1] == 0) this.dir = 1
-        else if (dirVector[0] < 0 && dirVector[1] > 0) this.dir = 2
+        else if (dirVector[0] < 0 && dirVector[1] > 0)  this.dir = 2
         else if (dirVector[0] == 0 && dirVector[1] > 0) this.dir = 3
-        else if (dirVector[0] > 0 && dirVector[1] > 0) this.dir = 4
+        else if (dirVector[0] > 0 && dirVector[1] > 0)  this.dir = 4
         else if (dirVector[0] > 0 && dirVector[1] == 0) this.dir = 5
-        else if (dirVector[0] > 0 && dirVector[1] < 0) this.dir = 6
+        else if (dirVector[0] > 0 && dirVector[1] < 0)  this.dir = 6
         else if (dirVector[0] == 0 && dirVector[1] < 0) this.dir = 7
         this.pilotSprite.anims.play('walk' + this.dir, true);
 

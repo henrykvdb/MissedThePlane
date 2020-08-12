@@ -26,7 +26,7 @@ class LoadingScene extends Phaser.Scene {
 
         // Load terain tile assets
         for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
-        for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
+        // for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
         for (var i = 0; i < 4; i++) this.load.image('Q' + i, 'assets/tiles/watermountain' + i + '.png')
         for (var i = 0; i < 10; i++) this.load.image('R' + i, 'assets/tiles/strip' + i + '.png')
         this.load.image('W', 'assets/tiles/water.png')
@@ -40,6 +40,7 @@ class LoadingScene extends Phaser.Scene {
 
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');
+        for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) this.load.image('mountain' + i + j, 'assets/tiles/mountain/mountain' + i + j + '.png')
         for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
         this.load.image('shadow', 'assets/entities/shadow.png')
 
@@ -50,13 +51,12 @@ class LoadingScene extends Phaser.Scene {
 
         // On complete load listener
         this.load.on('complete', this.complete, { scene: this.scene });
-
     }
 
     complete(game) {
         game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
-            game.scene.scene.start('GameScene', { levelIndex: 1 - 1 });
+            game.scene.scene.start('GameScene', { levelIndex: 2 - 1 });
             game.scene.sound.add('music', { loop: true }).play()
             game.scene.sound.setVolume(volumeIndex * VOLUME_STEP)
             game.scene.sound.pauseOnBlur = false

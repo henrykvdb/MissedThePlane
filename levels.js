@@ -62,7 +62,7 @@ const ALL_LEVELS = [{
         ['W', 'W', 'W', 'W', 'W', 'G', 'M', 'E', 'G'],
     ],
     pilot: { coords: [3.5, 3.5], dir: 3 },
-    plane: { coords: [8.5, 4.5], dir: 1 },
+    plane: { coords: [9.5, 4.5], dir: 1 },
     difficulty: 2
 },
 { // Level 6 - Show how multiple buttons can interact with each others mountains
