@@ -41,6 +41,7 @@ function Pilot(game, coords, dir) {
 
         this.pilotSprite.x  = worldCoords[0]
         this.pilotSprite.y  = worldCoords[1]
+        this.pilotSprite.setDepth(this.coords[0] + this.coords[1] + 0.2)
     }
 
     this.interact = function () {
