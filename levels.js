@@ -65,7 +65,21 @@ const ALL_LEVELS = [{
     plane: { coords: [8.5, 4.5], dir: 1 },
     difficulty: 2
 },
-{ // level 6 - longer level, showing position is important
+{ // Level 6 - Show how multiple buttons can interact with each others mountains
+    tiles: [
+        ['G', 'G', 'E', 'W', 'G', 'G', 'G'],
+        ['M', 'B', 'R', 'G', 'G', 'Q', 'G'],
+        ['G', 'G', 'R', 'W', 'W', 'W', 'G'],
+        ['M', 'B', 'G', 'W', 'G', 'G', 'G'],
+        ['G', 'G', 'W', 'G', 'G', 'M', 'G'],
+        ['G', 'B', 'W', 'G', 'M', 'G', 'M'],
+        ['G', 'M', 'W', 'G', 'B', 'M', 'G'],
+        ],
+    pilot: { coords: [5.5, 0.5], dir: 3 },
+    plane: { coords: [5.5, 5.5], dir: 5 },
+    difficulty: '2'
+},
+{ // level 7 - longer level, showing position is important
     tiles: [
         ['G', 'M', 'W', 'W', 'G', 'G', 'B', 'G', 'G'],
         ['G', 'W', 'W', 'W', 'G', 'G', 'G', 'G', 'G'],
@@ -81,33 +95,19 @@ const ALL_LEVELS = [{
     plane: { coords: [1.5, 1.5], dir: 3 },
     difficulty: 3
 },
-{ // Level 7 - Show how multiple buttons can interact with each others mountains
-    tiles: [
-        ['G', 'G', 'E', 'W', 'G', 'G', 'G'],
-        ['M', 'B', 'R', 'G', 'G', 'Q', 'G'],
-        ['G', 'G', 'R', 'W', 'W', 'W', 'G'],
-        ['M', 'B', 'G', 'W', 'G', 'G', 'G'],
-        ['G', 'G', 'W', 'G', 'G', 'M', 'G'],
-        ['G', 'B', 'W', 'G', 'M', 'G', 'M'],
-        ['G', 'M', 'W', 'G', 'B', 'M', 'G'],
-        ],
-    pilot: { coords: [5.5, 0.5], dir: 3 },
-    plane: { coords: [5.5, 5.5], dir: 5 },
-    difficulty: '2'
-},
 { // Level 8 - maybe the first actually difficult puzzle?
     tiles: [
-        ['G', 'M', 'M', 'G', 'G', 'G', 'M', 'G'],
-        ['G', 'B', 'G', 'G', 'G', 'G', 'G', 'M'],
-        ['M', 'M', 'W', 'W', 'W', 'G', 'G', 'G'],
-        ['G', 'G', 'W', 'W', 'W', 'G', 'B', 'M'],
-        ['G', 'G', 'W', 'Q', 'W', 'G', 'M', 'B'],
-        ['G', 'G', 'W', 'W', 'W', 'R', 'R', 'E'],
+        ['G', 'M', 'M', 'G', 'G', 'G', 'G', 'G'],
+        ['G', 'B', 'G', 'G', 'W', 'W', 'G', 'M'],
+        ['W', 'M', 'W', 'W', 'W', 'W', 'G', 'G'],
+        ['W', 'G', 'G', 'W', 'W', 'G', 'B', 'M'],
+        ['W', 'W', 'G', 'Q', 'W', 'G', 'M', 'B'],
+        ['W', 'W', 'G', 'W', 'W', 'R', 'R', 'E'],
         ['M', 'B', 'G', 'W', 'W', 'M', 'W', 'G'],
         ['G', 'M', 'G', 'W', 'G', 'B', 'G', 'G'],
         ],
-    pilot: { coords: [0.5, 0.5], dir: 3 },
-    plane: { coords: [1.5, -1.5], dir: 3 },
+    pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },
+    plane: { coords: [1.5, -0.5], dir: 3 },
     difficulty: '4'
 },
 {

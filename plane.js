@@ -9,7 +9,6 @@ function Plane(game, coords, dir) {
 
     this.toggleShadow = function() {
         var target = (this.shadow.alpha > 0.1 ? 0 : 0.2)
-        console.log(target)
         this.game.tweens.add({ // fade out shadow
             targets: this.shadow,
             alpha: target,

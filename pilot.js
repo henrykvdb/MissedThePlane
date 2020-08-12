@@ -1,8 +1,8 @@
 const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
-const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A'] // 'A' meaning 'Air'
+const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A']
 
-function Pilot(game, coords, dir) {
+function Pilot(game, coords, dir, speedMod) {
 
     //Move sprite in given dir
     this.move = function (dirVector, dt) {
@@ -14,12 +14,12 @@ function Pilot(game, coords, dir) {
         var originalCoords = this.coords.slice()
 
         //Move x
-        this.coords[0] += PILOT_MOVE_SPEED * dt * dirVector[0] / length
+        this.coords[0] += PILOT_MOVE_SPEED * dt * this.speedMod * dirVector[0] / length
         if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords.slice()
         else originalCoords = this.coords.slice()
 
         //Move y
-        this.coords[1] += PILOT_MOVE_SPEED * dt * dirVector[1] / length
+        this.coords[1] += PILOT_MOVE_SPEED * dt * this.speedMod * dirVector[1] / length
         if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords
 
         //Update orientation
@@ -53,6 +53,7 @@ function Pilot(game, coords, dir) {
     // Init code of pilot
     this.coords = coords
     this.game = game
+    this.speedMod = (speedMod ? speedMod : 1)
 
     //Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])
