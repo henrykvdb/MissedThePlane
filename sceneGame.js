@@ -11,13 +11,13 @@ class GameScene extends Phaser.Scene {
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.cursors = this.input.keyboard.createCursorKeys()
+        this.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D});
         this.graphics = this.add.graphics();
         this.ui = new UI(this)
 
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
-        if (level.tiles == undefined) this.world = new World(this, undefined)
-        else this.world = new World(this, level.tiles.map(row => row.slice()))
+        this.world = new World(this, level.tiles.map(row => row.slice()))
         this.pilot = new Pilot(this, level.pilot.coords.slice(), level.pilot.dir, level.pilot.speedModifier)
         this.plane = new Plane(this, level.plane.coords.slice(), level.plane.dir)
 
@@ -25,15 +25,17 @@ class GameScene extends Phaser.Scene {
         var pilot = this.pilot
         this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
+        
+        this.ui.showLevelText(this.levelIndex)
     }
 
     //Handle input
     update(_, dt) {
-        var dirVector = [0, 0]
-        if (this.cursors.up.isDown) dirVector = addArray(dirVector, [-1, -1])
-        if (this.cursors.down.isDown) dirVector = addArray(dirVector, [1, 1])
-        if (this.cursors.right.isDown) dirVector = addArray(dirVector, [-1, 1])
-        if (this.cursors.left.isDown) dirVector = addArray(dirVector, [1, -1])
+        var dirVector = [0, 0] // key checking is a bit verbose but whatever
+        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.W].isDown || this.cursors.up.isDown)    dirVector = addArray(dirVector, [-1, -1])
+        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.S].isDown || this.cursors.down.isDown)  dirVector = addArray(dirVector, [1, 1])
+        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.D].isDown || this.cursors.right.isDown) dirVector = addArray(dirVector, [-1, 1])
+        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.A].isDown || this.cursors.left.isDown)  dirVector = addArray(dirVector, [1, -1])
 
         this.pilot.move(dirVector, dt)
         this.plane.move(dt)

@@ -17,6 +17,7 @@ class LevelSelectScene extends Phaser.Scene {
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         text = this.add.text(X_START / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40, fontStyle: 'bold' })
+        text = this.add.text(X_START / 2, SIZE_Y - Y_START / 2, 'Feeling stuck? Skip to the next one!', { fill: '#000000', fontSize: 40, fontStyle: 'bold' })
 
         // Close button
         var LevelSelectScene = this;

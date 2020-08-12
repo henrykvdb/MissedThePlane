@@ -57,6 +57,33 @@ function UI(gameScene) {
         if (this.popups.timeAnimating >= MOVE_TIME) this.popups.timeAnimating = 0
     }
 
+    this.showLevelText = function(levelIndex) {
+        var margin = 15; var shiftY = 40; var startY = 420;
+        if (levelIndex == 0) {
+            gameScene.add.text(margin, startY + 0 * shiftY, 'Autopilot').setColor("0").setFontSize(28).setDepth(100)
+            gameScene.add.text(margin, startY + 1 * shiftY, 'turns right', {fontStyle: "bold"}).setColor("0").setFontSize(28).setDepth(100);
+            gameScene.add.text(margin, startY + 2 * shiftY, 'before a mountain').setColor("0").setFontSize(28).setDepth(100)
+            gameScene.add.text(margin, startY + 3 * shiftY, 'to avoid a crash.').setColor("0").setFontSize(28).setDepth(100)
+
+            gameScene.add.text(SIZE_X - margin, startY + 0 * shiftY, 'Get the').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin, startY + 1 * shiftY, 'plane to the').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin, startY + 2 * shiftY, 'landing strip!', {fontStyle: "Bold"}).setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+        }
+
+        if (levelIndex == 1) {
+            gameScene.add.text(margin, startY + 0 * shiftY, 'Buttons', {fontStyle: "bold"}).setColor("0").setFontSize(28).setDepth(100)
+            gameScene.add.sprite(margin + 140, startY, 'B0').setDepth(100).setScale(0.1)
+            gameScene.add.text(margin, startY + 1 * shiftY, 'toggle adjacent').setColor("0").setFontSize(28).setDepth(100);
+            gameScene.add.text(margin, startY + 2 * shiftY, 'tiles between').setColor("0").setFontSize(28).setDepth(100)
+            gameScene.add.text(margin, startY + 3 * shiftY, 'grass and mountains.').setColor("0").setFontSize(28).setDepth(100)
+
+            gameScene.add.text(SIZE_X - margin, startY + 1 * shiftY, 'Use them').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin - 130, startY + 2 * shiftY, 'with ').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin, startY + 2 * shiftY, 'spacebar', {fontStyle: "Bold"}).setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin, startY + 3 * shiftY, 'when nearby.').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+        }
+    }
+
     // Add level text
     gameScene.add.text(10, 10, 'Level ' + (gameScene.levelIndex + 1) + "/" + ALL_LEVELS.length).setColor("0").setFontSize(50).setDepth(100)
 }
