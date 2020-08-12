@@ -1,19 +1,28 @@
 We should make this
-- check our TODO's in project
 - more levels
 - better tutorial?
 - pilot center animation
 - explain story briefly
-- sound
-    - button blocked
-    - level complete
-    - menu button click
-    - compress music properly
 
 Nice to have
+- grass <-> mountain animation
 - cutscenes/story
 - plane starts landing earlier
 - landed plane collision / z sort fix
 - menu animations?
 - water animations
 - sine wave through level (or make level go up and down)
+
+Android
+- Relative positioning (scaling)
+- Tap movement (replaces arrow keys)
+- Trigger button (replaces SPACE)
+- Update tutorial controls explanation
+- Level editor
+- Ads
+- Remove ads in-app purchase
+<<<<<<< HEAD
+- Level editor share/import
+=======
+- Level editor share/import
+>>>>>>> Add android TODO

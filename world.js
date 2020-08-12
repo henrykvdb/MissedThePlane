@@ -139,7 +139,7 @@ function World(game, tiles) {
                     blockingTile.setTint(Phaser.Display.Color.GetColor(255, value, value));
                 }
             });
-            // TODO play error sound effect
+            this.buttonSounds[2].play()
             return
         }
         this.buttonSounds[this.sprites[tilePos[0]][tilePos[1]][0].visible ? 0 : 1].play()
@@ -169,7 +169,7 @@ function World(game, tiles) {
     this.game = game
     this.tiles = tiles
     this.sprites = this.createLevel(tiles)
-    this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp')]
+    this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp'),this.game.sound.add('buttonBlocked')]
     this.createAnimations();
 }
 
