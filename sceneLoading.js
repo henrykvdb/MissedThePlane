@@ -1,7 +1,5 @@
 var assets
-var volumeIndex = 2
-var music
-const VOLUME_STEP = 0.3
+var audio
 class LoadingScene extends Phaser.Scene {
 
     constructor() {
@@ -57,13 +55,11 @@ class LoadingScene extends Phaser.Scene {
     }
 
     complete(game) {
+        audio = new Audio(game.scene)
         game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
             game.scene.scene.start('GameScene', { levelIndex: 1 - 1 });
-            music = game.scene.sound.add('music', { loop: true })
-            music.play()
-            game.scene.sound.setVolume(volumeIndex * VOLUME_STEP)
-            game.scene.sound.pauseOnBlur = false
+            audio.start()
         })
         game.scene.add.text(500, 30, '[Press space to start]', { fill: '#a92a17', fontSize: 30, fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)
     }

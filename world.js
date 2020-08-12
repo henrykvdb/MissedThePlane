@@ -151,7 +151,6 @@ function World(game, tiles) {
             var sprite = this.sprites[c[0]][c[1]]
             if (sprite.tileType == "M") {
                 sprite[1].anims.play('shrink'+sprite[1].viewAngle, true)
-                console.log(sprite[1])
             } else {
                 sprite[1].visible = true
                 sprite[1].anims.play('grow'+sprite[1].viewAngle, true)

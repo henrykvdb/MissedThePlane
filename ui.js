@@ -21,13 +21,12 @@ function UI(gameScene) {
         buttons.push(button)
         button.visible = false
         button.on('pointerdown', function (pointer) {
-            buttons[volumeIndex].visible = false
-            volumeIndex = ++volumeIndex%4
-            buttons[volumeIndex].visible = true
-            gameScene.sound.volume = VOLUME_STEP * volumeIndex
+            buttons[audio.volumeIndex].visible = false
+            audio.toggleVolume();
+            buttons[audio.volumeIndex].visible = true
         });
     }
-    buttons[volumeIndex].visible = true
+    buttons[audio.volumeIndex].visible = true
 
     // Level change button
     this.btnLevels = gameScene.add.sprite(90, 90, 'btn_levels').setScale(0.25).setInteractive().setDepth(100);

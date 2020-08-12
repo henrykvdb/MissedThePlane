@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene {
 
     init(data) {
         this.levelIndex = data.levelIndex
+        this.audio = data.audio
     }
 
     create() {
@@ -40,7 +41,7 @@ class GameScene extends Phaser.Scene {
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.A].isDown || this.cursors.left.isDown)  dirVector = addArray(dirVector, [1, -1])
 
         this.pilot.move(dirVector, dt)
-        this.plane.move(dt)
+        this.plane.update(dt)
         this.ui.updatePopup(dt)
     }
 }

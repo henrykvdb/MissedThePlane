@@ -18,16 +18,22 @@ function Plane(game, coords, dir) {
         });
     }
 
-    //Move sprite in given dir
-    this.move = function (dt) {
+    this.update = function (dt) {
         if (this.finished) return
+        this.move(dt)
+        this.handleLanding(dt)
+        this.handleLeaving()
+        this.updateSprites()
+    }
+
+    // Move forward in current direction and handle collision/rotation
+    this.move = function(dt) {
         var originalCoords = this.coords.slice()
         this.coords[0] += PLANE_MOVE_SPEED * dt * this.dirVector[0]
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
-        // Rotate if collision
         if (this.dir % 2 == 0 || (this.game.world.collidesWith(this.coords, 0.5, PLANE_IMPASSABLE_TILES) &&  //Check half a tile in advance so plane stays centered
-            PLANE_IMPASSABLE_TILES.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
+        PLANE_IMPASSABLE_TILES.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
             this.coords = originalCoords
             this.waitTime -= dt
 
@@ -47,29 +53,30 @@ function Plane(game, coords, dir) {
                 }
             }
         }
+    }
 
-        // handle landing of plane
+    this.handleLanding = function(dt) {
         if (this.height != PLANE_HEIGHT && this.height > 0) this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
         if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH) &&
             this.game.world.getTile(addArray(this.coords, this.dirVector))[0] == "R") {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
-            music.pause()
-            this.endSounds[0].play()
+            audio.playPopup(true, this.game)
             this.height -= 0.001 // uhh, well, i mean
         }
         if (this.height <= 0 && !this.finished) {
             this.finished = true;
-            game.ui.btnRestart.visible = false;
-            game.ui.startPopupAnimation(true)
-            if (game.levelIndex < ALL_LEVELS.length - 1) game.ui.btnNext.visible = true;
+            this.game.ui.btnRestart.visible = false;
+            this.game.ui.startPopupAnimation(true)
+            if (this.game.levelIndex < ALL_LEVELS.length - 1) this.game.ui.btnNext.visible = true;
         }
+    }
 
-        // Check if plane is leaving world
+    // Check if the plane is leaving the world
+    this.handleLeaving = function() {
         if (!this.escaped && (
             this.coords[0] < 0 && this.dir == 1 || this.coords[0] > this.game.world.tiles.length && this.dir == 5 || 
             this.coords[1] < 0 && this.dir == 7 || this.coords[1] > this.game.world.tiles[0].length && this.dir == 3)) {
-                music.pause()
-                this.endSounds[1].play()
+                audio.playPopup(false, this.game)
                 this.game.ui.startPopupAnimation(false)
                 this.toggleShadow()
                 this.escaped = true;
@@ -79,8 +86,9 @@ function Plane(game, coords, dir) {
             this.toggleShadow()
             this.escaped = false;
         }
+    }
 
-        // Update sprites
+    this.updateSprites = function() {
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
         this.shadow.x = worldCoords[0]
         this.shadow.y = worldCoords[1]
@@ -106,7 +114,6 @@ function Plane(game, coords, dir) {
     this.height = PLANE_HEIGHT
     this.finished = false;
     this.escaped = true; // we set this to true so we can detect we arrive on the main land for the first time, to enable our shadow
-    this.endSounds = [this.game.sound.add('levelWon'), this.game.sound.add('levelFailed')]
 
     // Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])

@@ -6,7 +6,7 @@ const ALL_LEVELS = [{
         ['G', 'G', 'M', 'G']
     ],
     pilot: { coords: [0.5, 1.5], dir: 5 },
-    plane: { coords: [7.5, 0.5], dir: 1 },
+    plane: { coords: [11.5, 0.5], dir: 1 },
     difficulty: 0
 },
 {

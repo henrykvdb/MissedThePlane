@@ -35,7 +35,6 @@ class LevelSelectScene extends Phaser.Scene {
             var button = LevelSelectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1).setInteractive()
             button.smoothed = false;
             button.on('pointerdown', function (pointer) {
-                music.resume()
                 LevelSelectScene.scene.start('GameScene', { levelIndex: i });
                 LevelSelectScene.scene.stop()
             });
