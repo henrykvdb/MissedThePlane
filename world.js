@@ -69,14 +69,14 @@ function World(game, tiles) {
         for (var i = 0; i < 4; i++) { // loop through each viewAngle
             this.game.anims.create({
                 key: 'shrink' + i,
-                frames: [{ key: 'mountain0' + i}, { key: 'mountain1' + i}, { key: 'mountain2' + i}, { key: 'mountain3' + i}],
+                frames: [{ key: 'mountain', frame:'mountain0' + i}, { key: 'mountain', frame:'mountain1' + i}, { key: 'mountain', frame:'mountain2' + i}, { key: 'mountain', frame:'mountain3' + i}],
                 frameRate: 18,
                 hideOnComplete: true,
                 repeat: 0
             })
             this.game.anims.create({
                 key: 'grow' + i,
-                frames: [{ key: 'mountain3' + i}, { key: 'mountain2' + i}, { key: 'mountain1' + i}, { key: 'mountain0' + i}],
+                frames: [{ key: 'mountain', frame:'mountain3' + i}, { key: 'mountain', frame:'mountain2' + i}, { key: 'mountain', frame:'mountain1' + i}, { key: 'mountain', frame:'mountain0' + i}],
                 frameRate: 18,
                 repeat: 0
             })
@@ -85,7 +85,7 @@ function World(game, tiles) {
 
     this.createMountainSprite = function(coords) {
         var viewAngle = Math.floor(Math.random() * 3);
-        var mountainSprite = this.game.add.sprite(coords[0], coords[1], 'mountain0' + viewAngle)
+        var mountainSprite = this.game.add.sprite(coords[0], coords[1], 'mountain', 'mountain0' + viewAngle)
         mountainSprite.viewAngle = viewAngle
         return mountainSprite
     }

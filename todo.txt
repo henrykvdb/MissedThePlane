@@ -5,7 +5,6 @@ We should make this
 
 Nice to have
 - [SPACE TO START] splash screen tween
-- grass <-> mountain animation
 - cutscenes/story
 - plane starts landing earlier
 - landed plane collision / z sort fix

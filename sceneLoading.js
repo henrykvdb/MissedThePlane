@@ -38,7 +38,8 @@ class LoadingScene extends Phaser.Scene {
 
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');
-        for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) this.load.image('mountain' + i + j, 'assets/tiles/mountain/mountain' + i + j + '.png')
+        this.load.multiatlas('mountain', 'assets/tiles/mountain.json', 'assets/tiles/');
+        //for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) this.load.image('mountain' + i + j, 'assets/tiles/mountain/mountain' + i + j + '.png')
         for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
         this.load.image('shadow', 'assets/entities/shadow.png')
 
