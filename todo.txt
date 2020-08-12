@@ -1,15 +1,14 @@
 We should make this
 - more levels
 - better tutorial?
-- pilot center animation
 - explain story briefly
 
 Nice to have
+- [SPACE TO START] splash screen tween
 - grass <-> mountain animation
 - cutscenes/story
 - plane starts landing earlier
 - landed plane collision / z sort fix
-- menu animations?
 - water animations
 - sine wave through level (or make level go up and down)
 
@@ -21,8 +20,4 @@ Android
 - Level editor
 - Ads
 - Remove ads in-app purchase
-<<<<<<< HEAD
 - Level editor share/import
-=======
-- Level editor share/import
->>>>>>> Add android TODO
