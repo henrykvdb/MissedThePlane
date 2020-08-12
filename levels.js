@@ -81,17 +81,34 @@ const ALL_LEVELS = [{
     plane: { coords: [1.5, 1.5], dir: 3 },
     difficulty: 3
 },
-{
-    tiles: [['G']],
-    pilot: { coords: [0.5, 0.5], dir: 3 },
-    plane: { coords: [7.5, 1.5], dir: 1 },
-    difficulty: 'todo' //TODO
+{ // Level 7 - Show how multiple buttons can interact with each others mountains
+    tiles: [
+        ['G', 'G', 'E', 'W', 'G', 'G', 'G'],
+        ['M', 'B', 'R', 'G', 'G', 'Q', 'G'],
+        ['G', 'G', 'R', 'W', 'W', 'W', 'G'],
+        ['M', 'B', 'G', 'W', 'G', 'G', 'G'],
+        ['G', 'G', 'W', 'G', 'G', 'M', 'G'],
+        ['G', 'B', 'W', 'G', 'M', 'G', 'M'],
+        ['G', 'M', 'W', 'G', 'B', 'M', 'G'],
+        ],
+    pilot: { coords: [5.5, 0.5], dir: 3 },
+    plane: { coords: [5.5, 5.5], dir: 5 },
+    difficulty: '2'
 },
-{
-    tiles: [['G']],
+{ // Level 8 - maybe the first actually difficult puzzle?
+    tiles: [
+        ['G', 'M', 'M', 'G', 'G', 'G', 'M', 'G'],
+        ['G', 'B', 'G', 'G', 'G', 'G', 'G', 'M'],
+        ['M', 'M', 'W', 'W', 'W', 'G', 'G', 'G'],
+        ['G', 'G', 'W', 'W', 'W', 'G', 'B', 'M'],
+        ['G', 'G', 'W', 'Q', 'W', 'G', 'M', 'B'],
+        ['G', 'G', 'W', 'W', 'W', 'R', 'R', 'E'],
+        ['M', 'B', 'G', 'W', 'W', 'M', 'W', 'G'],
+        ['G', 'M', 'G', 'W', 'G', 'B', 'G', 'G'],
+        ],
     pilot: { coords: [0.5, 0.5], dir: 3 },
-    plane: { coords: [7.5, 1.5], dir: 1 },
-    difficulty: 'todo' //TODO
+    plane: { coords: [1.5, -1.5], dir: 3 },
+    difficulty: '4'
 },
 {
     tiles: [['G']],
