@@ -11,7 +11,7 @@ class LoadingScene extends Phaser.Scene {
     preload() {
         //Draw loading scene
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        //this.add.sprite(0, 0, 'splash').setOrigin(0, 0).setDepth(100);
+        this.add.sprite(0, 0, 'splash').setOrigin(0, 0).setDepth(100);
 
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png');
@@ -56,7 +56,7 @@ class LoadingScene extends Phaser.Scene {
     complete(game) {
         game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
-            game.scene.scene.start('GameScene', { levelIndex: 3 - 1 });
+            game.scene.scene.start('GameScene', { levelIndex: 7 - 1 });
             game.scene.sound.add('music', { loop: true }).play()
             game.scene.sound.setVolume(volumeIndex * VOLUME_STEP)
             game.scene.sound.pauseOnBlur = false
