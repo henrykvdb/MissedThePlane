@@ -53,10 +53,11 @@ function Plane(game, coords, dir) {
         if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH) &&
             this.game.world.getTile(addArray(this.coords, this.dirVector))[0] == "R") {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
+            music.pause()
+            this.endSounds[0].play()
             this.height -= 0.001 // uhh, well, i mean
         }
         if (this.height <= 0 && !this.finished) {
-            console.log("Victory!") //TODO sound
             this.finished = true;
             game.ui.btnRestart.visible = false;
             game.ui.startPopupAnimation(true)
@@ -67,6 +68,8 @@ function Plane(game, coords, dir) {
         if (!this.escaped && (
             this.coords[0] < 0 && this.dir == 1 || this.coords[0] > this.game.world.tiles.length && this.dir == 5 || 
             this.coords[1] < 0 && this.dir == 7 || this.coords[1] > this.game.world.tiles[0].length && this.dir == 3)) {
+                music.pause()
+                this.endSounds[1].play()
                 this.game.ui.startPopupAnimation(false)
                 this.toggleShadow()
                 this.escaped = true;
@@ -103,10 +106,10 @@ function Plane(game, coords, dir) {
     this.height = PLANE_HEIGHT
     this.finished = false;
     this.escaped = true; // we set this to true so we can detect we arrive on the main land for the first time, to enable our shadow
+    this.endSounds = [this.game.sound.add('levelWon'), this.game.sound.add('levelFailed')]
 
     // Create sprites
     var screenCoords = getScreenCoords(game, coords[0], coords[1])
-
     var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
     shadow.setScale(game.tileScale / 4)
     shadow.setOrigin(0.5, (800 - 405) / 800)

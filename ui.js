@@ -4,12 +4,14 @@ function UI(gameScene) {
     this.btnNext.visible = false;
     this.btnNext.on('pointerdown', function (pointer) {
         gameScene.scene.restart({ levelIndex: ++gameScene.levelIndex })
+        music.resume()
     });
 
     // Restart button
     this.btnRestart = gameScene.add.sprite(900, 100, 'btn_restart').setScale(0.25).setInteractive().setDepth(100);
     this.btnRestart.on('pointerdown', function (pointer) {
         gameScene.scene.restart({ levelIndex: gameScene.levelIndex })
+        music.resume()
     });
 
     // Sound change button

@@ -1,7 +1,7 @@
 var assets
-var text
 var volumeIndex = 2
-const VOLUME_STEP = 0.4
+var music
+const VOLUME_STEP = 0.3
 class LoadingScene extends Phaser.Scene {
 
     constructor() {
@@ -45,9 +45,12 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('shadow', 'assets/entities/shadow.png')
 
         // Load audio
-        this.load.audio('music', ['assets/audio/music.wav'])
-        this.load.audio('buttonUp', ['assets/audio/buttonUp.wav'])
-        this.load.audio('buttonDown', ['assets/audio/buttonDown.wav'])
+        this.load.audio('music', ['assets/audio/music.ogg','assets/audio/music.aac'])
+        this.load.audio('levelFailed', ['assets/audio/levelFailed.ogg','assets/audio/levelFailed.aac'])
+        this.load.audio('levelWon', ['assets/audio/levelWon.ogg','assets/audio/levelWon.aac'])
+        this.load.audio('buttonUp', ['assets/audio/buttonUp.ogg','assets/audio/buttonUp.aac'])
+        this.load.audio('buttonDown', ['assets/audio/buttonDown.ogg','assets/audio/buttonDown.aac'])
+        this.load.audio('buttonBlocked', ['assets/audio/buttonBlocked.ogg','assets/audio/buttonBlocked.aac'])
 
         // On complete load listener
         this.load.on('complete', this.complete, { scene: this.scene });
@@ -57,7 +60,8 @@ class LoadingScene extends Phaser.Scene {
         game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
             game.scene.scene.start('GameScene', { levelIndex: 2 - 1 });
-            game.scene.sound.add('music', { loop: true }).play()
+            music = game.scene.sound.add('music', { loop: true })
+            music.play()
             game.scene.sound.setVolume(volumeIndex * VOLUME_STEP)
             game.scene.sound.pauseOnBlur = false
         })
