@@ -3,6 +3,7 @@ Absolutely essential
 - tutorial
 
 We should make this
+- pilot center animation
 - plane starts landing earlier
 - indicate button block visually
 - sound
@@ -14,10 +15,7 @@ We should make this
 Nice to have
 - wasd also moves pilot
 - cutscenes/story -> imo basic story should be in todo, everyone finds concept hilarious
-- plane collision
+- landed plane collision
 - menu animations?
-- pilot
-    - animations
-    - make mouth more dark/red (almost skincolor now)
 - water animations
 - sine wave through level (or make level go up and down)
