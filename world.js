@@ -99,9 +99,20 @@ function World(game, tiles) {
         if (this.getTile(tilePos) != "B") return // todo maybe throw error here or something
 
         var neighbours = this.getNeighbourCoords(tilePos)
-        if (neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) && 
-                                   c[1] == Math.floor(this.game.plane.coords[1]) && 
-                                   ["M", "G"].includes(this.getTile(c))).length > 0) {
+        var withPlane = neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) && 
+                                          c[1] == Math.floor(this.game.plane.coords[1]) && 
+                                          ["M", "G"].includes(this.getTile(c)))
+        if (withPlane.length > 0) { // The plane is flying over an adjacent, blocking tile
+            var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]][0]
+            this.game.tweens.addCounter({ // We will tint the tile "red", or well, remove the other colors to make it dark red
+                from: 50,
+                to: 255,
+                duration: 500, // ms to revert to normal tile color
+                onUpdate: function (tween) {
+                    var value = Math.floor(tween.getValue());
+                    blockingTile.setTint(Phaser.Display.Color.GetColor(255, value, value));
+                }
+            });
             // TODO play error sound effect
             return
         }
