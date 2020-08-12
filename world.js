@@ -66,7 +66,7 @@ function World(game, tiles) {
     }
 
     this.createAnimations = function() {
-        for (var i = 0; i < 4; i++) { // loop through each angle
+        for (var i = 0; i < 4; i++) { // loop through each viewAngle
             this.game.anims.create({
                 key: 'shrink' + i,
                 frames: [{ key: 'mountain0' + i}, { key: 'mountain1' + i}, { key: 'mountain2' + i}, { key: 'mountain3' + i}],
@@ -84,9 +84,9 @@ function World(game, tiles) {
     }
 
     this.createMountainSprite = function(coords) {
-        var angle = Math.floor(Math.random() * 3);
-        var mountainSprite = this.game.add.sprite(coords[0], coords[1], 'mountain0' + angle)
-        mountainSprite.angle = angle
+        var viewAngle = Math.floor(Math.random() * 3);
+        var mountainSprite = this.game.add.sprite(coords[0], coords[1], 'mountain0' + viewAngle)
+        mountainSprite.viewAngle = viewAngle
         return mountainSprite
     }
 
@@ -150,11 +150,11 @@ function World(game, tiles) {
         neighbours.filter(c => ["M", "G"].includes(this.sprites[c[0]][c[1]].tileType)).forEach(c => {
             var sprite = this.sprites[c[0]][c[1]]
             if (sprite.tileType == "M") {
-                sprite[1].anims.play('shrink'+sprite[1].angle, true)
+                sprite[1].anims.play('shrink'+sprite[1].viewAngle, true)
                 console.log(sprite[1])
             } else {
                 sprite[1].visible = true
-                sprite[1].anims.play('grow'+sprite[1].angle, true)
+                sprite[1].anims.play('grow'+sprite[1].viewAngle, true)
             }
         })
         neighbours.forEach(c => { // Swap M to G and other way around in tiles and sprites

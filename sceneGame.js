@@ -11,7 +11,7 @@ class GameScene extends Phaser.Scene {
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.cursors = this.input.keyboard.createCursorKeys()
-        this.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D});
+        this.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D,restart:Phaser.Input.Keyboard.KeyCodes.R});
         this.graphics = this.add.graphics();
         this.ui = new UI(this)
 
@@ -31,6 +31,8 @@ class GameScene extends Phaser.Scene {
 
     //Handle input
     update(_, dt) {
+        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.R].isDown) this.scene.restart({ levelIndex: this.levelIndex })
+        
         var dirVector = [0, 0] // key checking is a bit verbose but whatever
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.W].isDown || this.cursors.up.isDown)    dirVector = addArray(dirVector, [-1, -1])
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.S].isDown || this.cursors.down.isDown)  dirVector = addArray(dirVector, [1, 1])

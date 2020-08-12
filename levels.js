@@ -36,8 +36,20 @@ const ALL_LEVELS = [{
     plane: { coords: [4.5, 6.5], dir: 7 },
     difficulty: 1
 },
+{ // level 4 - another filler easy level to show you have to press the same button multiple times
+    tiles: [
+        ['B', 'G', 'E', 'G', 'G'],
+        ['G', 'G', 'R', 'G', 'M'],
+        ['G', 'G', 'R', 'G', 'G'],
+        ['B', 'G', 'G', 'G', 'G'],
+        ['W', 'W', 'W', 'M', 'G']
+    ],
+    pilot: { coords: [0.5, 1.5], dir: 7 },
+    plane: { coords: [6.5, 1.5], dir: 1 },
+    difficulty: '1'
+},
 {
-    tiles: [ // level 4 - Explain plane trapping
+    tiles: [ // level 5 - Explain plane trapping
         ['G', 'E', 'M', 'W', 'W', 'W'],
         ['G', 'R', 'G', 'G', 'M', 'W'],
         ['G', 'R', 'G', 'G', 'G', 'M'],
@@ -49,7 +61,7 @@ const ALL_LEVELS = [{
     plane: { coords: [10, 4.5], dir: 1 },
     difficulty: 1
 },
-{ // level 5 - water level, teaches mid-turn toggle
+{ // level 6 - water level, teaches mid-turn toggle
     tiles: [
         ['W', 'W', 'Q', 'W', 'W', 'W', 'W', 'W', 'W'],
         ['W', 'W', 'W', 'W', 'W', 'W', 'Q', 'W', 'W'],
@@ -65,7 +77,7 @@ const ALL_LEVELS = [{
     plane: { coords: [9.5, 4.5], dir: 1 },
     difficulty: 2
 },
-{ // Level 6 - Show how multiple buttons can interact with each others mountains
+{ // Level 7 - Show how multiple buttons can interact with each others mountains
     tiles: [
         ['G', 'G', 'E', 'W', 'G', 'G', 'G'],
         ['M', 'B', 'R', 'G', 'G', 'Q', 'G'],
@@ -79,7 +91,7 @@ const ALL_LEVELS = [{
     plane: { coords: [5.5, 5.5], dir: 5 },
     difficulty: '2'
 },
-{ // level 7 - longer level, showing position is important
+{ // level 8 - longer level, showing position is important
     tiles: [
         ['G', 'M', 'W', 'W', 'G', 'G', 'B', 'G', 'G'],
         ['G', 'W', 'W', 'W', 'G', 'G', 'G', 'G', 'G'],
@@ -95,7 +107,7 @@ const ALL_LEVELS = [{
     plane: { coords: [1.5, 1.5], dir: 3 },
     difficulty: 3
 },
-{ // Level 8 - maybe the first actually difficult puzzle?
+{ // Level 9 - maybe the first actually difficult puzzle?
     tiles: [
         ['G', 'M', 'M', 'G', 'G', 'G', 'G', 'G'],
         ['G', 'B', 'G', 'G', 'W', 'W', 'G', 'M'],
@@ -109,12 +121,6 @@ const ALL_LEVELS = [{
     pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },
     plane: { coords: [1.5, -0.5], dir: 3 },
     difficulty: '4'
-},
-{
-    tiles: [['G']],
-    pilot: { coords: [0.5, 0.5], dir: 3 },
-    plane: { coords: [7.5, 1.5], dir: 1 },
-    difficulty: 'todo'//TODO
 },
 {
     tiles: [['G']],

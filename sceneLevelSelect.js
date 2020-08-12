@@ -32,7 +32,7 @@ class LevelSelectScene extends Phaser.Scene {
             var pos = [X_START + SHIFT * (i % ROW_COUNT), Y_START + SHIFT * Math.floor(i / ROW_COUNT)]
             var asset = 'btn_level_' + ALL_LEVELS[i].difficulty
             LevelSelectScene.add.text(pos[0], pos[1], i + 1, { fill: '#000000', fontSize: 60, fontStyle: 'bold' }).setOrigin(0.5, 0.5)
-            var button = LevelSelectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1).setInteractive() //TODO load difficulty
+            var button = LevelSelectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1).setInteractive()
             button.smoothed = false;
             button.on('pointerdown', function (pointer) {
                 LevelSelectScene.scene.start('GameScene', { levelIndex: i });
