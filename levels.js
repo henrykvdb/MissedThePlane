@@ -44,7 +44,7 @@ const ALL_LEVELS = [
         ['M', 'W', 'W', 'W', 'W', 'G'],
         ['W', 'W', 'W', 'W', 'M', 'G'],
     ],
-    pilot: { coords: [5.5, 5.5], dir: 3 },
+    pilot: { coords: [5.5, 5.5], dir: 1 },
     plane: { coords: [4.5, 6.5], dir: 7 },
     difficulty: 1
 },

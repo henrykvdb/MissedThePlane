@@ -1,8 +1,5 @@
-We should make this
-- fix pilot animation hat bug
-- more levels
-- better tutorial?
-- explain story briefly
+Should do
+    - Get juicy splash screen and thumbnails
 
 Nice to have
 - [SPACE TO START] splash screen tween

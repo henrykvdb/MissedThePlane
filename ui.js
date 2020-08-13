@@ -92,6 +92,12 @@ function UI(gameScene) {
             gameScene.add.text(SIZE_X - margin, startY + 2 * shiftY, 'spacebar', {fontStyle: "Bold"}).setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
             gameScene.add.text(SIZE_X - margin, startY + 3 * shiftY, 'when nearby.').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
         }
+
+        if (levelIndex == 3) {
+            startY += 10
+            gameScene.add.text(margin, startY + 2 * shiftY, 'Tip:',{fontStyle: "bold"}).setColor("0").setFontSize(28).setDepth(100)
+            gameScene.add.text(margin, startY + 3 * shiftY, 'You can press R to restart.').setColor("0").setFontSize(28).setDepth(100)
+        }
     }
 
     // Add level text
