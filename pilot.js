@@ -79,7 +79,7 @@ function Pilot(game, coords, dir, speedMod) {
     this.shadow = shadow
 
     // Create pilot sprite
-    this.pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot', 'pilot' + this.dir + '.png')
+    this.pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot', 'pilot' + this.dir)
     this.pilotSprite.setScale(game.tileScale / 4)
     this.pilotSprite.setOrigin(0.5, (800 - 204) / 800)
     this.pilotSprite.setDepth(coords[0] + coords[1])
@@ -87,17 +87,17 @@ function Pilot(game, coords, dir, speedMod) {
         game.anims.create({
             key: 'walk' + i,
             frames: [
-                { key: 'pilot', frame: 'pilot' + i + '.png' },
-                { key: 'pilot', frame: 'pilot' + i + 'R.png' },
-                { key: 'pilot', frame: 'pilot' + i + '.png' },
-                { key: 'pilot', frame: 'pilot' + i + 'L.png' },
+                { key: 'pilot', frame: 'pilot' + i},
+                { key: 'pilot', frame: 'pilot' + i + 'R'},
+                { key: 'pilot', frame: 'pilot' + i},
+                { key: 'pilot', frame: 'pilot' + i + 'L'},
             ],
             frameRate: 8,
             repeat: -1
         })
         game.anims.create({
             key: 'idle' + i,
-            frames: [{ key: 'pilot', frame: 'pilot' + i + '.png' },],
+            frames: [{ key: 'pilot', frame: 'pilot' + i},],
             frameRate: 0,
             repeat: 0
         })
