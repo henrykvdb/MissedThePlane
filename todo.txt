@@ -1,4 +1,8 @@
+essential
+- fix audio bug
+
 We should make this
+- fix pilot animation hat bug
 - more levels
 - better tutorial?
 - explain story briefly

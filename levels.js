@@ -123,7 +123,12 @@ const ALL_LEVELS = [{
     difficulty: '4'
 },
 {
-    tiles: [['G']],
+    tiles: [
+        ['1', '2', 'P', '2'],
+        ['0', 'P', 'P', 'P'],
+        ['0', 'P', 'P', 'P'],
+        ['0', 'P', 'P', 'P'],
+    ],
     pilot: { coords: [0.5, 0.5], dir: 3 },
     plane: { coords: [7.5, 1.5], dir: 1 },
     difficulty: 'todo'//TODO
