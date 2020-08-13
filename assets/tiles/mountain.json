@@ -1,0 +1,356 @@
+{
+	"textures": [
+		{
+			"image": "mountain.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1776,
+				"h": 1111
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "mountain00",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 267,
+						"w": 294,
+						"h": 419
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 294,
+						"h": 419
+					}
+				},
+				{
+					"filename": "mountain02",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 277,
+						"w": 294,
+						"h": 409
+					},
+					"frame": {
+						"x": 1,
+						"y": 422,
+						"w": 294,
+						"h": 409
+					}
+				},
+				{
+					"filename": "mountain03",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 277,
+						"w": 294,
+						"h": 409
+					},
+					"frame": {
+						"x": 297,
+						"y": 1,
+						"w": 294,
+						"h": 409
+					}
+				},
+				{
+					"filename": "mountain01",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 283,
+						"w": 294,
+						"h": 403
+					},
+					"frame": {
+						"x": 297,
+						"y": 412,
+						"w": 294,
+						"h": 403
+					}
+				},
+				{
+					"filename": "mountain10",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 298,
+						"w": 294,
+						"h": 388
+					},
+					"frame": {
+						"x": 593,
+						"y": 1,
+						"w": 294,
+						"h": 388
+					}
+				},
+				{
+					"filename": "mountain12",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 309,
+						"w": 294,
+						"h": 377
+					},
+					"frame": {
+						"x": 593,
+						"y": 391,
+						"w": 294,
+						"h": 377
+					}
+				},
+				{
+					"filename": "mountain21",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 346,
+						"w": 294,
+						"h": 340
+					},
+					"frame": {
+						"x": 593,
+						"y": 770,
+						"w": 294,
+						"h": 340
+					}
+				},
+				{
+					"filename": "mountain13",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 309,
+						"w": 294,
+						"h": 377
+					},
+					"frame": {
+						"x": 889,
+						"y": 1,
+						"w": 294,
+						"h": 377
+					}
+				},
+				{
+					"filename": "mountain11",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 314,
+						"w": 294,
+						"h": 372
+					},
+					"frame": {
+						"x": 1185,
+						"y": 1,
+						"w": 294,
+						"h": 372
+					}
+				},
+				{
+					"filename": "mountain20",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 330,
+						"w": 294,
+						"h": 356
+					},
+					"frame": {
+						"x": 1481,
+						"y": 1,
+						"w": 294,
+						"h": 356
+					}
+				},
+				{
+					"filename": "mountain22",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 341,
+						"w": 294,
+						"h": 345
+					},
+					"frame": {
+						"x": 1481,
+						"y": 359,
+						"w": 294,
+						"h": 345
+					}
+				},
+				{
+					"filename": "mountain23",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 341,
+						"w": 294,
+						"h": 345
+					},
+					"frame": {
+						"x": 1185,
+						"y": 375,
+						"w": 294,
+						"h": 345
+					}
+				},
+				{
+					"filename": "mountain30",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 346,
+						"w": 294,
+						"h": 340
+					},
+					"frame": {
+						"x": 1481,
+						"y": 706,
+						"w": 294,
+						"h": 340
+					}
+				},
+				{
+					"filename": "mountain31",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 346,
+						"w": 294,
+						"h": 340
+					},
+					"frame": {
+						"x": 889,
+						"y": 380,
+						"w": 294,
+						"h": 340
+					}
+				},
+				{
+					"filename": "mountain32",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 346,
+						"w": 294,
+						"h": 340
+					},
+					"frame": {
+						"x": 889,
+						"y": 722,
+						"w": 294,
+						"h": 340
+					}
+				},
+				{
+					"filename": "mountain33",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 53,
+						"y": 346,
+						"w": 294,
+						"h": 340
+					},
+					"frame": {
+						"x": 1185,
+						"y": 722,
+						"w": 294,
+						"h": 340
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:05086d0c03241bf03678261d7525c5a1:313271af274e5411d66df58b661cc8d9:de0818ccaf8f2f5d478ed362bd7d90e6$"
+	}
+}
