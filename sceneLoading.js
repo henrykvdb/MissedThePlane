@@ -19,6 +19,7 @@ class LoadingScene extends Phaser.Scene {
         for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')
         for (var i = 0; i < 4; i++) this.load.image('btn_volume_' + i, 'assets/menu/button_volume_' + i + '.png')
         this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png');
+        this.load.image('btn_level_home', 'assets/menu/button_level_home.png');
         this.load.image('level_complete', 'assets/menu/level_complete.png');
         this.load.image('level_failed', 'assets/menu/level_failed.png');
         this.load.image('background', 'assets/menu/background.png')
