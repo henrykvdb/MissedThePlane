@@ -31,10 +31,9 @@ class LevelSelectScene extends Phaser.Scene {
 
         // Level buttons
         for (let i = 0; i < ALL_LEVELS.length; i++) {
-            var pos = [SIZE_X / 2 + SHIFT * ((i % ROW_COUNT) - 2), Y_START + SHIFT * Math.floor(i / ROW_COUNT)]
+            var pos = [SIZE_X / 2 + SHIFT * ((i % ROW_COUNT) - (ALL_LEVELS.length / ROW_COUNT)), Y_START + SHIFT * Math.floor(i / ROW_COUNT)]
             var asset = 'btn_level_' + ALL_LEVELS[i].difficulty
-            var text = i == 0 ? "⌂" : i
-            LevelSelectScene.add.text(pos[0], pos[1], text, { fill: '#000000', fontSize: 60, fontStyle: 'bold' }).setOrigin(0.5, 0.5)
+            LevelSelectScene.add.text(pos[0], pos[1], i == 0 ? "" : i, { fill: '#000000', fontSize: 60, fontStyle: 'bold' }).setOrigin(0.5, 0.5)
             var button = LevelSelectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1).setInteractive()
             button.smoothed = false;
             button.on('pointerdown', function (pointer) {

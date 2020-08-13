@@ -8,7 +8,7 @@ const ALL_LEVELS = [
         ],
         pilot: { coords: [2.7, 1.3], dir: 1 },
         plane: { coords: [3.5, 5.5], dir: 1 },
-        difficulty: '0'
+        difficulty: 'home'
     },
     {
     tiles: [ // level 1 - Explain plane path
