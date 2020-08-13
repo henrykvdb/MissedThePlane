@@ -133,4 +133,4 @@ const ALL_LEVELS = [
     pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },
     plane: { coords: [1.5, -0.5], dir: 3 },
     difficulty: '4'
-},]
+}]
