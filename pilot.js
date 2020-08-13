@@ -1,6 +1,6 @@
 const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
-const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A']
+const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A', '4', '5', '6']
 
 function Pilot(game, coords, dir, speedMod) {
 
@@ -44,11 +44,22 @@ function Pilot(game, coords, dir, speedMod) {
         this.pilotSprite.x  = worldCoords[0]
         this.pilotSprite.y  = worldCoords[1]
         this.pilotSprite.setDepth(this.coords[0] + this.coords[1] + 0.2)
+
+        this.checkDoor();
+    }
+
+    this.checkDoor = function () {
+        if (this.foundDoor || !(this.game.world.getTile(this.coords) == "3" && this.coords[0] < 0.3)) return
+        this.foundDoor = true
+        this.game.ui.btnRestart.visible = false;
+        this.game.ui.startPopupAnimation(true)
+        audio.playPopup(true)
+        if (this.game.levelIndex < ALL_LEVELS.length - 1) this.game.ui.btnNext.visible = true;
     }
 
     this.interact = function () {
-        if (this.game.world.getTile(this.coords) != "B") return // silly user, there's no button here
-        this.game.world.triggerButton(this.coords) // todo this is maybe pointless if but maybe we can show a message to the user or something
+        if (this.game.world.getTile(this.coords) != "B") return
+        this.game.world.triggerButton(this.coords)
     }
 
     // Init code of pilot
@@ -56,6 +67,7 @@ function Pilot(game, coords, dir, speedMod) {
     this.game = game
     this.speedMod = (speedMod ? speedMod : 1)
     this.dir = dir
+    this.foundDoor = false // Bool just for home level, but eh
 
     // Create shadow sprite
     var screenCoords = getScreenCoords(game, coords[0], coords[1])

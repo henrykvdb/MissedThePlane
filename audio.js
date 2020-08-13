@@ -2,16 +2,15 @@ const VOLUME_STEP = 0.3
 
 function Audio(game) {
 
-    this.playPopup = function(success, otherGame) {
-        // otherGame is the scene we are currently in, because that matters apparently
-        otherGame.tweens.add({ // fade out current music
+    this.playPopup = function(success) {
+        this.game.tweens.add({ // fade out current music
             delay: 0,
             targets: this.music,
             volume: 0,
             duration: 400
           })
         this.popupSounds[success ? 0 : 1].play()
-        otherGame.tweens.add({  // fade music back in
+        this.game.tweens.add({  // fade music back in
             delay: 3150,
             targets: this.music,
             volume: 1,

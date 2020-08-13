@@ -60,7 +60,7 @@ function Plane(game, coords, dir) {
         if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH) &&
             this.game.world.getTile(addArray(this.coords, this.dirVector))[0] == "R") {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
-            audio.playPopup(true, this.game)
+            audio.playPopup(true)
             this.height -= 0.001 // uhh, well, i mean
         }
         if (this.height <= 0 && !this.finished) {
@@ -76,7 +76,7 @@ function Plane(game, coords, dir) {
         if (!this.escaped && (
             this.coords[0] < 0 && this.dir == 1 || this.coords[0] > this.game.world.tiles.length && this.dir == 5 || 
             this.coords[1] < 0 && this.dir == 7 || this.coords[1] > this.game.world.tiles[0].length && this.dir == 3)) {
-                audio.playPopup(false, this.game)
+                audio.playPopup(false)
                 this.game.ui.startPopupAnimation(false)
                 this.toggleShadow()
                 this.escaped = true;

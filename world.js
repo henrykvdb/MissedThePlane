@@ -1,4 +1,4 @@
-HIGHER_TILES = ["M", "Q"]
+HIGHER_TILES = ["M", "Q", "4", "5", "6"]
 
 function World(game, tiles) {
 

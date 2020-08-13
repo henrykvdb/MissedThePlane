@@ -27,7 +27,10 @@ class LoadingScene extends Phaser.Scene {
         // for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
         for (var i = 0; i < 4; i++) this.load.image('Q' + i, 'assets/tiles/watermountain' + i + '.png')
         for (var i = 0; i < 10; i++) this.load.image('R' + i, 'assets/tiles/strip' + i + '.png')
-        for (var i = 0; i < 3; i++) this.load.image(i.toString(), 'assets/tiles/wallhalf' + i + '.png')
+        for (var i = 0; i < 4; i++) this.load.image(i.toString(), 'assets/tiles/wallhalf' + i + '.png')
+        this.load.image('4', 'assets/tiles/clockdrawer.png')
+        this.load.image('5', 'assets/tiles/bed0.png')
+        this.load.image('6', 'assets/tiles/bed1.png')
         this.load.image('P', 'assets/tiles/plank.png')
         this.load.image('W', 'assets/tiles/water.png')
         this.load.image('B0', 'assets/tiles/button0.png')
@@ -61,7 +64,8 @@ class LoadingScene extends Phaser.Scene {
         audio = new Audio(game.scene)
         game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
-            game.scene.scene.start('GameScene', { levelIndex: 10 - 1 });
+            game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+            game.scene.scene.launch('GameScene', { levelIndex: 0 });
             audio.start()
         })
         game.scene.add.text(500, 30, '[Press space to start]', { fill: '#a92a17', fontSize: 30, fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)

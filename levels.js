@@ -1,11 +1,23 @@
-const ALL_LEVELS = [{
+const ALL_LEVELS = [
+    {
+        tiles: [ // Level 0 - home!
+            ['1', '2', '3', '2'],
+            ['0', 'P', 'P', 'P'],
+            ['4', 'P', 'P', 'P'],
+            ['5', '6', 'P', 'P'],
+        ],
+        pilot: { coords: [2.7, 1.3], dir: 1 },
+        plane: { coords: [3.5, 5.5], dir: 1 },
+        difficulty: '0'
+    },
+    {
     tiles: [ // level 1 - Explain plane path
         ['M', 'G', 'G', 'G'],
         ['G', 'G', 'G', 'M'],
         ['E', 'R', 'R', 'G'],
         ['G', 'G', 'M', 'G']
     ],
-    pilot: { coords: [0.5, 1.5], dir: 5 },
+    pilot: { coords: [3.5, 1.5], dir: 1 },
     plane: { coords: [11.5, 0.5], dir: 1 },
     difficulty: 0
 },
@@ -121,15 +133,4 @@ const ALL_LEVELS = [{
     pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },
     plane: { coords: [1.5, -0.5], dir: 3 },
     difficulty: '4'
-},
-{
-    tiles: [
-        ['1', '2', 'P', '2'],
-        ['0', 'P', 'P', 'P'],
-        ['0', 'P', 'P', 'P'],
-        ['0', 'P', 'P', 'P'],
-    ],
-    pilot: { coords: [0.5, 0.5], dir: 3 },
-    plane: { coords: [7.5, 1.5], dir: 1 },
-    difficulty: 'todo'//TODO
-}]
+},]

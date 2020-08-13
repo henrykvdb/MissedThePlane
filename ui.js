@@ -59,6 +59,17 @@ function UI(gameScene) {
     this.showLevelText = function(levelIndex) {
         var margin = 15; var shiftY = 40; var startY = 420;
         if (levelIndex == 0) {
+            startY = 460
+            shiftY = 44
+            gameScene.add.text(margin, startY + 0 * shiftY, 'Oh no! You').setColor("0").setFontSize(28).setDepth(100)
+            gameScene.add.text(margin, startY + 1 * shiftY, 'missed the plane.').setColor("0").setFontSize(28).setDepth(100);
+            gameScene.add.text(margin, startY + 2 * shiftY, "...and you're the pilot!", {fontStyle: "Bold"}).setColor("0").setFontSize(28).setDepth(100)
+
+            gameScene.add.text(SIZE_X - margin, startY + 0 * shiftY, 'Autopilot keeps').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin, startY + 1 * shiftY, 'it in the air, but').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+            gameScene.add.text(SIZE_X - margin, startY + 2 * shiftY, 'you need to help it!').setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
+        }
+        if (levelIndex == 1) {
             gameScene.add.text(margin, startY + 0 * shiftY, 'Autopilot').setColor("0").setFontSize(28).setDepth(100)
             gameScene.add.text(margin, startY + 1 * shiftY, 'turns right', {fontStyle: "bold"}).setColor("0").setFontSize(28).setDepth(100);
             gameScene.add.text(margin, startY + 2 * shiftY, 'before a mountain').setColor("0").setFontSize(28).setDepth(100)
@@ -69,7 +80,7 @@ function UI(gameScene) {
             gameScene.add.text(SIZE_X - margin, startY + 2 * shiftY, 'landing strip!', {fontStyle: "Bold"}).setColor("0").setFontSize(28).setDepth(100).setOrigin(1, 0)
         }
 
-        if (levelIndex == 1) {
+        if (levelIndex == 2) {
             gameScene.add.text(margin, startY + 0 * shiftY, 'Buttons', {fontStyle: "bold"}).setColor("0").setFontSize(28).setDepth(100)
             gameScene.add.sprite(margin + 140, startY, 'B0').setDepth(100).setScale(0.1)
             gameScene.add.text(margin, startY + 1 * shiftY, 'toggle adjacent').setColor("0").setFontSize(28).setDepth(100);
@@ -84,5 +95,6 @@ function UI(gameScene) {
     }
 
     // Add level text
-    gameScene.add.text(10, 10, 'Level ' + (gameScene.levelIndex + 1) + "/" + ALL_LEVELS.length).setColor("0").setFontSize(50).setDepth(100)
+    if (gameScene.levelIndex == 0) gameScene.add.text(10, 10, 'Home').setColor("0").setFontSize(50).setDepth(100)
+    else gameScene.add.text(10, 10, 'Level ' + gameScene.levelIndex + "/" + (ALL_LEVELS.length - 1)).setColor("0").setFontSize(50).setDepth(100)
 }
