@@ -21,6 +21,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png');
         this.load.image('level_complete', 'assets/menu/level_complete.png');
         this.load.image('level_failed', 'assets/menu/level_failed.png');
+        this.load.image('background', 'assets/menu/background.png')
 
         // Load terain tile assets
         for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
@@ -44,7 +45,6 @@ class LoadingScene extends Phaser.Scene {
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');
         this.load.multiatlas('mountain', 'assets/tiles/mountain.json', 'assets/tiles/');
-        //for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) this.load.image('mountain' + i + j, 'assets/tiles/mountain/mountain' + i + j + '.png')
         for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
         this.load.image('shadow', 'assets/entities/shadow.png')
 
