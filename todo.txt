@@ -9,6 +9,7 @@ Should do
 - Ads
 - Remove ads in-app purchase
 - Level editor share/import
+- Markus credit
 
 Nice to have
 - [SPACE TO START] splash screen tween

@@ -6,22 +6,36 @@
 </style>
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="icon" href="assets/menu/favicon.ico" type="image/x-icon" />
-    <script src="phaser.min.js"></script>
-    <script src="pilot.js"></script>
-    <script src="plane.js"></script>
-    <script src="world.js"></script>
-    <script src="levels.js"></script>
-    <script src="ui.js"></script>
-    <script src="audio.js"></script>
-    <script src="sceneGame.js"></script>
-    <script src="sceneLevelSelect.js"></script>
-    <script src="sceneLoading.js"></script>
-    <script src="scenePreLoading.js"></script>
-    <script src="main.js"></script>
+    <script src="assets/phaser.min.js"></script>
+    <script src="scripts/data/levels.js"></script>
+    <script src="scripts/objects/pilot.js"></script>
+    <script src="scripts/objects/plane.js"></script>
+    <script src="scripts/objects/world.js"></script>
+    <script src="scripts/objects/audio.js"></script>
+    <script src="scripts/objects/ui.js"></script>
+    <script src="scripts/scenes/game.js"></script>
+    <script src="scripts/scenes/levelselect.js"></script>
+    <script src="scripts/scenes/loading.js"></script>
+    <script src="scripts/scenes/preloading.js"></script>
 </head>
+
 <body>
-    <script></script>
+    <script>
+        const SIZE_X = 1000
+        const SIZE_Y = 600
+
+        var config = {
+            type: Phaser.AUTO,
+            width: SIZE_X,
+            height: SIZE_Y,
+            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene]
+        }
+
+        var game = new Phaser.Game(config)
+    </script>
 </body>
+
 </html>
