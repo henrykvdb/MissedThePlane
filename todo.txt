@@ -1,15 +1,6 @@
 Should do
-    - Get juicy splash screen and thumbnails
-
-Nice to have
-- [SPACE TO START] splash screen tween
-- cutscenes/story
-- plane starts landing earlier
-- landed plane collision / z sort fix
-- water animations
-- sine wave through level (or make level go up and down)
-
-Android
+- fix door tile align in lvl0
+- Trigger level complete at same time as victory sound
 - Relative positioning (scaling)
 - Tap movement (replaces arrow keys)
 - Trigger button (replaces SPACE)
@@ -18,3 +9,11 @@ Android
 - Ads
 - Remove ads in-app purchase
 - Level editor share/import
+
+Nice to have
+- [SPACE TO START] splash screen tween
+- cutscenes/story
+- plane starts landing earlier
+- landed plane collision / z sort fix
+- water animations
+- sine wave through level (or make level go up and down)
