@@ -1,16 +1,16 @@
 {
 	"textures": [
 		{
-			"image": "pilot-0.png",
+			"image": "pilot.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 2000,
-				"h": 1800
+				"w": 1800,
+				"h": 2029
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "pilot0.png",
+					"filename": "pilot1L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -18,20 +18,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 40,
+						"y": 117,
+						"w": 309,
+						"h": 520
 					},
 					"frame": {
-						"x": 0,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 1,
+						"y": 1,
+						"w": 309,
+						"h": 520
 					}
 				},
 				{
-					"filename": "pilot0L.png",
+					"filename": "pilot7R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -39,20 +39,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 51,
+						"y": 117,
+						"w": 309,
+						"h": 520
 					},
 					"frame": {
-						"x": 0,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 1,
+						"y": 523,
+						"w": 309,
+						"h": 520
 					}
 				},
 				{
-					"filename": "pilot0R.png",
+					"filename": "pilot3R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -60,20 +60,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 40,
+						"y": 124,
+						"w": 309,
+						"h": 513
 					},
 					"frame": {
-						"x": 0,
-						"y": 1200,
-						"w": 400,
-						"h": 600
+						"x": 1,
+						"y": 1045,
+						"w": 309,
+						"h": 513
 					}
 				},
 				{
-					"filename": "pilot1.png",
+					"filename": "pilot5L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -81,20 +81,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 51,
+						"y": 124,
+						"w": 309,
+						"h": 513
 					},
 					"frame": {
-						"x": 400,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 312,
+						"y": 1,
+						"w": 309,
+						"h": 513
 					}
 				},
 				{
-					"filename": "pilot1L.png",
+					"filename": "pilot1",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -102,20 +102,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 40,
+						"y": 117,
+						"w": 309,
+						"h": 507
 					},
 					"frame": {
-						"x": 400,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 312,
+						"y": 516,
+						"w": 309,
+						"h": 507
 					}
 				},
 				{
-					"filename": "pilot1R.png",
+					"filename": "pilot7",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -123,20 +123,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 51,
+						"y": 117,
+						"w": 309,
+						"h": 507
 					},
 					"frame": {
-						"x": 400,
-						"y": 1200,
-						"w": 400,
-						"h": 600
+						"x": 312,
+						"y": 1025,
+						"w": 309,
+						"h": 507
 					}
 				},
 				{
-					"filename": "pilot2.png",
+					"filename": "pilot1R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -144,20 +144,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 40,
+						"y": 117,
+						"w": 309,
+						"h": 494
 					},
 					"frame": {
-						"x": 800,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 312,
+						"y": 1534,
+						"w": 309,
+						"h": 494
 					}
 				},
 				{
-					"filename": "pilot2L.png",
+					"filename": "pilot4",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -165,20 +165,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 54,
+						"y": 151,
+						"w": 292,
+						"h": 456
 					},
 					"frame": {
-						"x": 1200,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 1,
+						"y": 1560,
+						"w": 292,
+						"h": 456
 					}
 				},
 				{
-					"filename": "pilot2R.png",
+					"filename": "pilot3",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -186,20 +186,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 40,
+						"y": 124,
+						"w": 309,
+						"h": 500
 					},
 					"frame": {
-						"x": 1600,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 623,
+						"y": 1,
+						"w": 309,
+						"h": 500
 					}
 				},
 				{
-					"filename": "pilot3.png",
+					"filename": "pilot5",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -207,20 +207,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 51,
+						"y": 124,
+						"w": 309,
+						"h": 500
 					},
 					"frame": {
-						"x": 800,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 623,
+						"y": 503,
+						"w": 309,
+						"h": 500
 					}
 				},
 				{
-					"filename": "pilot3L.png",
+					"filename": "pilot7L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -228,20 +228,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 51,
+						"y": 117,
+						"w": 309,
+						"h": 494
 					},
 					"frame": {
-						"x": 800,
-						"y": 1200,
-						"w": 400,
-						"h": 600
+						"x": 623,
+						"y": 1005,
+						"w": 309,
+						"h": 494
 					}
 				},
 				{
-					"filename": "pilot3R.png",
+					"filename": "pilot3L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -249,20 +249,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 40,
+						"y": 124,
+						"w": 309,
+						"h": 487
 					},
 					"frame": {
-						"x": 1200,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 623,
+						"y": 1501,
+						"w": 309,
+						"h": 487
 					}
 				},
 				{
-					"filename": "pilot4.png",
+					"filename": "pilot2",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -270,20 +270,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 86,
+						"y": 128,
+						"w": 276,
+						"h": 497
 					},
 					"frame": {
-						"x": 1600,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 934,
+						"y": 1,
+						"w": 276,
+						"h": 497
 					}
 				},
 				{
-					"filename": "pilot4L.png",
+					"filename": "pilot2L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -291,20 +291,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 86,
+						"y": 128,
+						"w": 276,
+						"h": 497
 					},
 					"frame": {
-						"x": 1200,
-						"y": 1200,
-						"w": 400,
-						"h": 600
+						"x": 934,
+						"y": 500,
+						"w": 276,
+						"h": 497
 					}
 				},
 				{
-					"filename": "pilot4R.png",
+					"filename": "pilot5R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -312,52 +312,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 51,
+						"y": 124,
+						"w": 309,
+						"h": 487
 					},
 					"frame": {
-						"x": 1600,
-						"y": 1200,
-						"w": 400,
-						"h": 600
-					}
-				}
-			]
-		},
-		{
-			"image": "pilot-1.png",
-			"format": "RGBA8888",
-			"size": {
-				"w": 2000,
-				"h": 1200
-			},
-			"scale": 1,
-			"frames": [
-				{
-					"filename": "pilot5.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 400,
-						"h": 800
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
-					},
-					"frame": {
-						"x": 0,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 934,
+						"y": 999,
+						"w": 309,
+						"h": 487
 					}
 				},
 				{
-					"filename": "pilot5L.png",
+					"filename": "pilot2R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -365,20 +333,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 86,
+						"y": 128,
+						"w": 276,
+						"h": 497
 					},
 					"frame": {
-						"x": 400,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 1212,
+						"y": 1,
+						"w": 276,
+						"h": 497
 					}
 				},
 				{
-					"filename": "pilot5R.png",
+					"filename": "pilot0L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -386,20 +354,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 54,
+						"y": 138,
+						"w": 292,
+						"h": 487
 					},
 					"frame": {
-						"x": 800,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 1212,
+						"y": 500,
+						"w": 292,
+						"h": 487
 					}
 				},
 				{
-					"filename": "pilot6.png",
+					"filename": "pilot0R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -407,20 +375,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 54,
+						"y": 138,
+						"w": 292,
+						"h": 487
 					},
 					"frame": {
-						"x": 1200,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 1490,
+						"y": 1,
+						"w": 292,
+						"h": 487
 					}
 				},
 				{
-					"filename": "pilot6L.png",
+					"filename": "pilot6",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -428,20 +396,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 38,
+						"y": 128,
+						"w": 276,
+						"h": 497
 					},
 					"frame": {
-						"x": 1600,
-						"y": 0,
-						"w": 400,
-						"h": 600
+						"x": 1245,
+						"y": 989,
+						"w": 276,
+						"h": 497
 					}
 				},
 				{
-					"filename": "pilot6R.png",
+					"filename": "pilot4L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -449,20 +417,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 54,
+						"y": 151,
+						"w": 292,
+						"h": 474
 					},
 					"frame": {
-						"x": 0,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 1506,
+						"y": 490,
+						"w": 292,
+						"h": 474
 					}
 				},
 				{
-					"filename": "pilot7.png",
+					"filename": "pilot6L",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -470,20 +438,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 38,
+						"y": 128,
+						"w": 276,
+						"h": 497
 					},
 					"frame": {
-						"x": 400,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 1523,
+						"y": 966,
+						"w": 276,
+						"h": 497
 					}
 				},
 				{
-					"filename": "pilot7L.png",
+					"filename": "pilot6R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -491,20 +459,20 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 38,
+						"y": 128,
+						"w": 276,
+						"h": 497
 					},
 					"frame": {
-						"x": 800,
-						"y": 600,
-						"w": 400,
-						"h": 600
+						"x": 1523,
+						"y": 1465,
+						"w": 276,
+						"h": 497
 					}
 				},
 				{
-					"filename": "pilot7R.png",
+					"filename": "pilot4R",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -512,16 +480,37 @@
 						"h": 800
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 100,
-						"w": 400,
-						"h": 600
+						"x": 54,
+						"y": 151,
+						"w": 292,
+						"h": 474
 					},
 					"frame": {
-						"x": 1200,
-						"y": 600,
+						"x": 934,
+						"y": 1488,
+						"w": 292,
+						"h": 474
+					}
+				},
+				{
+					"filename": "pilot0",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
 						"w": 400,
-						"h": 600
+						"h": 800
+					},
+					"spriteSourceSize": {
+						"x": 54,
+						"y": 138,
+						"w": 292,
+						"h": 469
+					},
+					"frame": {
+						"x": 1228,
+						"y": 1488,
+						"w": 292,
+						"h": 469
 					}
 				}
 			]
@@ -530,6 +519,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:5cdb8d5758a18ac8394d83c1d2c13573:cb581747371782492424c885439f3cc8:6e551c5acd45bf345c61df42be042b1e$"
+		"smartupdate": "$TexturePacker:SmartUpdate:86e973cd177aa98c2b93e3cf2caed8bc:436f7908411e34fe7a36d1ebf50a0524:ab31e529f512bb3dd8256a75e12de68d$"
 	}
 }
