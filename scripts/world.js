@@ -1,4 +1,3 @@
-HIGHER_TILES = [TILES.MOUNTAIN, TILES.MOUNTAIN_WATER, "4", "5", "6"]
 const TILE_SHIFT_X = 147
 const TILE_SHIFT_Y = 85
 
@@ -102,7 +101,7 @@ class World {
         var sprite = this.game.add.sprite(coords[0], coords[1], asset)
         sprite.setScale(this.game.tileScale)
         sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
-        sprite.setDepth(x + y + (HIGHER_TILES.includes(tileTypeEnum) ? 1 : 0))
+        sprite.setDepth(x + y + tileTypeEnum.z_index)
         return sprite
     }
 

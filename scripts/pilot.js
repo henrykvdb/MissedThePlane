@@ -1,6 +1,5 @@
 const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
-//const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A', '4', '5', '6']
 
 class Pilot {
     constructor(game, coords, dir, speedMod) {
@@ -93,7 +92,7 @@ class Pilot {
     }
 
     checkDoor() {
-        if (this.foundDoor || !(this.game.world.getTile(this.coords) == "3" && this.coords[0] < 0.3)) return
+        if (this.foundDoor || !(this.game.world.getTile(this.coords) == TILES.MISC_3 && this.coords[0] < 0.3)) return
         this.foundDoor = true
         this.game.ui.btnRestart.visible = false
         this.game.ui.startPopupAnimation(true)

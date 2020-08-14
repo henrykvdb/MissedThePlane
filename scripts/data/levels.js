@@ -1,5 +1,5 @@
 const ALL_LEVELS = [
-    /*{
+    {
         tiles: convertFromOld([ // Level 0 - home!
             ['1', '2', '3', '2'],
             ['0', 'P', 'P', 'P'],
@@ -9,7 +9,7 @@ const ALL_LEVELS = [
         pilot: { coords: [2.7, 1.3], dir: 1 },
         plane: { coords: [3.5, 5.5], dir: 1 },
         difficulty: 'home'
-    },*/
+    },
     {
     tiles: convertFromOld([ // level 1 - Explain plane path
         ['M', 'G', 'G', 'G'],
@@ -139,12 +139,20 @@ const ALL_LEVELS = [
 function convertFromOld(tiles) { //TODO REPLACE BY LEVEL EDITOR
     var conversionMap = {
         'G': TILES.GRASS,
+        'P': TILES.PLANK,
         'M': TILES.MOUNTAIN,
         'Q': TILES.MOUNTAIN_WATER,
         'W': TILES.WATER,
         'B': TILES.BUTTON,
         'R': TILES.RUNWAY,
-        'E': TILES.RUNWAY_END
+        'E': TILES.RUNWAY_END,
+        '0': TILES.MISC_0,
+        '1': TILES.MISC_1,
+        '2': TILES.MISC_2,
+        '3': TILES.MISC_3,
+        '4': TILES.MISC_4,
+        '5': TILES.MISC_5,
+        '6': TILES.MISC_6
     }
 
     for (let x = 0; x < tiles.length; x++) {

@@ -34,10 +34,10 @@ class LoadingScene extends Phaser.Scene {
         for (var i = 0; i < 2; i++) this.load.image('stripmiddle' + i, 'assets/tiles/stripmiddle' + i + '.png')
 
         //Special
-        for (var i = 0; i < 4; i++) this.load.image(i.toString(), 'assets/tiles/wallhalf' + i + '.png')
-        this.load.image('4', 'assets/tiles/clockdrawer.png')
-        this.load.image('5', 'assets/tiles/bed0.png')
-        this.load.image('6', 'assets/tiles/bed1.png')
+        for (var i = 0; i < 4; i++) this.load.image('misc' + i, 'assets/tiles/wallhalf' + i + '.png')
+        this.load.image('misc4', 'assets/tiles/clockdrawer.png')
+        this.load.image('misc5', 'assets/tiles/bed0.png')
+        this.load.image('misc6', 'assets/tiles/bed1.png')
 
         this.load.image('plank', 'assets/tiles/plank.png')
         this.load.image('water', 'assets/tiles/water.png')
