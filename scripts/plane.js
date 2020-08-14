@@ -2,8 +2,6 @@ const PLANE_MOVE_SPEED = 0.001 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
 const PLANE_LANDING_LENGTH = 1.7 // [tiles] // TODO eventually: base this on strip length (although maybe even better to simply drive over ground after tile 2)
 const PLANE_HEIGHT = 120 // [px]
-const PLANE_IMPASSABLE_TILES = ['M', 'Q']
-const PLANE_FINISH = ['R0', 'R1', 'R2', 'R3']
 
 class Plane {
     constructor(game, coords, dir) {
@@ -67,8 +65,8 @@ class Plane {
         this.coords[0] += PLANE_MOVE_SPEED * dt * this.dirVector[0]
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
-        if (this.dir % 2 == 0 || (this.game.world.collidesWith(this.coords, 0.5, PLANE_IMPASSABLE_TILES) &&  //Check half a tile in advance so plane stays centered
-            PLANE_IMPASSABLE_TILES.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
+        if (this.dir % 2 == 0 || (this.game.world.collidesWith(this.coords, 0.5, TILES_IMPASSABLE_PLANE) &&  //Check half a tile in advance so plane stays centered
+        TILES_IMPASSABLE_PLANE.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
             this.coords = originalCoords
             this.waitTime -= dt
 
@@ -91,13 +89,20 @@ class Plane {
     }
 
     handleLanding(dt) {
-        if (this.height != PLANE_HEIGHT && this.height > 0) this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
-        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, PLANE_FINISH) &&
-            this.game.world.getTile(addArray(this.coords, this.dirVector))[0] == "R") {  // check if the next tile is a runway as well
+        // Continue landing
+        if (this.height != PLANE_HEIGHT && this.height > 0){
+            this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
+        }
+
+        // Check for landing start
+        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, [TILES.RUNWAY_START]) &&
+            this.game.world.getTile(addArray(this.coords, this.dirVector)) == TILES.RUNWAY) {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
             audio.playPopup(true)
             this.height -= 0.001 // uhh, well, i mean
         }
+
+        // Check landing finish
         if (this.height <= 0 && !this.finished) {
             this.finished = true
             this.game.ui.btnRestart.visible = false
@@ -117,7 +122,7 @@ class Plane {
             this.escaped = true
         }
 
-        if (this.escaped && this.game.world.getTile(this.coords) != "A") {
+        if (this.escaped && this.game.world.getTile(this.coords) != TILES.AIR) {
             this.toggleShadow()
             this.escaped = false
         }

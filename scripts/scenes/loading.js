@@ -1,4 +1,4 @@
-var assets
+//var assets //TODO REMOVE
 var audio
 class LoadingScene extends Phaser.Scene {
 
@@ -25,23 +25,25 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('background', 'assets/menu/background.png')
 
         // Load terain tile assets
-        for (var i = 0; i < 7; i++) this.load.image('G' + i, 'assets/tiles/grass' + i + '.png')
+        for (var i = 0; i < 7; i++) this.load.image('grass' + i, 'assets/tiles/grass' + i + '.png')
         // for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
-        for (var i = 0; i < 4; i++) this.load.image('Q' + i, 'assets/tiles/watermountain' + i + '.png')
-        for (var i = 0; i < 10; i++) this.load.image('R' + i, 'assets/tiles/strip' + i + '.png')
+        for (var i = 0; i < 4; i++) this.load.image('mountainwater' + i, 'assets/tiles/watermountain' + i + '.png')
+
+        // Load runway
+        for (var i = 0; i < 4; i++) this.load.image('stripend' + i, 'assets/tiles/stripend' + i + '.png')
+        for (var i = 0; i < 4; i++) this.load.image('stripstart' + i, 'assets/tiles/stripstart' + i + '.png')
+        for (var i = 0; i < 2; i++) this.load.image('stripmiddle' + i, 'assets/tiles/stripmiddle' + i + '.png')
+
+        //Special
         for (var i = 0; i < 4; i++) this.load.image(i.toString(), 'assets/tiles/wallhalf' + i + '.png')
         this.load.image('4', 'assets/tiles/clockdrawer.png')
         this.load.image('5', 'assets/tiles/bed0.png')
         this.load.image('6', 'assets/tiles/bed1.png')
-        this.load.image('P', 'assets/tiles/plank.png')
-        this.load.image('W', 'assets/tiles/water.png')
-        this.load.image('B0', 'assets/tiles/button0.png')
-        this.load.image('B1', 'assets/tiles/button1.png')
-        assets = {
-            'G': Array.from(new Array(7), (v, i) => "G" + i),
-            'M': Array.from(new Array(4), (v, i) => "M" + i),
-            'Q': Array.from(new Array(4), (v, i) => "Q" + i),
-        }
+
+        this.load.image('plank', 'assets/tiles/plank.png')
+        this.load.image('water', 'assets/tiles/water.png')
+        this.load.image('button0', 'assets/tiles/button0.png')
+        this.load.image('button1', 'assets/tiles/button1.png')
 
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');

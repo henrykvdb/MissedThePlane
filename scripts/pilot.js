@@ -1,6 +1,6 @@
 const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
-const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A', '4', '5', '6']
+//const IMPASSABLE_TILES = ['W', 'M', 'Q', 'A', '4', '5', '6']
 
 class Pilot {
     constructor(game, coords, dir, speedMod) {
@@ -70,12 +70,12 @@ class Pilot {
 
         // Move x
         this.coords[0] += PILOT_MOVE_SPEED * dt * this.speedMod * dirVector[0] / length
-        if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords.slice()
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) this.coords = originalCoords.slice()
         else originalCoords = this.coords.slice()
 
         // Move y
         this.coords[1] += PILOT_MOVE_SPEED * dt * this.speedMod * dirVector[1] / length
-        if (this.game.world.collidesWith(this.coords, TILE_EDGE, IMPASSABLE_TILES)) this.coords = originalCoords
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) this.coords = originalCoords
 
         // Update shadow position
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
@@ -102,7 +102,7 @@ class Pilot {
     }
 
     interact() {
-        if (this.game.world.getTile(this.coords) != "B") return
+        if (this.game.world.getTile(this.coords) != TILES.BUTTON) return
         this.game.world.triggerButton(this.coords)
     }
 }
