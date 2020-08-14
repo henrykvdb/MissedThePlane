@@ -1,4 +1,3 @@
-//var assets //TODO REMOVE
 var audio
 class LoadingScene extends Phaser.Scene {
 
@@ -26,8 +25,8 @@ class LoadingScene extends Phaser.Scene {
 
         // Load terain tile assets
         for (var i = 0; i < 7; i++) this.load.image('grass' + i, 'assets/tiles/grass' + i + '.png')
-        // for (var i = 0; i < 4; i++) this.load.image('M' + i, 'assets/tiles/mountain' + i + '.png')
-        for (var i = 0; i < 4; i++) this.load.image('mountainwater' + i, 'assets/tiles/watermountain' + i + '.png')
+        for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) this.load.image('mountain' + i + j, 'assets/tiles/mountain' + i + j + '.png')
+        for (var i = 0; i < 4; i++) this.load.image('mountainwater' + i, 'assets/tiles/mountainwater' + i + '.png')
 
         // Load runway
         for (var i = 0; i < 4; i++) this.load.image('stripend' + i, 'assets/tiles/stripend' + i + '.png')
@@ -47,17 +46,16 @@ class LoadingScene extends Phaser.Scene {
 
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');
-        this.load.multiatlas('mountain', 'assets/tiles/mountain.json', 'assets/tiles/');
         for (var i = 0; i < 8; i++) this.load.image('plane' + i, 'assets/entities/plane' + i + '.png')
         this.load.image('shadow', 'assets/entities/shadow.png')
 
         // Load audio
-        this.load.audio('music', ['assets/audio/music.ogg','assets/audio/music.aac'])
-        this.load.audio('levelFailed', ['assets/audio/levelFailed.ogg','assets/audio/levelFailed.aac'])
-        this.load.audio('levelWon', ['assets/audio/levelWon.ogg','assets/audio/levelWon.aac'])
-        this.load.audio('buttonUp', ['assets/audio/buttonUp.ogg','assets/audio/buttonUp.aac'])
-        this.load.audio('buttonDown', ['assets/audio/buttonDown.ogg','assets/audio/buttonDown.aac'])
-        this.load.audio('buttonBlocked', ['assets/audio/buttonBlocked.ogg','assets/audio/buttonBlocked.aac'])
+        this.load.audio('music', ['assets/audio/music.ogg', 'assets/audio/music.aac'])
+        this.load.audio('levelFailed', ['assets/audio/levelFailed.ogg', 'assets/audio/levelFailed.aac'])
+        this.load.audio('levelWon', ['assets/audio/levelWon.ogg', 'assets/audio/levelWon.aac'])
+        this.load.audio('buttonUp', ['assets/audio/buttonUp.ogg', 'assets/audio/buttonUp.aac'])
+        this.load.audio('buttonDown', ['assets/audio/buttonDown.ogg', 'assets/audio/buttonDown.aac'])
+        this.load.audio('buttonBlocked', ['assets/audio/buttonBlocked.ogg', 'assets/audio/buttonBlocked.aac'])
 
         // On complete load listener
         this.load.on('complete', this.complete, { scene: this.scene });

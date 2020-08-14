@@ -156,5 +156,3 @@ function convertFromOld(tiles) { //TODO REPLACE BY LEVEL EDITOR
 
     return tiles
 }
-
-console.log(ALL_LEVELS)

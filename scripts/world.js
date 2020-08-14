@@ -20,14 +20,14 @@ class World {
         for (var i = 0; i < 4; i++) { // loop through each viewAngle
             this.game.anims.create({
                 key: 'shrink' + i,
-                frames: [{ key: 'mountain', frame: 'mountain0' + i }, { key: 'mountain', frame: 'mountain1' + i }, { key: 'mountain', frame: 'mountain2' + i }, { key: 'mountain', frame: 'mountain3' + i }],
+                frames: [{ key: 'mountain0' + i }, { key: 'mountain1' + i }, { key: 'mountain2' + i }, { key: 'mountain3' + i }],
                 frameRate: 18,
                 hideOnComplete: true,
                 repeat: 0
             })
             this.game.anims.create({
                 key: 'grow' + i,
-                frames: [{ key: 'mountain', frame: 'mountain3' + i }, { key: 'mountain', frame: 'mountain2' + i }, { key: 'mountain', frame: 'mountain1' + i }, { key: 'mountain', frame: 'mountain0' + i }],
+                frames: [{ key: 'mountain3' + i }, { key: 'mountain2' + i }, { key: 'mountain1' + i }, { key: 'mountain0' + i }],
                 frameRate: 18,
                 repeat: 0
             })
@@ -90,28 +90,20 @@ class World {
         if (!Object.values(TILES).includes(tileTypeEnum)) console.log(tileTypeEnum, " is not registered in TILES")
 
         // Choose asset from the tile's asset dictionary
-        console.log(tileTypeEnum)
         var asset
-        if(assetIndex!=undefined) asset = tileTypeEnum.assets[assetIndex]
+        if (assetIndex != undefined) asset = tileTypeEnum.assets[assetIndex]
         else if (tileTypeEnum == TILES.RUNWAY_START) asset = tileTypeEnum.assets[this.runwayIndices[0]]
-        else if (tileTypeEnum == TILES.RUNWAY)  asset = tileTypeEnum.assets[this.runwayIndices[1]]
+        else if (tileTypeEnum == TILES.RUNWAY) asset = tileTypeEnum.assets[this.runwayIndices[1]]
         else if (tileTypeEnum == TILES.RUNWAY_END) asset = tileTypeEnum.assets[this.runwayIndices[2]]
         else asset = Phaser.Utils.Array.GetRandom(tileTypeEnum.assets)
 
+        //Create the sprite
         var coords = getScreenCoords(this.game, x, y)
-        if (tileTypeEnum == TILES.MOUNTAIN) var sprite = this.createMountainSprite(coords) //TODO REMOVE!!! see below
-        else var sprite = this.game.add.sprite(coords[0], coords[1], asset)
+        var sprite = this.game.add.sprite(coords[0], coords[1], asset)
         sprite.setScale(this.game.tileScale)
         sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
         sprite.setDepth(x + y + (HIGHER_TILES.includes(tileTypeEnum) ? 1 : 0))
         return sprite
-    }
-
-    createMountainSprite(coords) { //TODO move all tiles to "entities" spreadsheet to compress & remove this special case
-        var viewAngle = Math.floor(Math.random() * 3)
-        var mountainSprite = this.game.add.sprite(coords[0], coords[1], 'mountain', 'mountain0' + viewAngle)
-        mountainSprite.viewAngle = viewAngle
-        return mountainSprite
     }
 
     collidesWith(coords, edge, collisionList) { // flying <=> plane, !flying <=> pilot
@@ -173,10 +165,10 @@ class World {
         neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.tiles[c[0]][c[1]])).forEach(c => {
             var sprite = this.sprites[c[0]][c[1]]
             if (this.tiles[c[0]][c[1]] == TILES.MOUNTAIN) {
-                sprite[1].anims.play('shrink' + sprite[1].viewAngle, true)
+                sprite[1].anims.play('shrink' + sprite[1].texture.key.substr(-1), true)
             } else {
                 sprite[1].visible = true
-                sprite[1].anims.play('grow' + sprite[1].viewAngle, true)
+                sprite[1].anims.play('grow' + sprite[1].texture.key.substr(-1), true)
             }
         })
         neighbours.forEach(c => { // Swap M to G and other way around in tiles and sprites

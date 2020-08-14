@@ -2,8 +2,6 @@ const TILES = {
     AIR: {
         description: 'toggles between grass/mountain',
         assets: [],
-        //toggeable: true,
-        //toggle: mountain,
         passable_pilot: false,
         passable_plane: true,
         z_index: -1
@@ -11,26 +9,20 @@ const TILES = {
     GRASS: {
         description: 'toggles between grass/mountain',
         assets: ['grass0', 'grass1', 'grass2', 'grass3', 'grass4', 'grass5', 'grass6'],
-        //toggeable: true,
-        //toggle: mountain,
         passable_pilot: true,
         passable_plane: true,
         z_index: 0
     },
     MOUNTAIN: {
         description: 'toggles between grass/mountain',
-        assets: [], // Already in spritesheet, special case...
-        //toggeable: true,
-        //toggle: mountain,
+        assets: ['mountain00', 'mountain01', 'mountain02', 'mountain03'],
         passable_pilot: false,
         passable_plane: false,
         z_index: 1
     },
     MOUNTAIN_WATER: {
         description: 'WATERMOUNTAIN //TODO',
-        assets: ['mountainwater0, mountainwater1, mountainwater2, mountainwater3'],
-        //toggeable: true,
-        //toggle: mountain,
+        assets: ['mountainwater0', 'mountainwater1', 'mountainwater2', 'mountainwater3'],
         passable_pilot: false,
         passable_plane: false,
         z_index: 1
@@ -38,8 +30,6 @@ const TILES = {
     RUNWAY_START: {
         description: 'STRIP*start //TODO',
         assets: ['stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
-        //toggeable: true,
-        //toggle: mountain,
         passable_pilot: true,
         passable_plane: true,
         z_index: 0
