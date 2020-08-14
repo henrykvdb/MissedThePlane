@@ -21,7 +21,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_level_home', 'assets/menu/button_level_home.png');
         this.load.image('level_complete', 'assets/menu/level_complete.png');
         this.load.image('level_failed', 'assets/menu/level_failed.png');
-        this.load.image('background', 'assets/menu/background.png')
+        this.load.image('pilot_tip', 'assets/menu/pilot_tip.png')
 
         // Load terain tile assets
         for (var i = 0; i < 7; i++) this.load.image('grass' + i, 'assets/tiles/grass' + i + '.png')
@@ -69,6 +69,18 @@ class LoadingScene extends Phaser.Scene {
             game.scene.scene.launch('GameScene', { levelIndex: 0 });
             audio.start()
         })
-        game.scene.add.text(500, 30, '[Press space to start]', { fill: '#a92a17', fontSize: 30, fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)
+        game.scene.add.text(getX(0.5), getY(0.05), '[Press space to start]', { fill: '#a92a17', fontSize: getXY(0.05), fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)
     }
+}
+
+function getX(ratioX){
+    return SIZE_X*ratioX
+}
+
+function getY(ratioY){
+    return SIZE_Y*ratioY
+}
+
+function getXY(ratio){
+    return MIN_XY*ratio
 }

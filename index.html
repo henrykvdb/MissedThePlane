@@ -25,13 +25,14 @@
 
 <body>
     <script>
-        const SIZE_X = 1000
-        const SIZE_Y = 600
+        const SIZE_X = window.innerWidth
+        const SIZE_Y = window.innerHeight
+        const MIN_XY = Math.min(SIZE_X,SIZE_Y)
 
         var config = {
             type: Phaser.AUTO,
-            width: SIZE_X,
-            height: SIZE_Y,
+            width: window.innerWidth,
+            height: window.innerHeight,
             scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene]
         }
 
