@@ -197,6 +197,7 @@ class World {
     }
 
     // Returns a list of coordinates which present a pilot passable path from start to finish, startCoord excluded
+    // TODO - what if end coord is impassable? do we take a tile next to it or just ignore it altogether?
     calculatePath(startCoord, endCoord) {
         startCoord = [Math.floor(startCoord[0]), Math.floor(startCoord[1])]
         console.log("Going from ", startCoord + " to " + endCoord)
@@ -231,13 +232,13 @@ class World {
             current = cameFrom[current[0] * size + current[1]]
         }
 
-        return result.reverse()
+        return result
     }
 
-    handleMouseInput(mouseX, mouseY) {
+    handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
        var endCoord = getGridCoords(this.game, mouseX, mouseY)
-       var path = this.calculatePath(this.game.pilot.coords, endCoord)
-       console.log(path)
+       var path = this.calculatePath(this.game.pilot.nextTile ? this.game.pilot.nextTile : this.game.pilot.coords, endCoord)
+       this.game.pilot.setPath(path)
     }
 }
 
