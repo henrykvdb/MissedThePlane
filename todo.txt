@@ -1,8 +1,6 @@
 Should do
 - fix door tile align in lvl0
-- Tutorial (re-add)
-- Tap movement (replaces arrow keys)
-- Trigger button (replaces SPACE)
+- Readd tutorial
 - Update tutorial controls explanation
 - Level editor
 - Ads
