@@ -31,12 +31,12 @@ class MainActivity : AppCompatActivity() {
 
         // Set up WebView
         val webView = findViewById<WebView>(R.id.game_view)
-        webView.settings.javaScriptEnabled = true;
+        webView.settings.javaScriptEnabled = true
+        webView.settings.useWideViewPort = true
+        webView.settings.loadWithOverviewMode = true
         webView.settings.allowFileAccessFromFileURLs = true
-        webView.addJavascriptInterface(JavaScriptInterface(this), "Android");
+        webView.addJavascriptInterface(JavaScriptInterface(this), "Android")
         webView.loadUrl("file:///android_asset/index.html?X=${screenSize.x}&Y=${screenSize.y}")
-        webView.settings.loadWithOverviewMode = true;
-        webView.settings.useWideViewPort = true;
     }
 
     override fun onStart() {
