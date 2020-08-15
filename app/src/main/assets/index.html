@@ -1,16 +1,10 @@
+<!DOCTYPE html>
 <style>
     * {
         margin: 0;
         padding: 0;
     }
-
-
-
-
-
-
 </style>
-<!DOCTYPE html>
 
 <head>
     <link rel="icon" href="assets/menu/favicon.ico" type="image/x-icon" />
@@ -32,11 +26,9 @@
     <script>
         document.querySelector("meta[name=viewport]").setAttribute('content', 'width=device-width, initial-scale=' + (1 / window.devicePixelRatio) + ', maximum-scale=1.0, user-scalable=0')
 
-        var params = new URL(window.location.href).searchParams
-        const SIZE_X = params.get("X") == null ? window.innerWidth : parseInt(params.get("X"))
-        const SIZE_Y = params.get("Y") == null ? window.innerHeight : parseInt(params.get("Y"))
+        const SIZE_X = window.innerWidth
+        const SIZE_Y = window.innerHeight
         const MIN_XY = Math.min(SIZE_X, SIZE_Y)
-        console.log(SIZE_X)
 
         var config = {
             type: Phaser.AUTO,

@@ -1,6 +1,6 @@
 Should do
 - fix door tile align in lvl0
-- Relative positioning (scaling)
+- Tutorial (re-add)
 - Tap movement (replaces arrow keys)
 - Trigger button (replaces SPACE)
 - Update tutorial controls explanation

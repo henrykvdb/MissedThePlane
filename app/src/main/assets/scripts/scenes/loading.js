@@ -11,16 +11,17 @@ class LoadingScene extends Phaser.Scene {
         this.add.sprite(0, 0, 'splash').setOrigin(0, 0).setDepth(100);
 
         // Load menu assets
-        this.load.image('btn_next', 'assets/menu/button_next.png');
-        this.load.image('btn_restart', 'assets/menu/button_restart.png');
-        this.load.image('btn_levels', 'assets/menu/button_levels.png');
-        this.load.image('btn_close', 'assets/menu/button_close.png');
+        this.load.image('btn_next', 'assets/menu/button_next.png')
+        this.load.image('btn_restart', 'assets/menu/button_restart.png')
+        this.load.image('btn_interact', 'assets/menu/button_interact.png')
+        this.load.image('btn_levels', 'assets/menu/button_levels.png')
+        this.load.image('btn_close', 'assets/menu/button_close.png')
         for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')
-        for (var i = 0; i < 4; i++) this.load.image('btn_volume_' + i, 'assets/menu/button_volume_' + i + '.png')
-        this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png');
-        this.load.image('btn_level_home', 'assets/menu/button_level_home.png');
-        this.load.image('level_complete', 'assets/menu/level_complete.png');
-        this.load.image('level_failed', 'assets/menu/level_failed.png');
+        //for (var i = 0; i < 4; i++) this.load.image('btn_volume_' + i, 'assets/menu/button_volume_' + i + '.png')
+        this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png')
+        this.load.image('btn_level_home', 'assets/menu/button_level_home.png')
+        this.load.image('level_complete', 'assets/menu/level_complete.png')
+        this.load.image('level_failed', 'assets/menu/level_failed.png')
         this.load.image('pilot_tip', 'assets/menu/pilot_tip.png')
 
         // Load terain tile assets
@@ -63,10 +64,10 @@ class LoadingScene extends Phaser.Scene {
 
     complete(game) {
         audio = new Audio(game.scene)
-        game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         //game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
-            game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-            game.scene.scene.launch('GameScene', { levelIndex: 0 });
+            game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+            game.scene.scene.launch('GameScene', { levelIndex: 0 })
             audio.start()
         //})
         game.scene.add.text(getX(0.5), getY(0.05), '[Press space to start]', { fill: '#a92a17', fontSize: getXY(0.05), fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)

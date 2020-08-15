@@ -23,7 +23,7 @@ class LevelSelectScene extends Phaser.Scene {
         this.add.text(X_START * 2, SIZE_Y - Y_START / 1.8, 'Skip to the next one!', { fill: '#000000', fontSize: 40*MIN_XY/600, }).setOrigin(0,0)
 
         // Close button
-        this.btnRestart = this.add.sprite(getX(0.92), getX(0.08), 'btn_close').setOrigin(0.5, 0.5).setScale(0.20*MIN_XY/600).setInteractive().setDepth(100);
+        this.btnRestart = this.add.sprite(SIZE_X-getXY(0.14), getXY(0.14), 'btn_close').setScale(0.20*MIN_XY/600).setInteractive().setDepth(100);
         this.btnRestart.on('pointerdown', function (pointer) {
             LevelSelectScene.scene.resume('GameScene');
             LevelSelectScene.scene.stop()
