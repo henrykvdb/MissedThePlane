@@ -28,6 +28,9 @@ class GameScene extends Phaser.Scene {
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
         
         this.ui.showLevelText(this.levelIndex)
+
+        var game = this;
+        this.input.on('pointerdown', () => getGridCoords(game, game.input.mousePointer.x, game.input.mousePointer.y));
     }
 
     //Handle input

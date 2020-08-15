@@ -170,11 +170,8 @@ class World {
                 sprite[1].anims.play('grow' + sprite[1].texture.key.substr(-1), true)
             }
         })
-        neighbours.forEach(c => { // Swap M to G and other way around in tiles and sprites
-            if ([TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))) {
+        neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))).forEach(c => { // Swap M to G and other way around in tiles
                 this.tiles[c[0]][c[1]] = this.getTile(c) == TILES.MOUNTAIN ? TILES.GRASS : TILES.MOUNTAIN
-                this.sprites[c[0]][c[1]].tileType = this.sprites[c[0]][c[1]].tileType == TILES.MOUNTAIN ? TILES.GRASS : TILES.MOUNTAIN
-            }
         })
     }
 }
@@ -184,6 +181,16 @@ function getScreenCoords(game, levelX, levelY) {
     var posX = SIZE_X / 2 + game.shiftX * (levelY - levelX)
     var posY = SIZE_Y / 2 + game.shiftY * (levelY + levelX - game.levelSize - 0.5)
     return [posX, posY]
+}
+
+function getGridCoords(game, screenX, screenY) {
+    console.log("Mouse input: ["+screenX+","+screenY+"]")
+    var posY = ((screenX - SIZE_X / 2 + screenY - SIZE_Y / 2) / game.shiftY + 0.5 + game.levelSize) / 2
+    var posX = (screenY - SIZE_Y / 2) / game.shiftY + 0.5 + game.levelSize - posY
+    console.log("["+Math.floor(posX)+","+Math.floor(posY)+"] (actual: ["+posX+","+posY+"])")
+    return
+    var posX = SIZE_X / 2 + game.shiftX * (levelY - levelX)
+    var posY = SIZE_Y / 2 + game.shiftY * (levelY + levelX - game.levelSize - 0.5)
 }
 
 function getNeighbourCoords(coords, fieldSize) {
