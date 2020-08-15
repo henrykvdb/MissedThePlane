@@ -1,17 +1,20 @@
 Should do
-- fix door tile align in lvl0
-- Readd tutorial
-- Update tutorial controls explanation
+- Fix door tile align in lvl0
+- Tutorial
+    - Re-add
+    - New controls explanation
 - Level editor
+    - basic
+    - export/import
 - Ads
-- Remove ads in-app purchase
-- Level editor share/import
+    - Admob: Add
+    - Google billing: Remove ads in-app purchase
 - Markus credit
+- Landed plane collision / z sort fix
 
 Nice to have
-- [SPACE TO START] splash screen tween
-- cutscenes/story
-- plane starts landing earlier
-- landed plane collision / z sort fix
-- water animations
-- sine wave through level (or make level go up and down)
+- Main menu instead of [TAB TO START]
+- Improved cutscenes/story
+- Plane starts landing earlier
+- Water animations
+- Sine wave through level (or make level go up and down)
