@@ -7,8 +7,8 @@ class LoadingScene extends Phaser.Scene {
 
     preload() {
         //Draw loading scene
-        this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        this.add.sprite(0, 0, 'splash').setOrigin(0, 0).setDepth(100);
+        this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#59AACA")
+        this.add.sprite(SIZE_X/2, SIZE_Y/2, 'splash').setScale(MIN_XY/800).setDepth(100);
 
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png')

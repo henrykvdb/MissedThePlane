@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true
         webView.settings.allowFileAccessFromFileURLs = true
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         webView.addJavascriptInterface(JavaScriptInterface(this), "Android")
         webView.loadUrl("file:///android_asset/index.html")
     }
