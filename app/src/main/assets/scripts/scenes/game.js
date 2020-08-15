@@ -29,8 +29,7 @@ class GameScene extends Phaser.Scene {
         
         this.ui.showLevelText(this.levelIndex)
 
-        var game = this;
-        this.input.on('pointerdown', () => getGridCoords(game, game.input.mousePointer.x, game.input.mousePointer.y));
+        this.input.on('pointerdown', () => this.world.handleMouseInput(this.input.mousePointer.x, this.input.mousePointer.y));
     }
 
     //Handle input
