@@ -120,6 +120,7 @@ class World {
     }
 
     getTile(coords) {
+        if (isNaN(coords[0]) || isNaN(coords[1])) return TILES.AIR
         if (coords[0] >= this.tiles.length || coords[0] < 0 || coords[1] >= this.tiles[0].length || coords[1] < 0) return TILES.AIR
         return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])]
     }
@@ -139,10 +140,8 @@ class World {
 
         var neighbours = getNeighbourCoords(tilePos, this.tiles.length)
         var withPlane = neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) &&
-            c[1] == Math.floor(this.game.plane.coords[1]) &&
-            c[1] == Math.floor(this.game.plane.coords[1]) &&
-            c[1] == Math.floor(this.game.plane.coords[1]) &&
-            [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
+                                               c[1] == Math.floor(this.game.plane.coords[1]) &&
+                                               [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
         if (withPlane.length > 0) { // The plane is flying over an adjacent, blocking tile
             var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]][0]
             this.game.tweens.addCounter({ // We will tint the tile "red", or well, remove the other colors to make it dark red
@@ -174,6 +173,72 @@ class World {
                 this.tiles[c[0]][c[1]] = this.getTile(c) == TILES.MOUNTAIN ? TILES.GRASS : TILES.MOUNTAIN
         })
     }
+
+    // Returns all pilot passable neighbours from a given coordinate, as well as _diagonal_ neighbours on the condition that the two
+    // adjacent tiles next to the diagonal are passable as well.
+    getPathNeighbours(coords) {
+        var pos = [Math.floor(coords[0]), Math.floor(coords[1])]
+        var neighbours = []
+        // Add straight orthogonally adjacent
+        neighbours.push([pos[0] - 1, pos[1]])
+        neighbours.push([pos[0] + 1, pos[1]])
+        neighbours.push([pos[0], pos[1] - 1])
+        neighbours.push([pos[0], pos[1] + 1])
+
+        // Add diagonally adjacent if possible
+        // I wanted to do this in a cool way but no built-in array equivalence check made it hard, you're free to try yourself
+        if ([[pos[0]-1, pos[1]], [pos[0], pos[1]-1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]-1, pos[1]-1])
+        if ([[pos[0]-1, pos[1]], [pos[0], pos[1]+1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]-1, pos[1]+1])
+        if ([[pos[0]+1, pos[1]], [pos[0], pos[1]-1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]+1, pos[1]-1])
+        if ([[pos[0]+1, pos[1]], [pos[0], pos[1]+1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]+1, pos[1]+1])
+
+        neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
+        return neighbours
+    }
+
+    // Returns a list of coordinates which present a pilot passable path from start to finish, startCoord excluded
+    calculatePath(startCoord, endCoord) {
+        startCoord = [Math.floor(startCoord[0]), Math.floor(startCoord[1])]
+        console.log("Going from ", startCoord + " to " + endCoord)
+        var queue = new PriorityQueue({ comparator: function(a, b) { return a.priority - b.priority; }});
+        queue.queue({priority: 0, coord: startCoord})
+        var size = this.tiles.length
+        var cameFrom = {}; // Keys are coords, saved as Coord[0] * this.tiles.length + Coord[1]
+        var costSoFar = {};
+        costSoFar[startCoord[0] * size + startCoord[1]] = 0;
+
+        var current = undefined
+        while (queue.length > 0) {
+            current = queue.dequeue()
+            if (current.coord[0] == endCoord[0] && current.coord[1] == endCoord[1]) break
+
+            this.getPathNeighbours(current.coord).forEach(c => {
+                var oldCost = costSoFar[current.coord[0] * size + current.coord[1]]
+                var newCost = oldCost + Math.hypot(c[0] - current.coord[0], c[1] - current.coord[1]) // If some tiles slow down/speed up, it's here you should add that
+                if (!(costSoFar[c[0] * size + c[1]] == undefined || newCost < oldCost)) return // "continue" in the foreach
+                costSoFar[c[0] * size + c[1]] = newCost
+                var priority = newCost + Math.hypot(c[0] - endCoord[0], c[1] - endCoord[1]) // We use distance to end coord as heuristic
+                queue.queue({priority: priority, coord: c})
+                cameFrom[c[0] * size + c[1]] = current.coord
+            })
+        }
+
+        current = current.coord
+        var result = []
+        if (queue.length == 0 && !(current[0] == endCoord[0] && current[1] == endCoord[1])) return result // We simply ran out of options, there's no path
+        while (current[0] != startCoord[0] || current[1] != startCoord[1]) {
+            result.push(current)
+            current = cameFrom[current[0] * size + current[1]]
+        }
+
+        return result.reverse()
+    }
+
+    handleMouseInput(mouseX, mouseY) {
+       var endCoord = getGridCoords(this.game, mouseX, mouseY)
+       var path = this.calculatePath(this.game.pilot.coords, endCoord)
+       console.log(path)
+    }
 }
 
 // Returns screen coordinate of the top of the tile
@@ -184,13 +249,10 @@ function getScreenCoords(game, levelX, levelY) {
 }
 
 function getGridCoords(game, screenX, screenY) {
-    console.log("Mouse input: ["+screenX+","+screenY+"]")
-    var posY = ((screenX - SIZE_X / 2 + screenY - SIZE_Y / 2) / game.shiftY + 0.5 + game.levelSize) / 2
+    var posY = ((screenX - SIZE_X / 2) / game.shiftX + ((screenY - SIZE_Y / 2) / game.shiftY) + 0.5 + game.levelSize) / 2
     var posX = (screenY - SIZE_Y / 2) / game.shiftY + 0.5 + game.levelSize - posY
-    console.log("["+Math.floor(posX)+","+Math.floor(posY)+"] (actual: ["+posX+","+posY+"])")
-    return
-    var posX = SIZE_X / 2 + game.shiftX * (levelY - levelX)
-    var posY = SIZE_Y / 2 + game.shiftY * (levelY + levelX - game.levelSize - 0.5)
+    // console.log("["+Math.floor(posX)+","+Math.floor(posY)+"] (actual: ["+posX+","+posY+"])")
+    return [Math.floor(posX), Math.floor(posY)]
 }
 
 function getNeighbourCoords(coords, fieldSize) {

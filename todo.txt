@@ -1,6 +1,5 @@
 Should do
 - fix door tile align in lvl0
-- Trigger level complete at same time as victory sound
 - Relative positioning (scaling)
 - Tap movement (replaces arrow keys)
 - Trigger button (replaces SPACE)
