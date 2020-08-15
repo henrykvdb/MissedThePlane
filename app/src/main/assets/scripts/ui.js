@@ -48,14 +48,14 @@ class UI {
 
         // Level completed/failed messages
         var complete = gameScene.add.sprite(SIZE_X / 2, -this.MSG_BOTTOM_HEIGHT, 'level_complete').setOrigin(0.5, 0).setScale(0.45 * MIN_XY / 600).setDepth(100)
-        var failed = gameScene.add.sprite(SIZE_X / 2, -this.MSG_BOTTOM_HEIGHT, 'level_failed').setOrigin(0, 0).setScale(0.45 * MIN_XY / 600).setDepth(100)
+        var failed = gameScene.add.sprite(SIZE_X / 2, -this.MSG_BOTTOM_HEIGHT, 'level_failed').setOrigin(0.5, 0).setScale(0.45 * MIN_XY / 600).setDepth(100)
         complete.visible = failed.visible = false
         this.popups = {}
         this.popups.sprites = [complete, failed]
 
         // Add level text
-        if (gameScene.levelIndex == 0) gameScene.add.text(getXY(0.04), getXY(0.14), 'Home').setOrigin(0, 0).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
-        else gameScene.add.text(getXY(0.04), getXY(0.15), gameScene.levelIndex + "/" + (ALL_LEVELS.length - 1)).setOrigin(0, 0).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
+        if (gameScene.levelIndex == 0) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Home').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
+        else gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), "Level " + gameScene.levelIndex).setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
     }
 
     startPopupAnimation(success) {
