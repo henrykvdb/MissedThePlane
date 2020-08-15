@@ -99,6 +99,7 @@ class Plane {
             this.game.world.getTile(addArray(this.coords, this.dirVector)) == TILES.RUNWAY) {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
             audio.playPopup(true)
+            this.game.ui.startPopupAnimation(true)
             this.game.ui.btnRestart.visible = false
             if (this.game.levelIndex < ALL_LEVELS.length - 1) this.game.ui.btnNext.visible = true
             this.height -= 0.001 // uhh, well, i mean
@@ -107,7 +108,6 @@ class Plane {
         // Check landing finish
         if (this.height <= 0 && !this.finished) {
             this.finished = true
-            this.game.ui.startPopupAnimation(true)
         }
     }
 

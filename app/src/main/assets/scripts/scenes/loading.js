@@ -51,12 +51,12 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('shadow', 'assets/entities/shadow.png')
 
         // Load audio
-        this.load.audio('music', ['assets/audio/music.ogg', 'assets/audio/music.aac'])
-        this.load.audio('levelFailed', ['assets/audio/levelFailed.ogg', 'assets/audio/levelFailed.aac'])
-        this.load.audio('levelWon', ['assets/audio/levelWon.ogg', 'assets/audio/levelWon.aac'])
-        this.load.audio('buttonUp', ['assets/audio/buttonUp.ogg', 'assets/audio/buttonUp.aac'])
-        this.load.audio('buttonDown', ['assets/audio/buttonDown.ogg', 'assets/audio/buttonDown.aac'])
-        this.load.audio('buttonBlocked', ['assets/audio/buttonBlocked.ogg', 'assets/audio/buttonBlocked.aac'])
+        this.load.audio('music', ['assets/audio/music.ogg'])
+        this.load.audio('levelFailed', ['assets/audio/levelFailed.ogg'])
+        this.load.audio('levelWon', ['assets/audio/levelWon.ogg'])
+        this.load.audio('buttonUp', ['assets/audio/buttonUp.ogg'])
+        this.load.audio('buttonDown', ['assets/audio/buttonDown.ogg'])
+        this.load.audio('buttonBlocked', ['assets/audio/buttonBlocked.ogg'])
 
         // On complete load listener
         this.load.on('complete', this.complete, { scene: this.scene });

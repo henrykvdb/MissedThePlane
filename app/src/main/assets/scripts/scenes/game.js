@@ -34,9 +34,8 @@ class GameScene extends Phaser.Scene {
 
     //Handle input
     update(_, dt) {
-        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.R].isDown) this.scene.restart({ levelIndex: this.levelIndex })
-        
         var dirVector = [0, 0] // key checking is a bit verbose but whatever // TODO - remove this? might be more useful when playtesting but also not
+        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.R].isDown) this.scene.restart({ levelIndex: this.levelIndex })
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.W].isDown || this.cursors.up.isDown)    dirVector = addArray(dirVector, [-1, -1])
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.S].isDown || this.cursors.down.isDown)  dirVector = addArray(dirVector, [1, 1])
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.D].isDown || this.cursors.right.isDown) dirVector = addArray(dirVector, [-1, 1])
