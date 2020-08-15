@@ -3,12 +3,17 @@
         margin: 0;
         padding: 0;
     }
+
+
+
+
+
+
 </style>
 <!DOCTYPE html>
-<html>
 
 <head>
-    <link rel="icon" href="assets/menu/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="assets/menu/favicon.ico" type="image/x-icon"/>
     <script src="assets/phaser.min.js"></script>
     <script src="scripts/data/tiles.js"></script>
     <script src="scripts/data/levels.js"></script>
@@ -21,13 +26,16 @@
     <script src="scripts/world.js"></script>
     <script src="scripts/audio.js"></script>
     <script src="scripts/ui.js"></script>
-</head>
 
-<body>
+    <meta name="viewport"/>
     <script>
-        const SIZE_X = window.width
-        const SIZE_Y = window.height
-        const MIN_XY = Math.min(SIZE_X,SIZE_Y)
+        document.querySelector("meta[name=viewport]").setAttribute('content', 'width=device-width, initial-scale=' + (1 / window.devicePixelRatio) + ', maximum-scale=1.0, user-scalable=0')
+
+        var params = new URL(window.location.href).searchParams
+        const SIZE_X = params.get("X") == null ? window.innerWidth : parseInt(params.get("X"))
+        const SIZE_Y = params.get("Y") == null ? window.innerHeight : parseInt(params.get("Y"))
+        const MIN_XY = Math.min(SIZE_X, SIZE_Y)
+        console.log(SIZE_X)
 
         var config = {
             type: Phaser.AUTO,
@@ -38,6 +46,8 @@
 
         var game = new Phaser.Game(config)
     </script>
-</body>
+</head>
+
+<body></body>
 
 </html>

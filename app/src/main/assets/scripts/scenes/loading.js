@@ -64,11 +64,11 @@ class LoadingScene extends Phaser.Scene {
     complete(game) {
         audio = new Audio(game.scene)
         game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
+        //game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
             game.scene.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
             game.scene.scene.launch('GameScene', { levelIndex: 0 });
             audio.start()
-        })
+        //})
         game.scene.add.text(getX(0.5), getY(0.05), '[Press space to start]', { fill: '#a92a17', fontSize: getXY(0.05), fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)
     }
 }
