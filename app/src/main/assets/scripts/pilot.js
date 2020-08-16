@@ -103,7 +103,7 @@ class Pilot {
     }
 
     checkDoor() {
-        if (this.foundDoor || !(this.game.world.getTile(this.coords) == TILES.MISC_3 && this.coords[0] < 0.3)) return
+        if (this.foundDoor || !(this.game.world.getTile(this.coords) == TILES.MISC_3 && this.coords[0] <= 0.5)) return
         this.foundDoor = true
         this.game.ui.btnRestart.visible = false
         this.game.ui.startPopupAnimation(true)
