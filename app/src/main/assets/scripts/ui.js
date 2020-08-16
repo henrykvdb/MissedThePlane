@@ -46,6 +46,18 @@ class UI {
             gameScene.scene.launch('LevelSelectScene')
         })
 
+        // Remove ads button
+        this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.16), 'btn_removeads').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnInteract.on('pointerdown', function (pointer) {
+            //TODO
+        })
+
+        // Info button
+        this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.305), 'btn_info').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnInteract.on('pointerdown', function (pointer) {
+            //TODO
+        })
+
         // Level completed/failed messages
         var complete = gameScene.add.sprite(SIZE_X / 2, -this.MSG_BOTTOM_HEIGHT, 'level_complete').setOrigin(0.5, 0).setScale(0.45 * MIN_XY / 600).setDepth(100)
         var failed = gameScene.add.sprite(SIZE_X / 2, -this.MSG_BOTTOM_HEIGHT, 'level_failed').setOrigin(0.5, 0).setScale(0.45 * MIN_XY / 600).setDepth(100)

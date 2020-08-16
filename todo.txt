@@ -1,16 +1,20 @@
 Should do
 - Fix door tile align in lvl0
+- Mid walk direction switch (180°) fix
 - Tutorial
     - Re-add
     - New controls explanation
+- Levels menu overhaul (better scalability, seperation user levels)
 - Level editor
     - basic
     - export/import
+    - database?
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
-- Markus credit
+- Markus credit (ui info menu with contact email?)
 - Landed plane collision / z sort fix
+- More levels
 
 Nice to have
 - Main menu instead of [TAB TO START]
