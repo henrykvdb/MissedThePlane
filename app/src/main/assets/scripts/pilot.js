@@ -102,16 +102,14 @@ class Pilot {
     checkDoor() {
         if (this.foundDoor || !(this.game.world.getTile(this.coords) == TILES.MISC_3 && this.coords[0] <= 0.5)) return
         this.foundDoor = true
-        this.game.ui.btnRestart.visible = false
-        this.game.ui.startPopupAnimation(true)
-        audio.playPopup(true)
-        if (this.game.levelIndex < ALL_LEVELS.length - 1) this.game.ui.btnNext.visible = true
+        this.game.setLevelStatus(LEVEL_STATUS.COMPLETED)
     }
 
     interact() {
         if (this.game.world.getTile(this.coords) != TILES.BUTTON) return
         this.game.world.triggerButton(this.coords)
-        this.cancelCurrent()
+        // If we are currently moving (nextTile != undefined) and it is not to the tile we have currently interacted with, we cancel our movement to stay on the button.
+        if (this.nextTile && (Math.floor(this.coords[0]) != this.nextTile[0] || Math.floor(this.coords[1]) != this.nextTile[1])) this.cancelCurrent()
     }
 
     // Sets a given path for this pilot to follow

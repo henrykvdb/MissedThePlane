@@ -18,6 +18,7 @@ class GameScene extends Phaser.Scene {
 
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
+        this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, level.tiles.map(row => row.slice()))
         this.pilot = new Pilot(this, level.pilot.coords.slice(), level.pilot.dir, level.pilot.speedModifier)
         this.plane = new Plane(this, level.plane.coords.slice(), level.plane.dir)
@@ -39,6 +40,21 @@ class GameScene extends Phaser.Scene {
         this.pilot.update(dt)
         this.plane.update(dt)
         this.ui.updatePopup(dt)
+    }
+
+    setLevelStatus(newStatus) {
+        if (newStatus == this.levelStatus) return
+        this.levelStatus = newStatus
+        if (newStatus == LEVEL_STATUS.COMPLETED) {
+            this.world.clearRunway()
+            audio.playPopup(true)
+            this.ui.startPopupAnimation(true)
+            this.ui.btnRestart.visible = false
+            if (this.levelIndex < ALL_LEVELS.length - 1) this.ui.btnNext.visible = true
+        } else if (newStatus == LEVEL_STATUS.FAILED) {
+            audio.playPopup(false)
+            this.game.ui.startPopupAnimation(false)
+        }
     }
 }
 

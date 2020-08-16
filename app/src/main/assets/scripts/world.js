@@ -183,17 +183,17 @@ class World {
         if (runwayTiles.includes(this.getTile(this.game.pilot.coords))) { // The pilot is a snobhead and needs to move out of the way
             var neighbourRunway = []
             this.runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(n => neighbourRunway.push(n))) // We add all tiles next to each runway tile (has duplicates)
-            console.log(this.runwayTiles)
-            console.log(neighbourRunway)
             neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && !runwayTiles.includes(this.getTile(c))).map(c => {
                 // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
-                return {coord: c, distance: Math.hypot(c[0] - this.game.pilot.coords[0], c[1] - this.game.pilot.coords[1])}
+                return {coord: c, distance: Math.hypot(c[0]+0.5 - this.game.pilot.coords[0], c[1]+0.5 - this.game.pilot.coords[1])}
             })
             neighbourRunway.sort((c1, c2) => c1.distance - c2.distance)
-            console.log(neighbourRunway)
-            this.updatePilotPath(neighbourRunway[0].coord) // Path to closest accessible tile
+            if (neighbourRunway.length != 0) this.updatePilotPath(neighbourRunway[0].coord) // Path to closest accessible tile
+            else // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
+                this.updatePilotPath(this.findCoord(this.runwayTiles.length > PLANE_LANDING_LENGTH + 1 ? TILES.RUNWAY_END : TILES.RUNWAY_START)) 
+            // TODO check if PLANE_LANDING_LENGTH is great enough when on a small enclosed runway to kill the pilot
         }
-        TILES_IMPASSABLE_PILOT = TILES_IMPASSABLE_PILOT.concat(runwayTiles) // Now we have our path, we make the current tiles inaccessible.
+        //TILES_IMPASSABLE_PILOT = TILES_IMPASSABLE_PILOT.concat(runwayTiles) // Now we have our path, we make the current tiles inaccessible.
     }
 
     // Returns all pilot passable neighbours from a given coordinate, as well as _diagonal_ neighbours on the condition that the two
@@ -215,6 +215,8 @@ class World {
         if ([[pos[0]+1, pos[1]], [pos[0], pos[1]+1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]+1, pos[1]+1])
 
         neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
+        // If the game is complete, we forbid pathing over runways
+        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) neighbours = neighbours.filter(c => ![TILES.RUNWAY, TILES.RUNWAY_END, TILES.RUNWAY_START].includes(this.getTile(c)))
         return neighbours
     }
 

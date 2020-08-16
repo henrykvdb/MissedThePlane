@@ -98,11 +98,7 @@ class Plane {
         if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, [TILES.RUNWAY_START]) &&
             this.game.world.getTile(addArray(this.coords, this.dirVector)) == TILES.RUNWAY) {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
-            this.game.world.clearRunway()
-            audio.playPopup(true)
-            this.game.ui.startPopupAnimation(true)
-            this.game.ui.btnRestart.visible = false
-            if (this.game.levelIndex < ALL_LEVELS.length - 1) this.game.ui.btnNext.visible = true
+            this.game.setLevelStatus(LEVEL_STATUS.COMPLETED)
             this.height -= 0.001 // uhh, well, i mean
         }
 
@@ -117,8 +113,7 @@ class Plane {
         if (!this.escaped && (
             this.coords[0] < 0 && this.dir == 1 || this.coords[0] > this.game.world.tiles.length && this.dir == 5 ||
             this.coords[1] < 0 && this.dir == 7 || this.coords[1] > this.game.world.tiles[0].length && this.dir == 3)) {
-            audio.playPopup(false)
-            this.game.ui.startPopupAnimation(false)
+            this.game.setLevelStatus(LEVEL_STATUS.FAILED)
             this.toggleShadow()
             this.escaped = true
         }
@@ -139,7 +134,7 @@ class Plane {
             s.x = worldCoords[0]
             s.y = worldCoords[1]
             s.setOrigin(0.5, (800 - 320 + this.height) / 800)
-            s.setDepth(this.coords[0] + this.coords[1] + 2) // TODO base this on height, although it will always look awkward without player collision
+            s.setDepth(this.coords[0] + this.coords[1] + 2 * this.height / PLANE_HEIGHT + 0.1) // 0.1 is to ensure plane gets drawn above shadow when landed
         })
     }
 }
