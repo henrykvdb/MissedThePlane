@@ -11,6 +11,7 @@
     <script src="scripts/libraries/phaser.min.js"></script>
     <script src="scripts/libraries/priority-queue.min.js"></script>
     <script src="scripts/data/tiles.js"></script>
+    <script src="scripts/data/enums.js"></script>
     <script src="scripts/data/levels.js"></script>
     <script src="scripts/scenes/game.js"></script>
     <script src="scripts/scenes/levelselect.js"></script>
@@ -35,6 +36,10 @@
             type: Phaser.AUTO,
             width: SIZE_X,
             height: SIZE_Y,
+            fps: {
+                target: 60,
+                forceSetTimeOut: true
+            },
             scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, LevelEditScene]
         }
 

@@ -17,6 +17,7 @@ class GameScene extends Phaser.Scene {
 
         // Create level
         var level = ALL_LEVELS[this.levelIndex]
+        this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, level.tiles.map(row => row.slice()))
         this.pilot = new Pilot(this, level.pilot.coords.slice(), level.pilot.dir, level.pilot.speedModifier)
         this.plane = new Plane(this, level.plane.coords.slice(), level.plane.dir)
@@ -33,17 +34,26 @@ class GameScene extends Phaser.Scene {
 
     //Handle input
     update(_, dt) {
-        var dirVector = [0, 0] // key checking is a bit verbose but whatever // TODO - remove this? might be more useful when playtesting but also not
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.R].isDown) this.scene.restart({ levelIndex: this.levelIndex })
-        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.W].isDown || this.cursors.up.isDown)    dirVector = addArray(dirVector, [-1, -1])
-        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.S].isDown || this.cursors.down.isDown)  dirVector = addArray(dirVector, [1, 1])
-        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.D].isDown || this.cursors.right.isDown) dirVector = addArray(dirVector, [-1, 1])
-        if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.A].isDown || this.cursors.left.isDown)  dirVector = addArray(dirVector, [1, -1])
-        if (this.pilot.nextTile == undefined) this.pilot.dirVector = dirVector
 
         this.pilot.update(dt)
         this.plane.update(dt)
         this.ui.updatePopup(dt)
+    }
+
+    setLevelStatus(newStatus) {
+        if (newStatus == this.levelStatus) return
+        this.levelStatus = newStatus
+        if (newStatus == LEVEL_STATUS.COMPLETED) {
+            this.world.clearRunway()
+            audio.playPopup(true)
+            this.ui.startPopupAnimation(true)
+            this.ui.btnRestart.visible = false
+            if (this.levelIndex < ALL_LEVELS.length - 1) this.ui.btnNext.visible = true
+        } else if (newStatus == LEVEL_STATUS.FAILED) {
+            audio.playPopup(false)
+            this.game.ui.startPopupAnimation(false)
+        }
     }
 }
 

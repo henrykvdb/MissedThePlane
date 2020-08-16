@@ -1,6 +1,4 @@
 Should do
-- Fix door tile align in lvl0
-- Mid walk direction switch (180°) fix
 - Tutorial
     - Re-add
     - New controls explanation
@@ -12,8 +10,7 @@ Should do
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
-- Markus credit (ui info menu with contact email?)
-- Landed plane collision / z sort fix
+- Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
 - More levels
 - fix navigation bar reappearing (onResume instead of onStart?)
 - Fix [TAP TO START]

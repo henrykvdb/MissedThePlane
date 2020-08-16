@@ -11,6 +11,7 @@ class Pilot {
         this.dir = dir
         this.foundDoor = false // Bool just for home level, but eh
         this.path = [] // Array of coordinates, in order of which to go to next
+        this.prevTile = [Math.floor(this.coords[0]), Math.floor(this.coords[1])] // The previous tile in our path, to calculate how long we have been moving for to the next one
 
         // Create shadow sprite
         var screenCoords = getScreenCoords(game, coords[0], coords[1])
@@ -48,13 +49,33 @@ class Pilot {
     }
 
     update(dt) {
-        // Play directional idle animation if no new direction
-        if (this.dirVector[0] == 0 && this.dirVector[1] == 0) {
-            this.pilotSprite.anims.play('idle' + this.dir);
-            return
+
+        this.moveAlongPath(dt)       
+        this.updateSprites()
+        this.checkDoor() // Door check for level 0
+    }
+
+    moveAlongPath(dt) {
+
+        // Consume dt to update position until there's no more dt or end of path has been reached
+        while (dt > 0) {
+            if (this.nextTile == undefined) return // There's nothing more to path to
+            var timeToNextTile = Math.hypot(this.coords[0] - (this.nextTile[0] + 0.5), this.coords[1] - (this.nextTile[1] + 0.5)) / PILOT_MOVE_SPEED // ms remaining for pilot
+            var totalTimeToNextTile = Math.hypot(this.prevTile[0] - this.nextTile[0], this.prevTile[1] - this.nextTile[1]) / PILOT_MOVE_SPEED // total ms needed
+            if (dt > timeToNextTile) { // We have more dt than time is needed to reach this tile, so we teleport to this tile and restart the loop
+                this.setNextDirVector()
+            } else { // We are on our way between two tiles, we update our position with the % of the time we have already spent between these tiles
+                this.coords[0] = this.prevTile[0] + 0.5 + (totalTimeToNextTile - timeToNextTile + dt) / totalTimeToNextTile * (this.nextTile[0] - this.prevTile[0])
+                this.coords[1] = this.prevTile[1] + 0.5 + (totalTimeToNextTile - timeToNextTile + dt) / totalTimeToNextTile * (this.nextTile[1] - this.prevTile[1])
+            }
+            dt = Math.max(dt - timeToNextTile, 0)
         }
 
-        // Play directional walk animation
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) console.log("ERROR: Illegal position?")
+    }
+
+    updateSprites() {
+        // Update animation based on dirvector
         if (this.dirVector[0] < 0 && this.dirVector[1] < 0) this.dir = 0
         else if (this.dirVector[0] <  0 && this.dirVector[1] == 0) this.dir = 1
         else if (this.dirVector[0] <  0 && this.dirVector[1] >  0) this.dir = 2
@@ -63,33 +84,9 @@ class Pilot {
         else if (this.dirVector[0] >  0 && this.dirVector[1] == 0) this.dir = 5
         else if (this.dirVector[0] >  0 && this.dirVector[1] <  0) this.dir = 6
         else if (this.dirVector[0] == 0 && this.dirVector[1] <  0) this.dir = 7
-        this.pilotSprite.anims.play('walk' + this.dir, true)
 
-        
-        this.moveForward(dt)
-        this.updateSprites()
-        this.checkWalkComplete()
+        this.pilotSprite.anims.play((this.dirVector[0] == 0 && this.dirVector[1] == 0 ? 'idle' : 'walk') + this.dir, true);
 
-        // Door check for level 0
-        this.checkDoor()
-    }
-
-    moveForward(dt) {
-        // Calculate move vars
-        var length = Math.sqrt(this.dirVector[0] * this.dirVector[0] + this.dirVector[1] * this.dirVector[1])
-        var originalCoords = this.coords.slice()
-
-        // Move x
-        this.coords[0] += PILOT_MOVE_SPEED * dt * this.speedMod * this.dirVector[0] / length
-        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) this.coords = originalCoords.slice()
-        else originalCoords = this.coords.slice()
-
-        // Move y
-        this.coords[1] += PILOT_MOVE_SPEED * dt * this.speedMod * this.dirVector[1] / length
-        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) this.coords = originalCoords
-    }
-
-    updateSprites() {
         // Update shadow position
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])
         this.shadow.x = worldCoords[0]
@@ -105,45 +102,50 @@ class Pilot {
     checkDoor() {
         if (this.foundDoor || !(this.game.world.getTile(this.coords) == TILES.MISC_3 && this.coords[0] <= 0.5)) return
         this.foundDoor = true
-        this.game.ui.btnRestart.visible = false
-        this.game.ui.startPopupAnimation(true)
-        audio.playPopup(true)
-        if (this.game.levelIndex < ALL_LEVELS.length - 1) this.game.ui.btnNext.visible = true
+        this.game.setLevelStatus(LEVEL_STATUS.COMPLETED)
     }
 
     interact() {
         if (this.game.world.getTile(this.coords) != TILES.BUTTON) return
         this.game.world.triggerButton(this.coords)
+        // If we are currently moving (nextTile != undefined) and it is not to the tile we have currently interacted with, we cancel our movement to stay on the button.
+        if (this.nextTile && (Math.floor(this.coords[0]) != this.nextTile[0] || Math.floor(this.coords[1]) != this.nextTile[1])) this.cancelCurrent()
     }
 
     // Sets a given path for this pilot to follow
-    setPath(path) {
-        // TODO - if path already exists, choose a smart way to break it off or something
-        // TODO - (commented out stuck below) - if we are not currently on the center of our tile, add that to our path to go to first (breaks in setNextDir)
-        // if (Math.hypot(this.coords[0] - (Math.floor(this.coords[0])+0.5), this.coords[1] - (Math.floor(this.coords[1])+0.5)) > 0.05)
-        //     path.push([Math.floor(this.coords[0]), Math.floor(this.coords[1])])
+    setPath(path, cancelLast) {
+        if (path.length == 0) return // TODO eventually: maybe add 'tapping on air' to stop? idk
         var currentlyOnPath = this.nextTile != undefined
+        // If the first tile we would go to is in the exact opposite of our current direction, we instantly flip around
+        var firstTile = path[path.length - 1]
+
+        var nextTileIsOpposite = (Math.floor(this.coords[0]) - this.dirVector[0] == firstTile[0] && // If we are moving in a direction and see the first tile we have to move to is
+                                 Math.floor(this.coords[1]) - this.dirVector[1] == firstTile[1]) || // In the exact opposite direction, we set this to true to instantly cancel the current move
+                                 cancelLast // If the pathing algorithm tells us the path would be faster if we got back to our previous tile first, we cancel the current move too
+        if (nextTileIsOpposite) this.cancelCurrent()
         this.path = path
-        if (!currentlyOnPath) this.setNextDirVector() // If we are already on a path, they will set the nextDir for us (+ we might be on a weird float right now)
+        if (!currentlyOnPath && !nextTileIsOpposite) this.setNextDirVector() 
     }
 
-    // Checks if we have arrived at this.nextTile, and if so, get a new direction vector and tile to walk to from the path.
-    checkWalkComplete() {
-        if (this.nextTile == undefined) return
-        if (Math.hypot(this.coords[0] - (this.nextTile[0]+0.5), this.coords[1] - (this.nextTile[1]+0.5)) > 0.03) return
-        this.coords = [this.nextTile[0] + 0.5, this.nextTile[1] + 0.5]
-        this.setNextDirVector()
+    // Cancels the current walking operation by pathing back to the tile we come from
+    cancelCurrent() {
+        if (!this.nextTile) return // We're not moving to somewhere, so no need to cancel
+        this.path = []
+        var s = this.nextTile; this.nextTile = this.prevTile;  this.prevTile = s // Swap next and prev tile (don't try to use SO magic, i wasted an hour here)
+        this.dirVector = this.nextTile.map((e, i) => e - this.prevTile[i])
     }
 
     // Updates dirvector as well as nextTile by getting the next tile to walk to from the current path
     setNextDirVector() {
+        var currentPos = [Math.floor(this.coords[0]), Math.floor(this.coords[1])]
+        this.prevTile = currentPos
         if (this.path.length == 0) { // We are done 
             this.dirVector = [0, 0]
             this.nextTile = undefined
             return
         }
-        var currentPos = [Math.floor(this.coords[0]), Math.floor(this.coords[1])]
         this.nextTile = this.path.pop()
-        this.dirVector = this.nextTile.map((e, i) => e - currentPos[i]) // TODO - assert that this is not some wonky vector?
+        this.dirVector = this.nextTile.map((e, i) => e - currentPos[i])
+        if (Math.abs(this.dirVector[0]) > 1 || Math.abs(this.dirVector[1]) > 1) console.log("ERROR: Weird pathing dirvector detected!")
     }
 }

@@ -37,6 +37,7 @@ class World {
     markRunway() {
         var endCoords = this.findCoord(TILES.RUNWAY_END)
         if (endCoords == undefined) { console.log("No end tile found!"); return }
+        this.runwayTiles = [endCoords]
 
         // Find runway direction
         var neighbourRunway = getNeighbourCoords(endCoords, this.tiles.length)
@@ -55,6 +56,7 @@ class World {
         while (next != undefined && (next[endCoords[1] - dir[1]] == TILES.RUNWAY || next[endCoords[1] - dir[1]] == TILES.RUNWAY_START)) {
             endCoords = [endCoords[0] - dir[0], endCoords[1] - dir[1]]
             this.tiles[endCoords[0]][endCoords[1]] = TILES.RUNWAY
+            this.runwayTiles.push(endCoords)
             next = this.tiles[endCoords[0] - dir[0]]
         }
 
@@ -175,6 +177,26 @@ class World {
         })
     }
 
+    // The plane is landing and called this function. If the pilot is standing on the runway, he should path to an accessible tile and the
+    // runway should be make inaccessible to ensure he doesn't walk on it again
+    clearRunway() {
+        var runwayTiles = [TILES.RUNWAY, TILES.RUNWAY_START, TILES.RUNWAY_END]
+        if (runwayTiles.includes(this.getTile(this.game.pilot.coords))) { // The pilot is a snobhead and needs to move out of the way
+            var neighbourRunway = []
+            this.runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(n => neighbourRunway.push(n))) // We add all tiles next to each runway tile (has duplicates)
+            neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && !runwayTiles.includes(this.getTile(c))).map(c => {
+                // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
+                return {coord: c, distance: Math.hypot(c[0]+0.5 - this.game.pilot.coords[0], c[1]+0.5 - this.game.pilot.coords[1])}
+            })
+            neighbourRunway.sort((c1, c2) => c1.distance - c2.distance)
+            if (neighbourRunway.length != 0) this.updatePilotPath(neighbourRunway[0].coord) // Path to closest accessible tile
+            else // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
+                this.updatePilotPath(this.findCoord(this.runwayTiles.length > PLANE_LANDING_LENGTH + 1 ? TILES.RUNWAY_END : TILES.RUNWAY_START)) 
+            // TODO check if PLANE_LANDING_LENGTH is great enough when on a small enclosed runway to kill the pilot
+        }
+        //TILES_IMPASSABLE_PILOT = TILES_IMPASSABLE_PILOT.concat(runwayTiles) // Now we have our path, we make the current tiles inaccessible.
+    }
+
     // Returns all pilot passable neighbours from a given coordinate, as well as _diagonal_ neighbours on the condition that the two
     // adjacent tiles next to the diagonal are passable as well.
     getPathNeighbours(coords) {
@@ -194,6 +216,8 @@ class World {
         if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] + 1, pos[1] + 1])
 
         neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
+        // If the game is complete, we forbid pathing over runways
+        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) neighbours = neighbours.filter(c => ![TILES.RUNWAY, TILES.RUNWAY_END, TILES.RUNWAY_START].includes(this.getTile(c)))
         return neighbours
     }
 
@@ -225,21 +249,47 @@ class World {
             })
         }
 
+        // We have generated our dictionaries, we work our way back using cameFrom to build the most efficient path
         current = current.coord
         var result = []
         if (queue.length == 0 && !(current[0] == endCoord[0] && current[1] == endCoord[1])) return result // We simply ran out of options, there's no path
+        var totalLength = 0
+        var next = undefined
         while (current[0] != startCoord[0] || current[1] != startCoord[1]) {
             result.push(current)
-            current = cameFrom[current[0] * size + current[1]]
+            next = cameFrom[current[0] * size + current[1]]
+            totalLength += Math.hypot(current[0] - next[0], current[1] - next[1])
+            current = next
         }
+        result.totalLength = totalLength;
 
         return result
     }
 
+    updatePilotPath(clickedTile) {
+        if (clickedTile[0] == Math.floor(this.game.pilot.coords[0]) && clickedTile[1] == Math.floor(this.game.pilot.coords[1])) { // If we click on the tile below us, we stop
+            if (!this.game.pilot.nextTile) return // The user is clicking on the tile below the pilot while the pilot isn't moving, this function doesn't need to do anything
+            if (clickedTile[0] == this.game.pilot.nextTile[0] && clickedTile[1] == this.game.pilot.nextTile[1]) this.game.pilot.path = [] // We're already going there, we simply need to clear path
+            else if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) this.game.pilot.cancelCurrent() // We come from here, we cancel this plan
+            else console.log("ERROR: Clicked on tile below pilot without it being related to it?")
+            return
+        }
+        if (!this.game.pilot.nextTile) {this.game.pilot.setPath(this.calculatePath(this.game.pilot.coords, clickedTile)); return} // We are not on a path already, no need for optimization mess
+
+        if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) // We want to go where we just came from, might as well simply cancel our current movement
+            this.game.pilot.cancelCurrent()
+
+        // If we are already on a path, check if it is faster to cancel the current movement to the next tile instead of pathing from there.
+        var pathFromNext = this.calculatePath(this.game.pilot.nextTile, clickedTile)
+        var pathFromPrevious = this.calculatePath(this.game.pilot.prevTile, clickedTile)
+        var lengthNext = pathFromNext.totalLength + Math.hypot(this.game.pilot.coords[0] - (this.game.pilot.nextTile[0] + 0.5), this.game.pilot.coords[1] - (this.game.pilot.nextTile[1] + 0.5))
+        var lengthPrev = pathFromPrevious.totalLength + Math.hypot(this.game.pilot.coords[0] - (this.game.pilot.prevTile[0] + 0.5), this.game.pilot.coords[1] - (this.game.pilot.prevTile[1] + 0.5))
+        this.game.pilot.setPath(lengthNext > lengthPrev ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev)
+    }
+
     handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
-        var endCoord = getGridCoords(this.game, mouseX, mouseY)
-        var path = this.calculatePath(this.game.pilot.nextTile ? this.game.pilot.nextTile : this.game.pilot.coords, endCoord)
-        this.game.pilot.setPath(path)
+       var endCoord = getGridCoords(this.game, mouseX, mouseY)
+       this.updatePilotPath(endCoord)
     }
 }
 
