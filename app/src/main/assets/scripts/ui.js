@@ -49,7 +49,8 @@ class UI {
         // Remove ads button
         this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.16), 'btn_removeads').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnInteract.on('pointerdown', function (pointer) {
-            //TODO
+            gameScene.scene.start('LevelEditScene');
+            gameScene.scene.stop()
         })
 
         // Info button

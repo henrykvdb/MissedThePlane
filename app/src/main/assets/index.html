@@ -15,6 +15,7 @@
     <script src="scripts/scenes/game.js"></script>
     <script src="scripts/scenes/levelselect.js"></script>
     <script src="scripts/scenes/loading.js"></script>
+    <script src="scripts/scenes/leveledit.js"></script>
     <script src="scripts/scenes/preloading.js"></script>
     <script src="scripts/pilot.js"></script>
     <script src="scripts/plane.js"></script>
@@ -22,7 +23,7 @@
     <script src="scripts/audio.js"></script>
     <script src="scripts/ui.js"></script>
 
-    <meta name="viewport"/>
+    <meta name="viewport" />
     <script>
         document.querySelector("meta[name=viewport]").setAttribute('content', 'width=device-width, initial-scale=' + (1 / window.devicePixelRatio) + ', maximum-scale=1.0, user-scalable=0')
 
@@ -34,7 +35,7 @@
             type: Phaser.AUTO,
             width: SIZE_X,
             height: SIZE_Y,
-            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene]
+            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, LevelEditScene]
         }
 
         var game = new Phaser.Game(config)

@@ -41,6 +41,7 @@ class World {
         // Find runway direction
         var neighbourRunway = getNeighbourCoords(endCoords, this.tiles.length)
             .filter(c => this.tiles[c[0]][c[1]] == TILES.RUNWAY || this.tiles[c[0]][c[1]] == TILES.RUNWAY_START)[0]
+        if(neighbourRunway==undefined) return
         var dir = endCoords.map((e, i) => e - neighbourRunway[i])
 
         // Choose asset types
@@ -91,9 +92,9 @@ class World {
         // Choose asset from the tile's asset dictionary
         var asset
         if (assetIndex != undefined) asset = tileTypeEnum.assets[assetIndex]
-        else if (tileTypeEnum == TILES.RUNWAY_START) asset = tileTypeEnum.assets[this.runwayIndices[0]]
-        else if (tileTypeEnum == TILES.RUNWAY) asset = tileTypeEnum.assets[this.runwayIndices[1]]
-        else if (tileTypeEnum == TILES.RUNWAY_END) asset = tileTypeEnum.assets[this.runwayIndices[2]]
+        else if (tileTypeEnum == TILES.RUNWAY_START && this.runwayIndices != undefined) asset = tileTypeEnum.assets[this.runwayIndices[0]]
+        else if (tileTypeEnum == TILES.RUNWAY && this.runwayIndices != undefined) asset = tileTypeEnum.assets[this.runwayIndices[1]]
+        else if (tileTypeEnum == TILES.RUNWAY_END && this.runwayIndices != undefined) asset = tileTypeEnum.assets[this.runwayIndices[2]]
         else asset = Phaser.Utils.Array.GetRandom(tileTypeEnum.assets)
 
         //Create the sprite
@@ -140,8 +141,8 @@ class World {
 
         var neighbours = getNeighbourCoords(tilePos, this.tiles.length)
         var withPlane = neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) &&
-                                               c[1] == Math.floor(this.game.plane.coords[1]) &&
-                                               [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
+            c[1] == Math.floor(this.game.plane.coords[1]) &&
+            [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
         if (withPlane.length > 0) { // The plane is flying over an adjacent, blocking tile
             var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]][0]
             this.game.tweens.addCounter({ // We will tint the tile "red", or well, remove the other colors to make it dark red
@@ -170,7 +171,7 @@ class World {
             }
         })
         neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))).forEach(c => { // Swap M to G and other way around in tiles
-                this.tiles[c[0]][c[1]] = this.getTile(c) == TILES.MOUNTAIN ? TILES.GRASS : TILES.MOUNTAIN
+            this.tiles[c[0]][c[1]] = this.getTile(c) == TILES.MOUNTAIN ? TILES.GRASS : TILES.MOUNTAIN
         })
     }
 
@@ -187,10 +188,10 @@ class World {
 
         // Add diagonally adjacent if possible
         // I wanted to do this in a cool way but no built-in array equivalence check made it hard, you're free to try yourself
-        if ([[pos[0]-1, pos[1]], [pos[0], pos[1]-1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]-1, pos[1]-1])
-        if ([[pos[0]-1, pos[1]], [pos[0], pos[1]+1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]-1, pos[1]+1])
-        if ([[pos[0]+1, pos[1]], [pos[0], pos[1]-1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]+1, pos[1]-1])
-        if ([[pos[0]+1, pos[1]], [pos[0], pos[1]+1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0]+1, pos[1]+1])
+        if ([[pos[0] - 1, pos[1]], [pos[0], pos[1] - 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] - 1, pos[1] - 1])
+        if ([[pos[0] - 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] - 1, pos[1] + 1])
+        if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] - 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] + 1, pos[1] - 1])
+        if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] + 1, pos[1] + 1])
 
         neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
         return neighbours
@@ -201,8 +202,8 @@ class World {
     calculatePath(startCoord, endCoord) {
         startCoord = [Math.floor(startCoord[0]), Math.floor(startCoord[1])]
         console.log("Going from ", startCoord + " to " + endCoord)
-        var queue = new PriorityQueue({ comparator: function(a, b) { return a.priority - b.priority; }});
-        queue.queue({priority: 0, coord: startCoord})
+        var queue = new PriorityQueue({ comparator: function (a, b) { return a.priority - b.priority; } });
+        queue.queue({ priority: 0, coord: startCoord })
         var size = this.tiles.length
         var cameFrom = {}; // Keys are coords, saved as Coord[0] * this.tiles.length + Coord[1]
         var costSoFar = {};
@@ -219,7 +220,7 @@ class World {
                 if (!(costSoFar[c[0] * size + c[1]] == undefined || newCost < oldCost)) return // "continue" in the foreach
                 costSoFar[c[0] * size + c[1]] = newCost
                 var priority = newCost + Math.hypot(c[0] - endCoord[0], c[1] - endCoord[1]) // We use distance to end coord as heuristic
-                queue.queue({priority: priority, coord: c})
+                queue.queue({ priority: priority, coord: c })
                 cameFrom[c[0] * size + c[1]] = current.coord
             })
         }
@@ -236,9 +237,9 @@ class World {
     }
 
     handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
-       var endCoord = getGridCoords(this.game, mouseX, mouseY)
-       var path = this.calculatePath(this.game.pilot.nextTile ? this.game.pilot.nextTile : this.game.pilot.coords, endCoord)
-       this.game.pilot.setPath(path)
+        var endCoord = getGridCoords(this.game, mouseX, mouseY)
+        var path = this.calculatePath(this.game.pilot.nextTile ? this.game.pilot.nextTile : this.game.pilot.coords, endCoord)
+        this.game.pilot.setPath(path)
     }
 }
 

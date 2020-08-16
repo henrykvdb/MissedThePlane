@@ -4,7 +4,7 @@ const TILES = {
         assets: [],
         passable_pilot: false,
         passable_plane: true,
-        levelEditor: true,
+        levelEditor: false,
         z_index: 0
     },
     GRASS: {
@@ -36,7 +36,7 @@ const TILES = {
         assets: ['stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
         passable_pilot: true,
         passable_plane: true,
-        levelEditor: true,
+        levelEditor: false,
         z_index: 0
     },
     RUNWAY: {
@@ -133,3 +133,4 @@ const TILES = {
 }
 TILES_IMPASSABLE_PILOT = Object.values(TILES).filter(data => !data.passable_pilot)
 TILES_IMPASSABLE_PLANE = Object.values(TILES).filter(data => !data.passable_plane)
+TILES_LEVEL_EDITOR = Object.values(TILES).filter(data => data.levelEditor)
