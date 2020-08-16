@@ -71,7 +71,7 @@ class Pilot {
             dt = Math.max(dt - timeToNextTile, 0)
         }
 
-        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) console.log("Illegal position?")
+        if (this.game.world.collidesWith(this.coords, TILE_EDGE, TILES_IMPASSABLE_PILOT)) console.log("ERROR: Illegal position?")
     }
 
     updateSprites() {
@@ -111,6 +111,7 @@ class Pilot {
     interact() {
         if (this.game.world.getTile(this.coords) != TILES.BUTTON) return
         this.game.world.triggerButton(this.coords)
+        this.cancelCurrent()
     }
 
     // Sets a given path for this pilot to follow

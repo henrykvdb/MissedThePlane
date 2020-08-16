@@ -98,6 +98,7 @@ class Plane {
         if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, [TILES.RUNWAY_START]) &&
             this.game.world.getTile(addArray(this.coords, this.dirVector)) == TILES.RUNWAY) {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
+            this.game.world.clearRunway()
             audio.playPopup(true)
             this.game.ui.startPopupAnimation(true)
             this.game.ui.btnRestart.visible = false

@@ -37,6 +37,7 @@ class World {
     markRunway() {
         var endCoords = this.findCoord(TILES.RUNWAY_END)
         if (endCoords == undefined) { console.log("No end tile found!"); return }
+        this.runwayTiles = [endCoords]
 
         // Find runway direction
         var neighbourRunway = getNeighbourCoords(endCoords, this.tiles.length)
@@ -54,6 +55,7 @@ class World {
         while (next != undefined && (next[endCoords[1] - dir[1]] == TILES.RUNWAY || next[endCoords[1] - dir[1]] == TILES.RUNWAY_START)) {
             endCoords = [endCoords[0] - dir[0], endCoords[1] - dir[1]]
             this.tiles[endCoords[0]][endCoords[1]] = TILES.RUNWAY
+            this.runwayTiles.push(endCoords)
             next = this.tiles[endCoords[0] - dir[0]]
         }
 
@@ -174,6 +176,26 @@ class World {
         })
     }
 
+    // The plane is landing and called this function. If the pilot is standing on the runway, he should path to an accessible tile and the
+    // runway should be make inaccessible to ensure he doesn't walk on it again
+    clearRunway() {
+        var runwayTiles = [TILES.RUNWAY, TILES.RUNWAY_START, TILES.RUNWAY_END]
+        if (runwayTiles.includes(this.getTile(this.game.pilot.coords))) { // The pilot is a snobhead and needs to move out of the way
+            var neighbourRunway = []
+            this.runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(n => neighbourRunway.push(n))) // We add all tiles next to each runway tile (has duplicates)
+            console.log(this.runwayTiles)
+            console.log(neighbourRunway)
+            neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && !runwayTiles.includes(this.getTile(c))).map(c => {
+                // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
+                return {coord: c, distance: Math.hypot(c[0] - this.game.pilot.coords[0], c[1] - this.game.pilot.coords[1])}
+            })
+            neighbourRunway.sort((c1, c2) => c1.distance - c2.distance)
+            console.log(neighbourRunway)
+            this.updatePilotPath(neighbourRunway[0].coord) // Path to closest accessible tile
+        }
+        TILES_IMPASSABLE_PILOT = TILES_IMPASSABLE_PILOT.concat(runwayTiles) // Now we have our path, we make the current tiles inaccessible.
+    }
+
     // Returns all pilot passable neighbours from a given coordinate, as well as _diagonal_ neighbours on the condition that the two
     // adjacent tiles next to the diagonal are passable as well.
     getPathNeighbours(coords) {
@@ -224,6 +246,7 @@ class World {
             })
         }
 
+        // We have generated our dictionaries, we work our way back using cameFrom to build the most efficient path
         current = current.coord
         var result = []
         if (queue.length == 0 && !(current[0] == endCoord[0] && current[1] == endCoord[1])) return result // We simply ran out of options, there's no path
