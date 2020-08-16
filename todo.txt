@@ -12,7 +12,7 @@ Should do
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
-- Markus credit (ui info menu with contact email?)
+- Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
 - Landed plane collision / z sort fix
 - More levels
 - fix navigation bar reappearing (onResume instead of onStart?)

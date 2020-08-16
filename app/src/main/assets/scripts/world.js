@@ -227,18 +227,43 @@ class World {
         current = current.coord
         var result = []
         if (queue.length == 0 && !(current[0] == endCoord[0] && current[1] == endCoord[1])) return result // We simply ran out of options, there's no path
+        var totalLength = 0
+        var next = undefined
         while (current[0] != startCoord[0] || current[1] != startCoord[1]) {
             result.push(current)
-            current = cameFrom[current[0] * size + current[1]]
+            next = cameFrom[current[0] * size + current[1]]
+            totalLength += Math.hypot(current[0] - next[0], current[1] - next[1])
+            current = next
         }
+        result.totalLength = totalLength;
 
         return result
     }
 
+    updatePilotPath(clickedTile) {
+        if (clickedTile[0] == Math.floor(this.game.pilot.coords[0]) && clickedTile[1] == Math.floor(this.game.pilot.coords[1])) { // If we click on the tile below us, we stop
+            if (!this.game.pilot.nextTile) return // The user is clicking on the tile below the pilot while the pilot isn't moving, this function doesn't need to do anything
+            if (clickedTile[0] == this.game.pilot.nextTile[0] && clickedTile[1] == this.game.pilot.nextTile[1]) this.game.pilot.path = [] // We're already going there, we simply need to clear path
+            else if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) this.game.pilot.cancelCurrent() // We come from here, we cancel this plan
+            else console.log("ERROR: Clicked on tile below pilot without it being related to it?")
+            return
+        }
+        if (!this.game.pilot.nextTile) {this.game.pilot.setPath(this.calculatePath(this.game.pilot.coords, clickedTile)); return} // We are not on a path already, no need for optimization mess
+
+        if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) // We want to go where we just came from, might as well simply cancel our current movement
+            this.game.pilot.cancelCurrent()
+
+        // If we are already on a path, check if it is faster to cancel the current movement to the next tile instead of pathing from there.
+        var pathFromNext = this.calculatePath(this.game.pilot.nextTile, clickedTile)
+        var pathFromPrevious = this.calculatePath(this.game.pilot.prevTile, clickedTile)
+        var lengthNext = pathFromNext.totalLength + Math.hypot(this.game.pilot.coords[0] - (this.game.pilot.nextTile[0] + 0.5), this.game.pilot.coords[1] - (this.game.pilot.nextTile[1] + 0.5))
+        var lengthPrev = pathFromPrevious.totalLength + Math.hypot(this.game.pilot.coords[0] - (this.game.pilot.prevTile[0] + 0.5), this.game.pilot.coords[1] - (this.game.pilot.prevTile[1] + 0.5))
+        this.game.pilot.setPath(lengthNext > lengthPrev ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev)
+    }
+
     handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
        var endCoord = getGridCoords(this.game, mouseX, mouseY)
-       var path = this.calculatePath(this.game.pilot.nextTile ? this.game.pilot.nextTile : this.game.pilot.coords, endCoord)
-       this.game.pilot.setPath(path)
+       this.updatePilotPath(endCoord)
     }
 }
 

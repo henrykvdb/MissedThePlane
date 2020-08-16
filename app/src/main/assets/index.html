@@ -34,6 +34,10 @@
             type: Phaser.AUTO,
             width: SIZE_X,
             height: SIZE_Y,
+            fps: {
+                target: 60,
+                forceSetTimeOut: true
+            },
             scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene]
         }
 
