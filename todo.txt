@@ -15,10 +15,9 @@ Should do
 - Markus credit (ui info menu with contact email?)
 - Landed plane collision / z sort fix
 - More levels
+- fix navigation bar reappearing (onResume instead of onStart?)
+- Fix [TAP TO START]
 
 Nice to have
-- Main menu instead of [TAB TO START]
 - Improved cutscenes/story
-- Plane starts landing earlier
 - Water animations
-- Sine wave through level (or make level go up and down)
