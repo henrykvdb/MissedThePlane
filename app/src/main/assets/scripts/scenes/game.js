@@ -16,11 +16,9 @@ class GameScene extends Phaser.Scene {
         this.ui = new UI(this)
 
         // Create level
-        var level = ALL_LEVELS[this.levelIndex]
+        var inputString = oldLevelToString(ALL_LEVELS[this.levelIndex])
         this.levelStatus = LEVEL_STATUS.PLAYING
-        this.world = new World(this, level.tiles.map(row => row.slice()))
-        this.pilot = new Pilot(this, level.pilot.coords.slice(), level.pilot.dir, level.pilot.speedModifier)
-        this.plane = new Plane(this, level.plane.coords.slice(), level.plane.dir)
+        this.world = new World(this, inputString)
 
         // Add pilot control listeners
         var pilot = this.pilot

@@ -133,9 +133,23 @@ const ALL_LEVELS = [
     pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },
     plane: { coords: [1.5, -0.5], dir: 3 },
     difficulty: '4'
-}]
+},
+// Filler levels for level select menu
+{tiles: [TILES.GRASS], difficulty: '1'},
+{tiles: [TILES.GRASS], difficulty: '1'},
+{tiles: [TILES.GRASS], difficulty: '2'},
+{tiles: [TILES.GRASS], difficulty: '2'},
+{tiles: [TILES.GRASS], difficulty: '2'},
+{tiles: [TILES.GRASS], difficulty: '3'},
+{tiles: [TILES.GRASS], difficulty: '3'},
+{tiles: [TILES.GRASS], difficulty: '3'},
+{tiles: [TILES.GRASS], difficulty: '3'},
+{tiles: [TILES.GRASS], difficulty: '3'},
+{tiles: [TILES.GRASS], difficulty: '4'},
+{tiles: [TILES.GRASS], difficulty: '4'},
+{tiles: [TILES.GRASS], difficulty: '5'},
+{tiles: [TILES.GRASS], difficulty: '5'},]
 
-// Given a list of tiles, convert the runway's E and R to R0, R1, etc
 function convertFromOld(tiles) { //TODO REPLACE BY LEVEL EDITOR
     var conversionMap = {
         'G': TILES.GRASS,
@@ -163,4 +177,13 @@ function convertFromOld(tiles) { //TODO REPLACE BY LEVEL EDITOR
     }
 
     return tiles
+}
+
+function oldLevelToString(level) {
+    var exportObject = {"size": level.tiles.length}
+    exportObject.tiles = level.tiles.map(row => row.map(tile => tile.id))
+    exportObject.pilot = [level.pilot.coords[0], level.pilot.coords[1], level.pilot.dir]
+    exportObject.plane = [level.plane.coords[0], level.plane.coords[1], level.plane.dir]
+    exportObject.difficulty = level.difficulty
+    return JSON.stringify(exportObject)
 }

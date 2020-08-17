@@ -1,26 +1,24 @@
 class LevelEditScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LevelEditScene' })
-        var START_SIZE = 3
-        this.INIT_TILES = Array.from(Array(START_SIZE)).map(_ => Array.from(Array(START_SIZE)).map(() => TILES.GRASS))
-        this.INIT_TILES = ALL_LEVELS[7].tiles.map(row => row.slice())
+        this.START_LEVEL = oldLevelToString(ALL_LEVELS[7])
     }
 
     init(data) {
-        if (data.tiles != undefined) this.INIT_TILES = data.tiles
+        if (data.start_level != undefined) this.START_LEVEL = data.start_level
     }
 
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        this.world = new World(this, this.INIT_TILES)
+        this.world = new World(this, this.START_LEVEL)
 
         // Rotate
         var scene = this
-        this.btnRotate = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_removeads').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnRotate = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_rotate').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnRotate.on('pointerdown', function (pointer) {
-            var tiles = scene.world.tiles
-            tiles = tiles[0].map((_, index) => tiles.map(row => row[index]).reverse())
-            scene.scene.restart({ tiles })
+            scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
+            var newString = scene.world.exportWorldAsString()
+            scene.scene.restart({ start_level: newString })
         })
 
         // Shift arrows
@@ -46,9 +44,14 @@ class LevelEditScene extends Phaser.Scene {
             LevelEditScene.scene.stop()
         })*/
 
+        // Export current level
+        this.btnSave = this.add.sprite(SIZE_X - 5*getXY(0.04), getXY(0.04), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnSave.on('pointerdown', function (pointer) {
+            console.log(scene.world.exportWorldAsString())
+        })
+
         // Increase size
-        var scene = this
-        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_removeads').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_size_0').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnSizeUp.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
             tiles.forEach(col => col.push(TILES.GRASS))
@@ -58,7 +61,7 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Decrease size
-        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.185), 'btn_removeads').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.185), 'btn_size_1').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnSizeDown.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
             if (tiles.length <= 3) return // Below 3x3 is not useful and pretty ugly

@@ -2,10 +2,16 @@ const TILE_SHIFT_X = 147
 const TILE_SHIFT_Y = 85
 
 class World {
-    constructor(game, tiles) {
+    constructor(game, inputString) {
+
         // Init code of world
         this.game = game
-        this.tiles = tiles
+
+        this.parameters = JSON.parse(inputString)
+        var idToTile = {}
+        Object.keys(TILES).forEach(name => idToTile[TILES[name].id] = TILES[name])
+        this.tiles = this.parameters.tiles.map(row => row.map(tileId => idToTile[tileId]))
+        this.markRunway()
 
         //Define game drawing constants
         this.game.levelSize = this.tiles.length
@@ -15,22 +21,11 @@ class World {
 
         this.createSprites()
 
+        // Instantiate pilot and plane with given parameters
+        this.game.pilot = new Pilot(this.game, this.parameters.pilot.slice(0,2), this.parameters.pilot[2])
+        this.game.plane = new Plane(this.game, this.parameters.plane.slice(0,2), this.parameters.plane[2])
+
         this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp'), this.game.sound.add('buttonBlocked')]
-        for (var i = 0; i < 4; i++) { // loop through each viewAngle
-            this.game.anims.create({
-                key: 'shrink' + i,
-                frames: [{ key: 'mountain0' + i }, { key: 'mountain1' + i }, { key: 'mountain2' + i }, { key: 'mountain3' + i }],
-                frameRate: 18,
-                hideOnComplete: true,
-                repeat: 0
-            })
-            this.game.anims.create({
-                key: 'grow' + i,
-                frames: [{ key: 'mountain3' + i }, { key: 'mountain2' + i }, { key: 'mountain1' + i }, { key: 'mountain0' + i }],
-                frameRate: 18,
-                repeat: 0
-            })
-        }
     }
 
     // Given a list of tiles, convert the runway's E and R to R0, R1, etc
@@ -65,7 +60,21 @@ class World {
     }
 
     createSprites() {
-        this.markRunway()
+        for (var i = 0; i < 4; i++) { // loop through each viewAngle
+            this.game.anims.create({
+                key: 'shrink' + i,
+                frames: [{ key: 'mountain0' + i }, { key: 'mountain1' + i }, { key: 'mountain2' + i }, { key: 'mountain3' + i }],
+                frameRate: 18,
+                hideOnComplete: true,
+                repeat: 0
+            })
+            this.game.anims.create({
+                key: 'grow' + i,
+                frames: [{ key: 'mountain3' + i }, { key: 'mountain2' + i }, { key: 'mountain1' + i }, { key: 'mountain0' + i }],
+                frameRate: 18,
+                repeat: 0
+            })
+        }
 
         this.sprites = Array.from(Array(this.tiles.length)).map(() => Array.from(Array(this.tiles.length)).map(() => undefined))
         for (var x = 0; x < this.tiles.length; x++) {
@@ -290,6 +299,15 @@ class World {
     handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
        var endCoord = getGridCoords(this.game, mouseX, mouseY)
        this.updatePilotPath(endCoord)
+    }
+
+    // Save it in a string of format {"size": size, "tiles": [1,1,1,2,1,1,1,etc], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
+    exportWorldAsString() {
+        var exportObject = {"size": this.tiles.length}
+        exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
+        exportObject.pilot = this.parameters.pilot
+        exportObject.plane = this.parameters.plane
+        return JSON.stringify(exportObject)
     }
 }
 
