@@ -2,23 +2,26 @@ Should do
 - Tutorial
     - Re-add
     - New controls explanation
-- Levels menu overhaul (better scalability, seperation user levels)
+- UI
+    - Overlay main menu
+        - about + credits: Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
+    - Levels menu overhaul (better scalability, seperation user levels)
+    - Level browser / User levels
+    - Level editor
+        - basic
+        - export/import
+        - Model shift, +-, rotate buttons
+        - database?
+    - Game scene update
 - Get an actual font
-- Flip app icon
-- Level editor
-    - basic
-    - export/import
-    - Model shift, +-, rotate buttons
-    - database?
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
-- Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
 - More levels
 - fix navigation bar reappearing (onResume instead of onStart?)
-- Fix [TAP TO START]
+- Start music on main menu press
 
 Nice to have
-- Show selected tile when walking
+- Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
 - Water animations
