@@ -2,71 +2,132 @@ class LevelEditScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LevelEditScene' })
         this.START_LEVEL = oldLevelToString(ALL_LEVELS[7])
+        this.drawerOpen = false
+        this.shiftEnabled = false
     }
 
     init(data) {
-        if (data.start_level != undefined) this.START_LEVEL = data.start_level
+        if (data.levelString != undefined) this.START_LEVEL = data.levelString
+        if (data.drawerOpen != undefined) this.drawerOpen = data.drawerOpen
+        if (data.shiftEnabled != undefined) this.shiftEnabled = data.shiftEnabled
     }
 
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.world = new World(this, this.START_LEVEL)
-
-        // Rotate
         var scene = this
-        this.btnRotate = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_rotate').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnRotate.on('pointerdown', function (pointer) {
-            scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
-            var newString = scene.world.exportWorldAsString()
-            scene.scene.restart({ start_level: newString })
+
+        // Close button
+        this.btnRestart = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_close').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnRestart.on('pointerdown', function (pointer) {
+            LevelEditScene.scene.resume('GameScene');
+            LevelEditScene.scene.stop()
+        })
+
+        // Increase size button
+        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(0.84), getXY(0.04), 'btn_size_0').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
+        this.btnSizeUp.on('pointerdown', function (pointer) {
+            var tiles = scene.world.tiles
+            tiles.forEach(col => col.push(TILES.GRASS))
+            tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
+            scene.world.tiles = tiles
+            var levelString = scene.world.exportWorldAsString()
+            scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled }) //TODO pilot + plane pos
+
+        })
+
+        // Decrease size button
+        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(0.68), getXY(0.04), 'btn_size_1').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
+        this.btnSizeDown.on('pointerdown', function (pointer) {
+            var tiles = scene.world.tiles
+            if (tiles.length <= 3) return // Below 3x3 is not useful and pretty ugly
+            scene.world.tiles = tiles.slice(0, tiles.length - 1).map(col => col.slice(0, tiles.length - 1))
+            var levelString = scene.world.exportWorldAsString()
+            scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled }) //TODO pilot + plane pos
         })
 
         // Shift arrows
         var size = this.world.tiles.length
         var positions = [[-1.3, size / 2 - 0.5], [size / 2 - 0.5, size + 0.3], [size + 0.3, size / 2 - 0.5], [size / 2 - 0.5, - 1.3]]
+        var shiftArrows = []
         for (let i = 0; i < 4; i++) {
             var scene = this
             var coords = getScreenCoords(this, positions[i][0], positions[i][1])
-            var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_'+i)
-            btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({pixelPerfect: true, }).setDepth(positions[i][0] + positions[i][1]).setTint("0xFFAA00")
+            var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i)
+            btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true, }).setDepth(positions[i][0] + positions[i][1])
+            btnMove.setTint("0xFFAA00").visible = this.shiftEnabled
             btnMove.on('pointerdown', function (pointer) {
                 var tiles = scene.world.tiles
-                if (i % 2 == 0) tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : size - 1)) //shift X
-                else tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
-                scene.scene.restart({ tiles })
+                if (i % 2 == 0) scene.world.tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : size - 1)) //shift X
+                else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
+                var levelString = scene.world.exportWorldAsString()
+                scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled }) //TODO pilot + plane pos
             })
+            shiftArrows.push(btnMove)
         }
 
-        // Close button //TODO readd
-        /*this.btnRestart = this.add.sprite(SIZE_X - 10*getXY(0.04), getXY(0.04), 'btn_close').setOrigin(1, 0).setScale(0.20 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnRestart.on('pointerdown', function (pointer) {
-            LevelEditScene.scene.resume('GameScene');
-            LevelEditScene.scene.stop()
-        })*/
+        // Shift toggle button
+        this.btnShift = this.add.sprite(SIZE_X - getXY(0.52), getXY(0.04), 'btn_removeads').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
+        if (scene.shiftEnabled) this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+        else this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
+        this.btnShift.on('pointerdown', function (pointer) {
+            scene.shiftEnabled = !scene.shiftEnabled
+            shiftArrows.forEach(sprite => sprite.visible = scene.shiftEnabled)
+            if (scene.shiftEnabled) scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+            else scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
+        })
 
-        // Export current level
-        this.btnSave = this.add.sprite(SIZE_X - 5*getXY(0.04), getXY(0.04), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        // Rotate button
+        var scene = this
+        this.btnRotate = this.add.sprite(SIZE_X - getXY(0.36), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
+        this.btnRotate.on('pointerdown', function (pointer) {
+            scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
+            var levelString = scene.world.exportWorldAsString()
+            scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled }) //TODO pilot + plane pos
+        })
+
+        // Open tools drawer
+        var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotate]
+        var drawerSpritesX = drawerSprites.map(sprite => sprite.x)
+        if (!this.drawerOpen) drawerSprites.forEach(sprite => sprite.x = SIZE_X - getXY(0.20))
+        this.btnDrawer = this.add.sprite(SIZE_X - getXY(0.20), getXY(0.04), 'btn_removeads').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110);
+        this.btnDrawer.on('pointerdown', function (pointer) {
+            scene.drawerOpen = !scene.drawerOpen
+
+            drawerSprites.forEach(function (sprite, i) {
+                // Open -> close
+                if (scene.drawerOpen) scene.tweens.add({
+                    targets: sprite,
+                    x: drawerSpritesX[i],
+                    duration: 100, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
+                });
+                // Close -> open
+                else scene.tweens.add({
+                    targets: sprite,
+                    x: SIZE_X - getXY(0.20),
+                    duration: 100, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
+                });
+            })
+
+            //drawerSprites.forEach(sprite => sprite.visible = scene.drawerOpen)
+        })
+
+        // Import level button
+        this.btnLoad = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_removeads').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnLoad.on('pointerdown', function (pointer) {
+            console.log(scene.world.exportWorldAsString()) //TODO
+        })
+
+        // Export/Save current level button
+        this.btnSave = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.20), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnSave.on('pointerdown', function (pointer) {
-            console.log(scene.world.exportWorldAsString())
+            console.log(scene.world.exportWorldAsString()) //TODO
         })
 
-        // Increase size
-        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_size_0').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnSizeUp.on('pointerdown', function (pointer) {
-            var tiles = scene.world.tiles
-            tiles.forEach(col => col.push(TILES.GRASS))
-            tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
-            scene.scene.restart({ tiles })
-
-        })
-
-        // Decrease size
-        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.185), 'btn_size_1').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnSizeDown.on('pointerdown', function (pointer) {
-            var tiles = scene.world.tiles
-            if (tiles.length <= 3) return // Below 3x3 is not useful and pretty ugly
-            tiles = tiles.slice(0, tiles.length - 1).map(col => col.slice(0, tiles.length - 1))
-            scene.scene.restart({ tiles })
+        // Run button
+        this.btnRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'btn_removeads').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnRun.on('pointerdown', function (pointer) {
+            console.log(scene.world.exportWorldAsString()) //TODO
         })
 
         //MAGIC TIME
@@ -78,13 +139,12 @@ class LevelEditScene extends Phaser.Scene {
 
         // Make tile sprites
         this.tileSprites = []
-        this.tweenArray = Array.from(Array(this.COUNT_TOTAL))
         for (let i = 0; i < TILES_LEVEL_EDITOR.length; i++) {
             var tileSprite = this.add.sprite(0, this.TOPHEIGT, TILES_LEVEL_EDITOR[i].assets[0])
             tileSprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
             tileSprite.setScale(this.TILE_SCALE)
             tileSprite.setDepth(200)
-            tileSprite.setInteractive({ draggable: true, pixelPerfect: true})
+            tileSprite.setInteractive({ draggable: true, pixelPerfect: true })
             scene.tileSprites.push(tileSprite)
         }
         updateSprites(this, 0, 0)
@@ -154,7 +214,7 @@ function updateSprites(scene, position, duration) {
 
             //Move the sprite to the new position
             if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
-                scene.tweenArray[i] = scene.tweens.add({
+                scene.tweens.add({
                     targets: sprite,
                     x: newPos,
                     duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
