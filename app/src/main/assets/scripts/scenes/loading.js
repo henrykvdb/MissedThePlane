@@ -77,7 +77,7 @@ class LoadingScene extends Phaser.Scene {
         const BUTTON_HEIGHT = getXY(0.14)
         const BUTTON_SPACING = getXY(0.08)
 
-        const START_Y = (SIZE_Y - BUTTON_HEIGHT * 4 - BUTTON_HEIGHT * 3 / 2) / 2
+/*         const START_Y = (SIZE_Y - BUTTON_HEIGHT * 4 - BUTTON_HEIGHT * 3 / 2) / 2
         var menuGraphics = []
         var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
         for (var i = 0; i < 4; i++) {
@@ -88,14 +88,14 @@ class LoadingScene extends Phaser.Scene {
                 console.log('hey: ', menuGraphics.indexOf(gameObject))
             });
             menuGraphics.push(rect)
-        }
+        } */
 
 
         //this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         //game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
         //this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         this.scene.launch('GameScene', { levelIndex: 0 })
-        //audio.start()
+        audio.start()
         //})
         //this.add.text(getX(0.5), getY(0.05), '[Press space to start]', { fill: '#a92a17', fontSize: getXY(0.05), fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)
     }
