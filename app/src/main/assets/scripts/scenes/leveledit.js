@@ -114,7 +114,8 @@ class LevelEditScene extends Phaser.Scene {
             var distance = pointer.downX - pointer.upX
 
             // User tapped a tile
-            if (Math.abs(distance) < scene.TILE_SCALE * 400) {
+            if (gameObject != scrollbar && Math.abs(distance) < scene.TILE_SCALE * 400) {
+                console.log("tap")
                 position = scene.tileSprites.indexOf(gameObject) - (scene.COUNT_DISPLAY - 1) / 2
                 position = (position + scene.COUNT_TOTAL) % scene.COUNT_TOTAL
                 updateSprites(scene, position, 100)
@@ -122,11 +123,11 @@ class LevelEditScene extends Phaser.Scene {
 
             // User swiped to a tile
             else {
-                console.log(distance)
+                console.log("swipe")
                 position += distance / scene.DRAG_WEIGHT
                 position = position + scene.COUNT_TOTAL
                 position = Math.round(position) % scene.COUNT_TOTAL
-                updateSprites(scene, position, 250)
+                updateSprites(scene, position, 100)
             }
         })
     }
@@ -152,7 +153,7 @@ function updateSprites(scene, position, duration) {
             var newPos = localPos * STEP
 
             //Move the sprite to the new position
-            if (duration != 0 && Math.abs(newPos-sprite.x)<STEP*2.5) {
+            if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
                 scene.tweenArray[i] = scene.tweens.add({
                     targets: sprite,
                     x: newPos,
