@@ -4,7 +4,7 @@ Should do
     - New controls explanation
 - Levels menu overhaul (better scalability, seperation user levels)
 - Get an actual font
-- Flip app icon
+- Make menu overlay
 - Level editor
     - basic
     - export/import
@@ -22,3 +22,7 @@ Nice to have
 - Show selected tile when walking
 - Improved cutscenes/story
 - Water animations
+- Level spawn animation
+
+Marketing
+- Voxel isometric games -> almost no results -> make some reddit/medium threads or something
