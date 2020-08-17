@@ -8,10 +8,10 @@ Should do
     - Levels menu overhaul (better scalability, seperation user levels)
     - Level browser / User levels
     - Level editor
-        - basic
-        - export/import
-        - Model shift, +-, rotate buttons
-        - database?
+        - Textures
+        - Export/import
+        - Transform pilot+plane too
+        - Database?
     - Game scene update
 - Get an actual font
 - Ads

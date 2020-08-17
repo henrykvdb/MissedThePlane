@@ -108,13 +108,13 @@ class LevelEditScene extends Phaser.Scene {
                     duration: 100, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
                 });
             })
-
-            //drawerSprites.forEach(sprite => sprite.visible = scene.drawerOpen)
         })
 
         // Import level button
         this.btnLoad = this.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_removeads').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnLoad.on('pointerdown', function (pointer) {
+            console.log("LOADING WORLD...")
+            console.log("haha just kidding we can't do that yet ;)")
             console.log(scene.world.exportWorldAsString()) //TODO
         })
 
@@ -133,16 +133,15 @@ class LevelEditScene extends Phaser.Scene {
         //MAGIC TIME
         this.COUNT_DISPLAY = 5 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
         this.COUNT_TOTAL = TILES_LEVEL_EDITOR.length
-        this.TOPHEIGT = SIZE_Y - getY(0.14)
         this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // No idea what kind of units this is lol
-        this.TILE_SCALE = 0.25 * MIN_XY / 600
+        this.TILE_SCALE = 0.3 * MIN_XY / 600
 
         // Make tile sprites
         this.tileSprites = []
+        const TILE_HEIGHT = SIZE_Y - getY(0.04)
         for (let i = 0; i < TILES_LEVEL_EDITOR.length; i++) {
-            var tileSprite = this.add.sprite(0, this.TOPHEIGT, TILES_LEVEL_EDITOR[i].assets[0])
-            tileSprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
-            tileSprite.setScale(this.TILE_SCALE)
+            var tileSprite = this.add.sprite(0, TILE_HEIGHT, TILES_LEVEL_EDITOR[i].assets[0])
+            tileSprite.setOrigin(0.5, (800 - 284) / 800)
             tileSprite.setDepth(200)
             tileSprite.setInteractive({ draggable: true, pixelPerfect: true })
             scene.tileSprites.push(tileSprite)
@@ -150,10 +149,13 @@ class LevelEditScene extends Phaser.Scene {
         updateSprites(this, 0, 0)
 
         // Make scrollbar
-        var scrollbar = this.add.tileSprite(0, this.TOPHEIGT, SIZE_X, 50, 'menu_invisible').setDepth(150)
+        const SCROLLBAR_HEIGT =  TILE_HEIGHT - this.TILE_SCALE*200
+        var scrollbar = this.add.tileSprite(0, SCROLLBAR_HEIGT, SIZE_X, SIZE_Y - SCROLLBAR_HEIGT, 'menu_invisible').setDepth(150)
         scrollbar.setScale(SIZE_X)
         scrollbar.setOrigin(0)
         scrollbar.setInteractive({ draggable: true })
+        scrollbar.setAlpha(0.5)
+        scrollbar.setTint(0,0,0)
 
         // User is dragging - update positions
         var position = 0
@@ -212,7 +214,12 @@ function updateSprites(scene, position, duration) {
             var localPos = (i + 1 > position) ? (i - position) : (scene.COUNT_TOTAL + i - position)
             var newPos = localPos * STEP
 
-            //Move the sprite to the new position
+            // Update sprite size
+            const CENTER = (scene.COUNT_DISPLAY-1)/2
+            var size = Math.max(1/(Math.abs(CENTER-localPos) + 1),0.7)
+            sprite.setScale(scene.TILE_SCALE*size)
+
+            // Move the sprite to the new position
             if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
                 scene.tweens.add({
                     targets: sprite,
