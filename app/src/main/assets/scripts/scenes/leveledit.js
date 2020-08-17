@@ -25,15 +25,12 @@ class LevelEditScene extends Phaser.Scene {
 
         // Shift arrows
         var size = this.world.tiles.length
-        var evenWorld = size % 2 == 0
-        var shiftX = (getScreenCoords(this, 0, size - 1)[0] - getScreenCoords(this, size - 1, 0)[0]) / 4 + this.shiftX / 2
-        var shiftY = (getScreenCoords(this, size - 1, size - 1)[1] - getScreenCoords(this, 0, 0)[1]) / 4 + this.shiftY / 2
-        var centerY = evenWorld ? getScreenCoords(this, size / 2, size / 2)[1] : getScreenCoords(this, (size - 1) / 2, (size - 1) / 2)[1] + this.shiftY
+        var positions = [[-1.3, size / 2 - 0.5], [size / 2 - 0.5, size + 0.3], [size + 0.3, size / 2 - 0.5], [size / 2 - 0.5, - 1.3]]
         for (let i = 0; i < 4; i++) {
             var scene = this
-            var originX = i > 1
-            var originY = i == 0 || i == 3
-            var btnMove = this.add.sprite(SIZE_X / 2 + (originX ? -1 : 1) * shiftX, centerY - (originY ? 1 : -1) * shiftY, 'btn_removeads').setOrigin(originX, originY).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+            var coords = getScreenCoords(this, positions[i][0], positions[i][1])
+            var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_'+i)
+            btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({pixelPerfect: true, }).setDepth(positions[i][0] + positions[i][1]).setTint("0xFFAA00")
             btnMove.on('pointerdown', function (pointer) {
                 var tiles = scene.world.tiles
                 if (i % 2 == 0) tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : size - 1)) //shift X
@@ -84,7 +81,7 @@ class LevelEditScene extends Phaser.Scene {
             tileSprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
             tileSprite.setScale(this.TILE_SCALE)
             tileSprite.setDepth(200)
-            tileSprite.setInteractive({ draggable: true, pixelPerfect: true, })
+            tileSprite.setInteractive({ draggable: true, pixelPerfect: true})
             scene.tileSprites.push(tileSprite)
         }
         updateSprites(this, 0, 0)

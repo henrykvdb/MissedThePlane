@@ -3,9 +3,12 @@ Should do
     - Re-add
     - New controls explanation
 - Levels menu overhaul (better scalability, seperation user levels)
+- Get an actual font
+- Flip app icon
 - Level editor
     - basic
     - export/import
+    - Model shift, +-, rotate buttons
     - database?
 - Ads
     - Admob: Add
@@ -16,5 +19,6 @@ Should do
 - Fix [TAP TO START]
 
 Nice to have
+- Show selected tile when walking
 - Improved cutscenes/story
 - Water animations

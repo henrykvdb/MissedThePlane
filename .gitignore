@@ -9,3 +9,4 @@
 .externalNativeBuild
 .cxx
 app/release
+app/build

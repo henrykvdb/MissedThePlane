@@ -103,7 +103,7 @@ class World {
         var coords = getScreenCoords(this.game, x, y)
         var sprite = this.game.add.sprite(coords[0], coords[1], asset)
         sprite.setScale(this.game.tileScale)
-        sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800)
+        sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800) // Magic numbers for our specific 400x800 tile resolution
         sprite.setDepth(x + y + tileTypeEnum.z_index)
         return sprite
     }
