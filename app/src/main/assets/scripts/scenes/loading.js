@@ -77,52 +77,8 @@ class LoadingScene extends Phaser.Scene {
 
     create() {
         audio = new Audio(this) //TODO START
-        this.splash.destroy()
-
-        const BUTTON_SPACING = getXY(0.18)
-        var scene = this.scene
-        this.btnCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnCampaign.on('pointerdown', function (pointer) {
-            scene.launch('LevelSelectScene', { levelIndex: 0 })
-            audio.start()
-        })
-
-        this.btnUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnUserLevels.on('pointerdown', function (pointer) {
-            console.log("not implemented") //TODO
-            audio.start()
-        })
-
-        this.btnLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnLevelEdit.on('pointerdown', function (pointer) {
-            scene.launch('LevelEditScene', { levelIndex: 0 })
-            audio.start()
-
-        })
-
-        this.btnAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnAbout.on('pointerdown', function (pointer) {
-            console.log("not implemented") //TODO
-            audio.start()
-        })
-
-        this.btnReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_removeads').setOrigin(0, 0).setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnReturn.on('pointerdown', function (pointer) {
-            //TODO unpause whatever tf is running
-            audio.start()
-        })
-
-        this.btnRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(0, 1).setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnRemoveAds.on('pointerdown', function (pointer) {
-            //TODO CALL TO KOTLIN TO SHOW ANDROID PAYMENT POPUP
-            audio.start()
-        })
-
-        this.btnSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(1, 1).setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnSettings.on('pointerdown', function (pointer) {
-            console.log("not implemented") //TODO
-            audio.start()
-        })
+        var caller = this.scene.key
+        this.scene.launch('MenuScene', {caller: caller})
     }
 }
 

@@ -23,10 +23,10 @@ class LevelSelectScene extends Phaser.Scene {
         this.add.text(X_START * 2, SIZE_Y - Y_START / 1.8, 'Skip to the next one!', { fill: '#000000', fontSize: 40*MIN_XY/600, }).setOrigin(0,0)
 
         // Close button
-        this.btnMenu = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnMenu = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnMenu.on('pointerdown', function (pointer) {
-            selectScene.scene.resume('LoadingScene');
-            selectScene.scene.stop() //TODO PAUSE INSTEAD OF RESUME?
+            selectScene.scene.launch('MenuScene', {caller: selectScene.scene.key})
+            selectScene.scene.pause() //TODO PAUSE INSTEAD OF STOP?
         })
 
         // Level buttons

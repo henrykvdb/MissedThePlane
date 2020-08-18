@@ -30,8 +30,8 @@ class UI {
         if (!this.playTesting) {
             this.btnMenu = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnMenu.on('pointerdown', function (pointer) {
-                gameScene.scene.resume('LoadingScene');
-                gameScene.scene.stop() //TODO PAUSE INSTEAD OF RESUME?
+                gameScene.scene.launch('MenuScene', {caller: gameScene.scene.key});
+                gameScene.scene.pause()
             })
         } else {
             this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);

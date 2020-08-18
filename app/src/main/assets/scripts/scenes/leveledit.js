@@ -19,16 +19,15 @@ class LevelEditScene extends Phaser.Scene {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.state.seed = JSON.parse(this.state.levelString).seed // Copy over the seed of the world if it is present
         this.world = new World(this, this.state.levelString)
-        var scene = this
+        const scene = this
         const BUTTON_GAP = 0.2
         const MARGIN_X = 0.04 //TODO INLINE AND MAKE GLOBAL VARIABLE
 
         // Menu button
-        const scene = this //TODO RENAME TO editScene
         this.btnMenu = this.add.sprite(getXY(0.04), getXY(MARGIN_X), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnMenu.on('pointerdown', function (pointer) {
-            scene.scene.resume('GameScene');
-            scene.scene.stop()
+            scene.scene.launch('MenuScene', {caller: scene.scene.key})
+            scene.scene.pause();
         })
 
         // Increase size button
@@ -83,7 +82,6 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Rotate button
-        var scene = this
         this.btnRotate = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
         this.btnRotate.on('pointerdown', function (pointer) {
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
