@@ -185,5 +185,6 @@ function oldLevelToString(level) {
     exportObject.pilot = [level.pilot.coords[0], level.pilot.coords[1], level.pilot.dir]
     exportObject.plane = [level.plane.coords[0], level.plane.coords[1], level.plane.dir]
     exportObject.difficulty = level.difficulty
+    exportObject.seed = Math.floor(Math.random() * 10000)
     return JSON.stringify(exportObject)
 }

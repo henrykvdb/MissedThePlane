@@ -1,23 +1,24 @@
 class LevelEditScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LevelEditScene' })
-        this.START_LEVEL = oldLevelToString(ALL_LEVELS[1])
-        this.drawerOpen = false
-        this.shiftEnabled = false
-        this.position = 0
-        this.relativePos = 0
+        this.state = {
+            drawerOpen: false,
+            shiftEnabled: false,
+            position: 0,
+            relativePos: 0,
+            levelString: oldLevelToString(ALL_LEVELS[1])
+            // We could instantiate seed here if we didn't already get a random from oldLevelToString
+        }
     }
 
     init(data) {
-        if (data.levelString != undefined) this.START_LEVEL = data.levelString
-        if (data.drawerOpen != undefined) this.drawerOpen = data.drawerOpen
-        if (data.shiftEnabled != undefined) this.shiftEnabled = data.shiftEnabled
-        if (data.initialPosition != undefined) this.position = data.initialPosition
+        if (data.state != undefined) Object.keys(data.state).forEach(name => this.state[name] = data.state[name])
     }
 
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        this.world = new World(this, this.START_LEVEL)
+        this.state.seed = JSON.parse(this.state.levelString).seed // Copy over the seed of the world if it is present
+        this.world = new World(this, this.state.levelString)
         var scene = this
         const BUTTON_GAP = 0.2
         const MARGIN_X = 0.04
@@ -36,9 +37,8 @@ class LevelEditScene extends Phaser.Scene {
             tiles.forEach(col => col.push(TILES.GRASS))
             tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
             scene.world.tiles = tiles
-            var levelString = scene.world.exportWorldAsString()
-            scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled, initialPosition: scene.position + scene.relativePos }) //TODO pilot + plane pos
-
+            scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+            scene.scene.restart(scene.state)
         })
 
         // Decrease size button
@@ -47,8 +47,8 @@ class LevelEditScene extends Phaser.Scene {
             var tiles = scene.world.tiles
             if (tiles.length <= 3) return // Below 3x3 is not useful and pretty ugly
             scene.world.tiles = tiles.slice(0, tiles.length - 1).map(col => col.slice(0, tiles.length - 1))
-            var levelString = scene.world.exportWorldAsString()
-            scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled, initialPosition: scene.position + scene.relativePos }) //TODO pilot + plane pos
+            scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+            scene.scene.restart(scene.state)
         })
 
         // Shift arrows
@@ -60,25 +60,25 @@ class LevelEditScene extends Phaser.Scene {
             var coords = getScreenCoords(this, positions[i][0], positions[i][1])
             var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i)
             btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true, }).setDepth(positions[i][0] + positions[i][1])
-            btnMove.setTint("0xFFAA00").visible = this.shiftEnabled
+            btnMove.setTint("0xFFAA00").visible = this.state.shiftEnabled
             btnMove.on('pointerdown', function (pointer) {
                 var tiles = scene.world.tiles
                 if (i % 2 == 0) scene.world.tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : size - 1)) //shift X
                 else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
-                var levelString = scene.world.exportWorldAsString()
-                scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled, initialPosition: scene.position + scene.relativePos }) //TODO pilot + plane pos
+                scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+                scene.scene.restart(scene.state)
             })
             shiftArrows.push(btnMove)
         }
 
         // Shift toggle button
         this.btnShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), 'btn_shift_toggle').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
-        if (scene.shiftEnabled) this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+        if (scene.state.shiftEnabled) this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
         else this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         this.btnShift.on('pointerdown', function (pointer) {
-            scene.shiftEnabled = !scene.shiftEnabled
-            shiftArrows.forEach(sprite => sprite.visible = scene.shiftEnabled)
-            if (scene.shiftEnabled) scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+            scene.state.shiftEnabled = !scene.state.shiftEnabled
+            shiftArrows.forEach(sprite => sprite.visible = scene.state.shiftEnabled)
+            if (scene.state.shiftEnabled) scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
             else scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         })
 
@@ -87,21 +87,21 @@ class LevelEditScene extends Phaser.Scene {
         this.btnRotate = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
         this.btnRotate.on('pointerdown', function (pointer) {
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
-            var levelString = scene.world.exportWorldAsString()
-            scene.scene.restart({ levelString: levelString, drawerOpen: scene.drawerOpen, shiftEnabled: scene.shiftEnabled, initialPosition: scene.position + scene.relativePos }) //TODO pilot + plane pos
+            scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+            scene.scene.restart(scene.state)
         })
 
         // Open tools drawer
         var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotate]
         var drawerSpritesX = drawerSprites.map(sprite => sprite.x) 
         this.btnDrawer = this.add.sprite(SIZE_X - getXY(MARGIN_X) - getXY(BUTTON_GAP), getXY(0.04), 'btn_wrench').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110);
-        if (!this.drawerOpen) drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
+        if (!this.state.drawerOpen) drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
         this.btnDrawer.on('pointerdown', function (pointer) {
-            scene.drawerOpen = !scene.drawerOpen
+            scene.state.drawerOpen = !scene.state.drawerOpen
 
             drawerSprites.forEach(function (sprite, i) {
                 // Open -> close
-                if (scene.drawerOpen) {
+                if (scene.state.drawerOpen) {
                         scene.tweens.add({
                         targets: sprite,
                         x: drawerSpritesX[i],
@@ -128,19 +128,19 @@ class LevelEditScene extends Phaser.Scene {
         this.btnLoad.on('pointerdown', function (pointer) {
             console.log("LOADING WORLD...")
             console.log("haha just kidding we can't do that yet ;)")
-            console.log(scene.world.exportWorldAsString()) //TODO
+            console.log(scene.world.exportWorldAsString(scene.state.seed)) //TODO
         })
 
         // Export/Save current level button
         this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04+BUTTON_GAP), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnSave.on('pointerdown', function (pointer) {
-            console.log(scene.world.exportWorldAsString()) //TODO
+            console.log(scene.world.exportWorldAsString(scene.state.seed)) //TODO
         })
 
         // Run button
         this.btnRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'btn_playtest').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRun.on('pointerdown', function (pointer) {
-            scene.scene.launch('GameScene', { levelString: scene.world.exportWorldAsString() })
+            scene.scene.launch('GameScene', { levelString: scene.state.levelString })
             scene.scene.sleep()
         })
 
@@ -159,7 +159,7 @@ class LevelEditScene extends Phaser.Scene {
             tileSprite.setInteractive({ draggable: true, pixelPerfect: true })
             this.tileSprites.push(tileSprite)
         }
-        updateSprites(this, this.position, 0)
+        updateSprites(this, this.state.position, 0)
 
         // Make scrollbar
         const SCROLLBAR_HEIGHT = TILE_HEIGHT - this.TILE_SCALE * 200
@@ -173,11 +173,11 @@ class LevelEditScene extends Phaser.Scene {
         // User is dragging - update positions
         this.input.on('drag', function (pointer, gameObject, dragX) {
             // Calculate the relative drag position
-            if (gameObject == scrollbar) scene.relativePos = -dragX
-            else scene.relativePos = pointer.downX - dragX
+            if (gameObject == scrollbar) scene.state.relativePos = -dragX
+            else scene.state.relativePos = pointer.downX - dragX
 
             // Calculate the absolute position
-            var absolutePos = scene.position + scene.relativePos / scene.DRAG_WEIGHT
+            var absolutePos = scene.state.position + scene.state.relativePos / scene.DRAG_WEIGHT
             absolutePos = (absolutePos + TILES_LEVEL_EDITOR.length) % TILES_LEVEL_EDITOR.length
             updateSprites(scene, absolutePos, 0)
         })
@@ -185,23 +185,23 @@ class LevelEditScene extends Phaser.Scene {
         // User stops dragging - snap to discrete position
         this.input.on('dragend', function (pointer, gameObject) {
             var distance = pointer.downX - pointer.upX
-            scene.relativePos = 0
+            scene.state.relativePos = 0
 
             // User tapped a tile
             if (gameObject != scrollbar && Math.abs(distance) < scene.TILE_SCALE * 400) {
                 console.log("tap")
-                scene.position = scene.tileSprites.indexOf(gameObject) - (scene.COUNT_DISPLAY - 1) / 2
-                scene.position = (scene.position + TILES_LEVEL_EDITOR.length) % TILES_LEVEL_EDITOR.length
-                updateSprites(scene, scene.position, 100)
+                scene.state.position = scene.tileSprites.indexOf(gameObject) - (scene.COUNT_DISPLAY - 1) / 2
+                scene.state.position = (scene.state.position + TILES_LEVEL_EDITOR.length) % TILES_LEVEL_EDITOR.length
+                updateSprites(scene, scene.state.position, 100)
             }
 
             // User swiped to a tile
             else {
                 console.log("swipe")
-                scene.position += distance / scene.DRAG_WEIGHT
-                scene.position = scene.position + TILES_LEVEL_EDITOR.length
-                scene.position = Math.round(scene.position) % TILES_LEVEL_EDITOR.length
-                updateSprites(scene, scene.position, 100)
+                scene.state.position += distance / scene.DRAG_WEIGHT
+                scene.state.position = scene.state.position + TILES_LEVEL_EDITOR.length
+                scene.state.position = Math.round(scene.state.position) % TILES_LEVEL_EDITOR.length
+                updateSprites(scene, scene.state.position, 100)
             }
         })
     }
@@ -212,10 +212,9 @@ class LevelEditScene extends Phaser.Scene {
             var coords = getGridCoords(this.world.game, pointer.x, pointer.y)
             if (coords[0] < 0 || coords[1] < 0 || coords[0] > this.world.tiles.length - 1 || coords[1] > this.world.tiles.length - 1) return
 
-            this.world.tiles[coords[0]][coords[1]] = TILES_LEVEL_EDITOR[Math.round(this.position + this.relativePos + 2) % TILES_LEVEL_EDITOR.length]
-            var levelString = this.world.exportWorldAsString()
-            this.scene.restart({ levelString: levelString, drawerOpen: this.drawerOpen, shiftEnabled: this.shiftEnabled, initialPosition: this.position + this.relativePos }) //TODO pilot + plane pos
-
+            this.world.tiles[coords[0]][coords[1]] = TILES_LEVEL_EDITOR[Math.round(this.state.position + this.state.relativePos + 2) % TILES_LEVEL_EDITOR.length]
+            this.state.levelString = this.world.exportWorldAsString(this.state.seed)
+            this.scene.restart(this.state)
         }
     }
 }
