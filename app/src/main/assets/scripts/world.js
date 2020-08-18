@@ -318,11 +318,8 @@ class World {
         return x - Math.floor(x);
     }
 
-    destroy(){
-        this.sprites.forEach(row => row.forEach(function(spriteArray){
-            console.log(spriteArray)
-            spriteArray.forEach(sprite => sprite.destroy())
-        }))
+    destroy() {
+        this.sprites.forEach(row => row.forEach(spriteArray => spriteArray.forEach(sprite => sprite.destroy())))
         this.game.plane.destroy()
         this.game.pilot.destroy()
     }
