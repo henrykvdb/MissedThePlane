@@ -1,7 +1,7 @@
 class LevelEditScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LevelEditScene' })
-        this.START_LEVEL = oldLevelToString(ALL_LEVELS[7])
+        this.START_LEVEL = oldLevelToString(ALL_LEVELS[1])
         this.drawerOpen = false
         this.shiftEnabled = false
         this.position = 0
@@ -140,7 +140,8 @@ class LevelEditScene extends Phaser.Scene {
         // Run button
         this.btnRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'btn_playtest').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRun.on('pointerdown', function (pointer) {
-            console.log(scene.world.exportWorldAsString()) //TODO
+            scene.scene.launch('GameScene', { levelString: scene.world.exportWorldAsString() })
+            scene.scene.sleep()
         })
 
         //MAGIC TIME
