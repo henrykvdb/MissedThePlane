@@ -16,8 +16,11 @@ Should do
 - Get an actual font
 - Make menu overlay
 - Level editor
-    - export/import
-    - Model shift, +-, rotate buttons
+    - move+rotate plane and pilot
+    - export/import dialog
+    - actually implement save and load functionality
+    - create playtest functionality
+    - seed to get consistency
     - database?
 - Ads
     - Admob: Add

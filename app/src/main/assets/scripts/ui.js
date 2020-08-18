@@ -1,7 +1,8 @@
 class UI {
-    constructor(gameScene) {
+    constructor(gameScene, playTesting) {
         this.MSG_BOTTOM_HEIGHT = 50 * MIN_XY / 600
         this.MSG_MOVE_TIME = 1200 // [ms]
+        this.playTesting = playTesting
 
         // Save scene
         this.gameScene = gameScene
@@ -10,13 +11,14 @@ class UI {
         this.btnNext = gameScene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_next').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnNext.visible = false
         this.btnNext.on('pointerdown', function (pointer) {
-            gameScene.scene.restart({ levelIndex: ++gameScene.levelIndex })
+            if (!playTesting) gameScene.scene.restart({ levelIndex: ++gameScene.levelIndex })
+            else gameScene.returnToEditor()
         })
 
         // Restart button
         this.btnRestart = gameScene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_restart').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRestart.on('pointerdown', function (pointer) {
-            gameScene.scene.restart({ levelIndex: gameScene.levelIndex })
+            gameScene.scene.restart({ levelIndex: gameScene.levelIndex, levelString: gameScene.levelString })
         })
 
         // Press button
@@ -25,39 +27,32 @@ class UI {
             gameScene.pilot.interact()
         })
 
-        // Sound change button
-        /*var soundButtons = [] // local variable to make it acessable within lambda below
-        for (var i = 0; i < 4; i++) {
-            var button = gameScene.add.sprite(getXY(0.04), getXY(0.2), 'btn_volume_' + i).setOrigin(0,0).setScale(0.14*MIN_XY/600).setInteractive().setDepth(100)
-            soundButtons.push(button)
-            button.visible = false
-            button.on('pointerdown', function (pointer) {
-                soundButtons[audio.volumeIndex].visible = false
-                audio.toggleVolume()
-                soundButtons[audio.volumeIndex].visible = true
+        if (!this.playTesting) {
+            // Level change button
+            this.btnLevels = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_levels').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+            this.btnLevels.on('pointerdown', function (pointer) {
+                gameScene.scene.pause()
+                gameScene.scene.launch('LevelSelectScene')
+            })
+
+            // Remove ads button
+            this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.16), 'btn_removeads').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+            this.btnInteract.on('pointerdown', function (pointer) {
+                gameScene.scene.stop()
+                gameScene.scene.start('LevelEditScene');
+            })
+
+            // Info button
+            this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.305), 'btn_info').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+            this.btnInteract.on('pointerdown', function (pointer) {
+                //TODO
+            })
+        } else {
+            this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+            this.btnInteract.on('pointerdown', function (pointer) {
+                gameScene.returnToEditor()
             })
         }
-        soundButtons[audio.volumeIndex].visible = true*/
-
-        // Level change button
-        this.btnLevels = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_levels').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnLevels.on('pointerdown', function (pointer) {
-            gameScene.scene.pause()
-            gameScene.scene.launch('LevelSelectScene')
-        })
-
-        // Remove ads button
-        this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.16), 'btn_removeads').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnInteract.on('pointerdown', function (pointer) {
-            gameScene.scene.start('LevelEditScene');
-            gameScene.scene.stop()
-        })
-
-        // Info button
-        this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.305), 'btn_info').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnInteract.on('pointerdown', function (pointer) {
-            //TODO
-        })
 
         // Level completed/failed messages
         var complete = gameScene.add.sprite(SIZE_X / 2, -this.MSG_BOTTOM_HEIGHT, 'level_complete').setOrigin(0.5, 0).setScale(0.45 * MIN_XY / 600).setDepth(100)
@@ -67,7 +62,8 @@ class UI {
         this.popups.sprites = [complete, failed]
 
         // Add level text
-        if (gameScene.levelIndex == 0) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Home').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
+        if (this.playTesting) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Testing').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
+        else if (gameScene.levelIndex == 0) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Home').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
         else gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), "Level " + gameScene.levelIndex).setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
     }
 

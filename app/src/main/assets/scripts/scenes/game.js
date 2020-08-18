@@ -5,7 +5,8 @@ class GameScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.levelIndex = data.levelIndex
+        this.levelIndex = data.levelIndex ? data.levelIndex : 0
+        this.levelString = data.levelString // We are playing a loaded level, we hide most of the UI
     }
 
     create() {
@@ -13,10 +14,10 @@ class GameScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D,restart:Phaser.Input.Keyboard.KeyCodes.R});
         this.graphics = this.add.graphics();
-        this.ui = new UI(this)
+        this.ui = new UI(this, this.levelString != undefined)
 
         // Create level
-        var inputString = oldLevelToString(ALL_LEVELS[this.levelIndex])
+        var inputString = this.levelString ? this.levelString : oldLevelToString(ALL_LEVELS[this.levelIndex])
         this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, inputString)
 
@@ -24,8 +25,6 @@ class GameScene extends Phaser.Scene {
         var pilot = this.pilot
         this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
-        
-        this.ui.showLevelText(this.levelIndex)
 
         this.input.on('pointerdown', () => this.world.handleMouseInput(this.input.activePointer.x, this.input.activePointer.y));
     }
@@ -50,8 +49,13 @@ class GameScene extends Phaser.Scene {
             if (this.levelIndex < ALL_LEVELS.length - 1) this.ui.btnNext.visible = true
         } else if (newStatus == LEVEL_STATUS.FAILED) {
             audio.playPopup(false)
-            this.game.ui.startPopupAnimation(false)
+            this.ui.startPopupAnimation(false)
         }
+    }
+
+    returnToEditor() {
+        this.scene.stop()
+        this.scene.wake('LevelEditScene')
     }
 }
 
