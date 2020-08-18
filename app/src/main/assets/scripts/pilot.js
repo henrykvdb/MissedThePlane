@@ -49,14 +49,12 @@ class Pilot {
     }
 
     update(dt) {
-
-        this.moveAlongPath(dt)       
+        this.moveAlongPath(dt)
         this.updateSprites()
         this.checkDoor() // Door check for level 0
     }
 
     moveAlongPath(dt) {
-
         // Consume dt to update position until there's no more dt or end of path has been reached
         while (dt > 0) {
             if (this.nextTile == undefined) return // There's nothing more to path to
@@ -77,13 +75,13 @@ class Pilot {
     updateSprites() {
         // Update animation based on dirvector
         if (this.dirVector[0] < 0 && this.dirVector[1] < 0) this.dir = 0
-        else if (this.dirVector[0] <  0 && this.dirVector[1] == 0) this.dir = 1
-        else if (this.dirVector[0] <  0 && this.dirVector[1] >  0) this.dir = 2
-        else if (this.dirVector[0] == 0 && this.dirVector[1] >  0) this.dir = 3
-        else if (this.dirVector[0] >  0 && this.dirVector[1] >  0) this.dir = 4
-        else if (this.dirVector[0] >  0 && this.dirVector[1] == 0) this.dir = 5
-        else if (this.dirVector[0] >  0 && this.dirVector[1] <  0) this.dir = 6
-        else if (this.dirVector[0] == 0 && this.dirVector[1] <  0) this.dir = 7
+        else if (this.dirVector[0] < 0 && this.dirVector[1] == 0) this.dir = 1
+        else if (this.dirVector[0] < 0 && this.dirVector[1] > 0) this.dir = 2
+        else if (this.dirVector[0] == 0 && this.dirVector[1] > 0) this.dir = 3
+        else if (this.dirVector[0] > 0 && this.dirVector[1] > 0) this.dir = 4
+        else if (this.dirVector[0] > 0 && this.dirVector[1] == 0) this.dir = 5
+        else if (this.dirVector[0] > 0 && this.dirVector[1] < 0) this.dir = 6
+        else if (this.dirVector[0] == 0 && this.dirVector[1] < 0) this.dir = 7
 
         this.pilotSprite.anims.play((this.dirVector[0] == 0 && this.dirVector[1] == 0 ? 'idle' : 'walk') + this.dir, true);
 
@@ -120,18 +118,18 @@ class Pilot {
         var firstTile = path[path.length - 1]
 
         var nextTileIsOpposite = (Math.floor(this.coords[0]) - this.dirVector[0] == firstTile[0] && // If we are moving in a direction and see the first tile we have to move to is
-                                 Math.floor(this.coords[1]) - this.dirVector[1] == firstTile[1]) || // In the exact opposite direction, we set this to true to instantly cancel the current move
-                                 cancelLast // If the pathing algorithm tells us the path would be faster if we got back to our previous tile first, we cancel the current move too
+            Math.floor(this.coords[1]) - this.dirVector[1] == firstTile[1]) || // In the exact opposite direction, we set this to true to instantly cancel the current move
+            cancelLast // If the pathing algorithm tells us the path would be faster if we got back to our previous tile first, we cancel the current move too
         if (nextTileIsOpposite) this.cancelCurrent()
         this.path = path
-        if (!currentlyOnPath && !nextTileIsOpposite) this.setNextDirVector() 
+        if (!currentlyOnPath && !nextTileIsOpposite) this.setNextDirVector()
     }
 
     // Cancels the current walking operation by pathing back to the tile we come from
     cancelCurrent() {
         if (!this.nextTile) return // We're not moving to somewhere, so no need to cancel
         this.path = []
-        var s = this.nextTile; this.nextTile = this.prevTile;  this.prevTile = s // Swap next and prev tile (don't try to use SO magic, i wasted an hour here)
+        var s = this.nextTile; this.nextTile = this.prevTile; this.prevTile = s // Swap next and prev tile (don't try to use SO magic, i wasted an hour here)
         this.dirVector = this.nextTile.map((e, i) => e - this.prevTile[i])
     }
 
@@ -147,5 +145,10 @@ class Pilot {
         this.nextTile = this.path.pop()
         this.dirVector = this.nextTile.map((e, i) => e - currentPos[i])
         if (Math.abs(this.dirVector[0]) > 1 || Math.abs(this.dirVector[1]) > 1) console.log("ERROR: Weird pathing dirvector detected!")
+    }
+
+    destroy() {
+        this.shadow.destroy()
+        this.pilotSprite.destroy()
     }
 }

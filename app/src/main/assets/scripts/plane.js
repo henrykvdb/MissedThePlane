@@ -137,4 +137,9 @@ class Plane {
             s.setDepth(this.coords[0] + this.coords[1] + 2 * this.height / PLANE_HEIGHT + 0.1) // 0.1 is to ensure plane gets drawn above shadow when landed
         })
     }
+
+    destroy() {
+        this.sprites.forEach(sprite => sprite.destroy())
+        this.shadow.destroy()
+    }
 }

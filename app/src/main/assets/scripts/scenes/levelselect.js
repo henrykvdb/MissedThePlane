@@ -37,7 +37,7 @@ class LevelSelectScene extends Phaser.Scene {
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
         const scene = this
-        this.world = new World(scene, oldLevelToString(ALL_LEVELS[0]))
+        this.world = new World(this, oldLevelToString(ALL_LEVELS[0]))
 
         // Make tile sprites
         this.levelSprites = []
@@ -111,9 +111,16 @@ function updateSprites2(scene, position, duration) { //TODO move in class
     var snappedPos = Math.min(Math.max(Math.round(position), scene.MIN_POS), scene.MAX_POS)
     if(snappedPos != scene.lastPos){
         scene.lastPos = snappedPos
+
+        // Destroy the world and kill its children ;)
+        if(scene.world!=undefined){
+            scene.world.destroy()
+            scene.world = undefined
+        }
+
+        // Create new world
         var inputString = oldLevelToString(ALL_LEVELS[snappedPos - scene.MIN_POS])
-        //if(this.world!=undefined) this.world.destroy() //TODO DESTROY
-        this.world = new World(scene, inputString)
+        scene.world = new World(scene, inputString)
     }
 
     for (let i = 0; i < ALL_LEVELS.length; i++) {
