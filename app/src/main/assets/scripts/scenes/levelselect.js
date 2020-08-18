@@ -15,30 +15,30 @@ class LevelSelectScene extends Phaser.Scene {
         const SHIFT = 130*MIN_XY/600
         const ROW_COUNT = 5
 
-        var LevelSelectScene = this;
+        const selectScene = this;
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        LevelSelectScene.add.sprite(X_START * 1.7, SIZE_Y, "pilot_tip").setOrigin(1, 1).setScale(MIN_XY/600)
+        selectScene.add.sprite(X_START * 1.7, SIZE_Y, "pilot_tip").setOrigin(1, 1).setScale(MIN_XY/600)
         text = this.add.text(SIZE_X / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40*MIN_XY/600, fontStyle: 'bold' }).setOrigin(0.5, 0)
         text = this.add.text(X_START * 2, SIZE_Y - Y_START / 1.2, 'Feeling stuck?', { fill: '#000000', fontSize: 40*MIN_XY/600, }).setOrigin(0,0)
         this.add.text(X_START * 2, SIZE_Y - Y_START / 1.8, 'Skip to the next one!', { fill: '#000000', fontSize: 40*MIN_XY/600, }).setOrigin(0,0)
 
         // Close button
-        this.btnRestart = this.add.sprite(SIZE_X-getXY(0.04), getXY(0.04), 'btn_close').setOrigin(1,0).setScale(0.20*MIN_XY/600).setInteractive().setDepth(100);
-        this.btnRestart.on('pointerdown', function (pointer) {
-            LevelSelectScene.scene.resume('GameScene');
-            LevelSelectScene.scene.stop()
-        });
+        this.btnMenu = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnMenu.on('pointerdown', function (pointer) {
+            selectScene.scene.resume('LoadingScene');
+            selectScene.scene.stop() //TODO PAUSE INSTEAD OF RESUME?
+        })
 
         // Level buttons
         for (let i = 0; i < ALL_LEVELS.length; i++) {
             var pos = [SIZE_X / 2 + SHIFT * ((i % ROW_COUNT) - (10 / ROW_COUNT)), Y_START + SHIFT * Math.floor(i / ROW_COUNT)]
             var asset = 'btn_level_' + ALL_LEVELS[i].difficulty
-            LevelSelectScene.add.text(pos[0], pos[1], i == 0 ? "" : i, { fill: '#000000', fontSize: 60, fontStyle: 'bold' }).setOrigin(0.5, 0.5)
-            var button = LevelSelectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1*MIN_XY/600).setInteractive()
+            selectScene.add.text(pos[0], pos[1], i == 0 ? "" : i, { fill: '#000000', fontSize: 60, fontStyle: 'bold' }).setOrigin(0.5, 0.5)
+            var button = selectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1*MIN_XY/600).setInteractive()
             button.smoothed = false;
             button.on('pointerdown', function (pointer) {
-                LevelSelectScene.scene.start('GameScene', { levelIndex: i });
-                LevelSelectScene.scene.stop()
+                selectScene.scene.start('GameScene', { levelIndex: i });
+                selectScene.scene.stop()
             });
         }
     }

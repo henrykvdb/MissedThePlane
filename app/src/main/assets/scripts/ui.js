@@ -28,24 +28,10 @@ class UI {
         })
 
         if (!this.playTesting) {
-            // Level change button
-            this.btnLevels = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_levels').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-            this.btnLevels.on('pointerdown', function (pointer) {
-                gameScene.scene.pause()
-                gameScene.scene.launch('LevelSelectScene')
-            })
-
-            // Remove ads button
-            this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.16), 'btn_removeads').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-            this.btnInteract.on('pointerdown', function (pointer) {
-                gameScene.scene.stop()
-                gameScene.scene.start('LevelEditScene');
-            })
-
-            // Info button
-            this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.305), 'btn_info').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-            this.btnInteract.on('pointerdown', function (pointer) {
-                //TODO
+            this.btnMenu = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnMenu.on('pointerdown', function (pointer) {
+                gameScene.scene.resume('LoadingScene');
+                gameScene.scene.stop() //TODO PAUSE INSTEAD OF RESUME?
             })
         } else {
             this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);

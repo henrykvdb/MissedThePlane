@@ -79,32 +79,50 @@ class LoadingScene extends Phaser.Scene {
         audio = new Audio(this) //TODO START
         this.splash.destroy()
 
-        // Make sure that: BUTTON_HEIGHT*4 + BUTTON_SPACING*3 <= SIZE_Y
-        const BUTTON_WIDTH = getXY(0.5)
-        const BUTTON_HEIGHT = getXY(0.14)
-        const BUTTON_SPACING = getXY(0.08)
+        const BUTTON_SPACING = getXY(0.18)
+        var scene = this.scene
+        this.btnCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnCampaign.on('pointerdown', function (pointer) {
+            scene.launch('LevelSelectScene', { levelIndex: 0 })
+            audio.start()
+        })
 
-/*         const START_Y = (SIZE_Y - BUTTON_HEIGHT * 4 - BUTTON_HEIGHT * 3 / 2) / 2
-        var menuGraphics = []
-        var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
-        for (var i = 0; i < 4; i++) {
-            var rect = new Phaser.Geom.Rectangle((SIZE_X - BUTTON_WIDTH) / 2, START_Y + i * BUTTON_HEIGHT * 3 / 2, BUTTON_WIDTH, BUTTON_HEIGHT);
-            var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
-            graphics.fillRectShape(rect);
-            graphics.setInteractive(rect, function(gameObject){
-                console.log('hey: ', menuGraphics.indexOf(gameObject))
-            });
-            menuGraphics.push(rect)
-        } */
+        this.btnUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnUserLevels.on('pointerdown', function (pointer) {
+            console.log("not implemented") //TODO
+            audio.start()
+        })
 
+        this.btnLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnLevelEdit.on('pointerdown', function (pointer) {
+            scene.launch('LevelEditScene', { levelIndex: 0 })
+            audio.start()
 
-        //this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-        //game.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () {
-        //this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-        this.scene.launch('GameScene', { levelIndex: 0 })
-        audio.start()
-        //})
-        //this.add.text(getX(0.5), getY(0.05), '[Press space to start]', { fill: '#a92a17', fontSize: getXY(0.05), fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(200)
+        })
+
+        this.btnAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnAbout.on('pointerdown', function (pointer) {
+            console.log("not implemented") //TODO
+            audio.start()
+        })
+
+        this.btnReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_removeads').setOrigin(0, 0).setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnReturn.on('pointerdown', function (pointer) {
+            //TODO unpause whatever tf is running
+            audio.start()
+        })
+
+        this.btnRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(0, 1).setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnRemoveAds.on('pointerdown', function (pointer) {
+            //TODO CALL TO KOTLIN TO SHOW ANDROID PAYMENT POPUP
+            audio.start()
+        })
+
+        this.btnSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(1, 1).setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnSettings.on('pointerdown', function (pointer) {
+            console.log("not implemented") //TODO
+            audio.start()
+        })
     }
 }
 
