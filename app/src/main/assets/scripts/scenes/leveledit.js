@@ -20,13 +20,14 @@ class LevelEditScene extends Phaser.Scene {
         this.world = new World(this, this.START_LEVEL)
         var scene = this
         const BUTTON_GAP = 0.2
-        const MARGIN_X = 0.04
+        const MARGIN_X = 0.04 //TODO INLINE AND MAKE GLOBAL VARIABLE
 
         // Menu button
+        const scene = this //TODO RENAME TO editScene
         this.btnMenu = this.add.sprite(getXY(0.04), getXY(MARGIN_X), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnMenu.on('pointerdown', function (pointer) {
-            LevelEditScene.scene.resume('GameScene');
-            LevelEditScene.scene.stop()
+            scene.scene.resume('GameScene');
+            scene.scene.stop()
         })
 
         // Increase size button
@@ -56,7 +57,6 @@ class LevelEditScene extends Phaser.Scene {
         var positions = [[-1.3, size / 2 - 0.5], [size / 2 - 0.5, size + 0.3], [size + 0.3, size / 2 - 0.5], [size / 2 - 0.5, - 1.3]]
         var shiftArrows = []
         for (let i = 0; i < 4; i++) {
-            var scene = this
             var coords = getScreenCoords(this, positions[i][0], positions[i][1])
             var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i)
             btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true, }).setDepth(positions[i][0] + positions[i][1])
