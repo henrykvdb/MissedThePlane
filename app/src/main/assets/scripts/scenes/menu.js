@@ -14,7 +14,7 @@ class MenuScene extends Phaser.Scene {
         const BUTTON_SPACING = getXY(0.18)
         var scene = this
 
-        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.5)
+        var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.5)
 
         this.btnCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_levels').setScale(0.4 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene'))

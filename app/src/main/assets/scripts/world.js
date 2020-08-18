@@ -317,6 +317,15 @@ class World {
         var x = Math.sin(this.seed++) * 10000;
         return x - Math.floor(x);
     }
+
+    destroy(){
+        this.sprites.forEach(row => row.forEach(function(spriteArray){
+            console.log(spriteArray)
+            spriteArray.forEach(sprite => sprite.destroy())
+        }))
+        this.game.plane.destroy()
+        this.game.pilot.destroy()
+    }
 }
 
 // Returns screen coordinate of the top of the tile

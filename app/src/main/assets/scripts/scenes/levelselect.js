@@ -10,36 +10,154 @@ class LevelSelectScene extends Phaser.Scene {
     preload() { }
 
     create() {
-        const X_START = 160*MIN_XY/600
-        const Y_START = 200*MIN_XY/600
-        const SHIFT = 130*MIN_XY/600
+        const X_START = 160 * MIN_XY / 600
+        const Y_START = 200 * MIN_XY / 600
+        const SHIFT = 130 * MIN_XY / 600
         const ROW_COUNT = 5
 
         const selectScene = this;
-        this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        selectScene.add.sprite(X_START * 1.7, SIZE_Y, "pilot_tip").setOrigin(1, 1).setScale(MIN_XY/600)
-        text = this.add.text(SIZE_X / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40*MIN_XY/600, fontStyle: 'bold' }).setOrigin(0.5, 0)
-        text = this.add.text(X_START * 2, SIZE_Y - Y_START / 1.2, 'Feeling stuck?', { fill: '#000000', fontSize: 40*MIN_XY/600, }).setOrigin(0,0)
-        this.add.text(X_START * 2, SIZE_Y - Y_START / 1.8, 'Skip to the next one!', { fill: '#000000', fontSize: 40*MIN_XY/600, }).setOrigin(0,0)
+        var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setOrigin(0, 0).setTint("0xD0EEFF").setAlpha(0.5).setDepth(50)
+        text = this.add.text(SIZE_X / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
 
         // Close button
-        this.btnMenu = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnMenu = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(200)
         this.btnMenu.on('pointerdown', function (pointer) {
-            selectScene.scene.launch('MenuScene', {caller: selectScene.scene.key})
+            selectScene.scene.launch('MenuScene', { caller: selectScene.scene.key })
             selectScene.scene.pause() //TODO PAUSE INSTEAD OF STOP?
         })
 
-        // Level buttons
+        //MAGIC TIME
+        this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
+        this.MIN_POS = (1 - this.COUNT_DISPLAY) / 2
+        this.MAX_POS = this.MIN_POS + ALL_LEVELS.length - 1
+        this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // No idea what kind of units this is lol
+        this.TILE_SCALE = 0.1 * MIN_XY / 600
+
+
+        this.position = this.MIN_POS
+        this.lastPos = this.MIN_POS
+        const scene = this
+        this.world = new World(this, oldLevelToString(ALL_LEVELS[0]))
+
+        // Make tile sprites
+        this.levelSprites = []
+        this.levelNumbers = []
+        const SPRITE_HEIGHT = SIZE_Y / 2
         for (let i = 0; i < ALL_LEVELS.length; i++) {
-            var pos = [SIZE_X / 2 + SHIFT * ((i % ROW_COUNT) - (10 / ROW_COUNT)), Y_START + SHIFT * Math.floor(i / ROW_COUNT)]
+            // Create tile
             var asset = 'btn_level_' + ALL_LEVELS[i].difficulty
-            selectScene.add.text(pos[0], pos[1], i == 0 ? "" : i, { fill: '#000000', fontSize: 60, fontStyle: 'bold' }).setOrigin(0.5, 0.5)
-            var button = selectScene.add.sprite(pos[0], pos[1], asset).setOrigin(0.5, 0.5).setScale(0.1*MIN_XY/600).setInteractive()
-            button.smoothed = false;
-            button.on('pointerdown', function (pointer) {
-                selectScene.scene.start('GameScene', { levelIndex: i });
-                selectScene.scene.stop()
-            });
+            var tileSprite = this.add.sprite(0, SPRITE_HEIGHT, asset)
+            tileSprite.setScale(this.TILE_SCALE)
+            tileSprite.setDepth(200)
+            tileSprite.setInteractive({ draggable: true })
+
+            //Create tile text
+            var tileNumber = selectScene.add.text(0, SPRITE_HEIGHT, i == 0 ? "" : i, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
+            tileNumber.setDepth(201).setOrigin(0.5,0.5)
+
+            this.levelSprites.push(tileSprite)
+            this.levelNumbers.push(tileNumber)
+        }
+        updateSprites2(this, this.position, 0)
+
+        // Make scrollbar
+        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150)
+        scrollbar.setScale(SIZE_X).setOrigin(0)
+        scrollbar.setTint(0, 0, 0).setAlpha(0.5)
+        scrollbar.setInteractive({ draggable: true })
+
+        // User is dragging - update positions
+        this.input.on('drag', function (pointer, gameObject, dragX) {
+            // Calculate the relative drag position
+            var relativePos
+            if (gameObject == scrollbar) relativePos = -dragX
+            else relativePos = pointer.downX - dragX
+
+            // Calculate the absolute position
+            var absolutePos = scene.position + relativePos / scene.DRAG_WEIGHT
+            absolutePos = Math.min(Math.max(absolutePos, scene.MIN_POS), scene.MAX_POS)
+            updateSprites2(scene, absolutePos, 0)
+        })
+
+        // User stops dragging - snap to discrete position
+        this.input.on('dragend', function (pointer, gameObject) {
+            var distance = pointer.downX - pointer.upX
+
+            // User tapped a tile
+            if (gameObject != scrollbar && Math.abs(distance) < scene.TILE_SCALE * 400) {
+                console.log("tap")
+                var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
+                if(newPos==scene.position){
+                    scene.scene.start('GameScene', { levelIndex: newPos - scene.MIN_POS});
+                    scene.scene.stop()
+                }
+                else scene.position = newPos
+
+                updateSprites2(scene, scene.position, 50)
+            }
+
+            // User swiped to a tile
+            else {
+                console.log("swipe")
+                scene.position += distance / scene.DRAG_WEIGHT
+                scene.position = Math.min(Math.max(Math.round(scene.position), scene.MIN_POS), scene.MAX_POS)
+                updateSprites2(scene, scene.position, 50)
+            }
+        })
+    }
+}
+
+function updateSprites2(scene, position, duration) { //TODO move in class
+    var snappedPos = Math.min(Math.max(Math.round(position), scene.MIN_POS), scene.MAX_POS)
+    if(snappedPos != scene.lastPos){
+        scene.lastPos = snappedPos
+
+        // Destroy the world and kill its children ;)
+        if(scene.world!=undefined){
+            scene.world.destroy()
+            scene.world = undefined
+        }
+
+        // Create new world
+        var inputString = oldLevelToString(ALL_LEVELS[snappedPos - scene.MIN_POS])
+        scene.world = new World(scene, inputString)
+    }
+
+    for (let i = 0; i < ALL_LEVELS.length; i++) {
+        var sprite = scene.levelSprites[i]
+        var number = scene.levelNumbers[i]
+
+        if (position <= i && i <= position + scene.COUNT_DISPLAY - 1) {
+            // Set visible
+            sprite.visible = true
+            number.visible = true
+
+            // Calculate next position
+            const STEP = SIZE_X / (scene.COUNT_DISPLAY - 1)
+            var localPos = (i + 1 > position) ? (i - position) : (TILES_LEVEL_EDITOR.length + i - position)
+            var newPos = localPos * STEP
+
+            // Move the sprite to the new position
+            if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
+                scene.tweens.add({
+                    targets: number,
+                    x: newPos,
+                    duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
+                });
+                scene.tweens.add({
+                    targets: sprite,
+                    x: newPos,
+                    duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
+                });
+            }
+            else{
+                sprite.x = newPos
+                number.x = newPos
+            }
+        }
+        else{
+            sprite.visible = false
+            number.visible = false
         }
     }
 }

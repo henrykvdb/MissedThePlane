@@ -135,20 +135,22 @@ const ALL_LEVELS = [
     difficulty: '4'
 },
 // Filler levels for level select menu
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '1'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '1'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '2'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '2'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '2'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '3'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '3'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '3'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '3'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '3'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '4'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '4'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '5'},
-{tiles: [[TILES.GRASS]], pilot: {coords: [0.5, 0.5], dir: 0}, plane: {coords: [0.5, 0.5], dir: 1}, difficulty: '5'},]
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+{ tiles: convertFromOld([['G']]),pilot: { coords: [0.5, 0.5], dir: 3, speedModifier: 0.95 },plane: { coords: [1.5, -0.5], dir: 3 },difficulty: '4'},
+]
 
 function convertFromOld(tiles) { //TODO REPLACE BY LEVEL EDITOR
     var conversionMap = {
