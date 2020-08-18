@@ -153,7 +153,7 @@ class LevelEditScene extends Phaser.Scene {
         const TILE_HEIGHT = SIZE_Y - getY(0.01)
         for (let i = 0; i < TILES_LEVEL_EDITOR.length; i++) {
             var tileSprite = this.add.sprite(0, TILE_HEIGHT, TILES_LEVEL_EDITOR[i].assets[0])
-            tileSprite.setOrigin(0.5, (800 - 284) / 800)
+            tileSprite.setOrigin(0.5, (800 - 284 + 168) / 800)
             tileSprite.setDepth(200)
             tileSprite.setInteractive({ draggable: true, pixelPerfect: true })
             this.tileSprites.push(tileSprite)
