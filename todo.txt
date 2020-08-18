@@ -6,28 +6,19 @@ Should do
     - Overlay main menu
         - about + credits: Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
     - Levels menu overhaul (better scalability, seperation user levels)
-    - Level browser / User levels
-    - Level editor
-        - Textures
-        - Export/import
-        - Transform pilot+plane too
-        - Database?
+    - Level browser / User levels / Your levels
     - Game scene update
 - Get an actual font
-- Make menu overlay
 - Level editor
-    - move+rotate plane and pilot
     - export/import dialog
-    - actually implement save and load functionality
-    - create playtest functionality
-    - seed to get consistency
+    - Entire publish system
+    - Check if pilot/plane not in inaccessible on start
     - database?
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
 - More levels
 - fix navigation bar reappearing (onResume instead of onStart?)
-- Start music on main menu press
 
 Nice to have
 - Show selected tile when walking (highlight/arrow model on target tile?)

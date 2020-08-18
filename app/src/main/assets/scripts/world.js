@@ -307,8 +307,8 @@ class World {
     exportWorldAsString(seed) {
         var exportObject = {"size": this.tiles.length}
         exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
-        exportObject.pilot = this.parameters.pilot
-        exportObject.plane = this.parameters.plane
+        exportObject.pilot = [this.game.pilot.coords[0], this.game.pilot.coords[1], this.game.pilot.dir]
+        exportObject.plane = [this.game.plane.coords[0], this.game.plane.coords[1], this.game.plane.dir]
         exportObject.seed = seed
         return JSON.stringify(exportObject)
     }

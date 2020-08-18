@@ -30,7 +30,7 @@ class Audio{
     }
 
     start() {
-        if(this.started) return
+        if (this.started) return
         this.started = true
         
         this.music = this.game.sound.add('music', { loop: true })

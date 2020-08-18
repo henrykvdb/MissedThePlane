@@ -45,8 +45,20 @@ class LevelEditScene extends Phaser.Scene {
         this.btnSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), 'btn_minus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
         this.btnSizeDown.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
-            if (tiles.length <= 3) return // Below 3x3 is not useful and pretty ugly
+            if (tiles.length <= 4) return // Below 4x4 is not useful and pretty ugly
             scene.world.tiles = tiles.slice(0, tiles.length - 1).map(col => col.slice(0, tiles.length - 1))
+            if (scene.world.getTile(scene.pilot.coords) == TILES.AIR) { // Pilot has gotten out of the map
+                var pos = scene.pilot.coords
+                if (pos[0] == pos[1])    scene.pilot.coords = [pos[0] - 1, pos[1] - 1] // He was on the edge, we move him 1 x and 1 y up
+                else if (pos[0] > pos[1]) scene.pilot.coords = [pos[0] - 1, pos[1]]
+                else if (pos[0] < pos[1]) scene.pilot.coords = [pos[0], pos[1] - 1]
+            }
+            var planePos = scene.plane.coords // check if plane is more than 1 tile away from the main land
+            if (planePos[0] > scene.world.tiles.length + 1 || planePos[1] > scene.world.tiles.length + 1) {
+                if (planePos[0] == planePos[1])     scene.plane.coords = [planePos[0] - 1, planePos[1] - 1] // He was on the edge, we move him 1 x and 1 y up
+                else if (planePos[0] > planePos[1]) scene.plane.coords = [planePos[0] - 1, planePos[1]]
+                else if (planePos[0] < planePos[1]) scene.plane.coords = [planePos[0], planePos[1] - 1]
+            }
             scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
             scene.scene.restart(scene.state)
         })
@@ -58,12 +70,14 @@ class LevelEditScene extends Phaser.Scene {
         for (let i = 0; i < 4; i++) {
             var coords = getScreenCoords(this, positions[i][0], positions[i][1])
             var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i)
-            btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true, }).setDepth(positions[i][0] + positions[i][1])
+            btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true}).setDepth(positions[i][0] + positions[i][1])
             btnMove.setTint("0xFFAA00").visible = this.state.shiftEnabled
             btnMove.on('pointerdown', function (pointer) {
                 var tiles = scene.world.tiles
                 if (i % 2 == 0) scene.world.tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : size - 1)) //shift X
                 else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
+                scene.pilot.coords = [(scene.pilot.coords[0] + scene.world.tiles.length + (i % 2 == 0 ? (i == 0 ? -1 : 1) : 0)) % scene.world.tiles.length, 
+                                      (scene.pilot.coords[1] + scene.world.tiles.length + (i % 2 != 0 ? (i == 3 ? -1 : 1) : 0)) % scene.world.tiles.length]
                 scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
                 scene.scene.restart(scene.state)
             })
@@ -85,6 +99,10 @@ class LevelEditScene extends Phaser.Scene {
         this.btnRotate = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
         this.btnRotate.on('pointerdown', function (pointer) {
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
+            scene.pilot.coords = [scene.pilot.coords[1], scene.world.tiles.length - scene.pilot.coords[0]]
+            scene.pilot.dir = (scene.pilot.dir + 2) % 8
+            scene.plane.coords = [scene.plane.coords[1], scene.world.tiles.length - scene.plane.coords[0]]
+            scene.plane.dir = (scene.plane.dir + 2) % 8
             scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
             scene.scene.restart(scene.state)
         })
