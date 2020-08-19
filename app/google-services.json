@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "223994445024",
+    "firebase_url": "https://missed-the-plane.firebaseio.com",
+    "project_id": "missed-the-plane",
+    "storage_bucket": "missed-the-plane.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223994445024:android:a37e08f119b3a3470d2485",
+        "android_client_info": {
+          "package_name": "com.missedtheplane"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223994445024-cc0nt3ohd8e0qin5m2l9194n05qp883v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqJyf0hMd8o9_1rUAySR4XyuuqALw3mxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223994445024-cc0nt3ohd8e0qin5m2l9194n05qp883v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

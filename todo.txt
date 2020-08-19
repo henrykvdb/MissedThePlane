@@ -1,10 +1,16 @@
+To get something releaseable:
+- Barebones tutorial
+- Level editor plane and pilot moving/rotating
+- Local level saving and loading
+- Credits to Marcus
+
 Should do
 - Tutorial
     - Re-add
     - New controls explanation
 - UI
     - Decorate main menu
-    - about + credits: Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
+    - Level editor: back button
     - Levels menu overhaul (better scalability, seperation user levels)
     - Level browser / User levels / Your levels
     - Game scene update
@@ -13,14 +19,14 @@ Should do
 - Level editor
     - export/import dialog
     - Entire publish system
-    - Check if pilot/plane not in inaccessible on start
-    - Check winnable
+    - Check if pilot/plane not in inaccessible on start (+ single runway?)
+    - Check winnable on publish
     - database?
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
 - More levels
-- fix navigation bar reappearing (onResume instead of onStart?)
+- Safety checks everywhere: what if level can't be loaded, error during editing, etc
 
 Nice to have
 - Show selected tile when walking (highlight/arrow model on target tile?)

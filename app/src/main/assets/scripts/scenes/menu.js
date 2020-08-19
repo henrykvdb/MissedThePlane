@@ -49,6 +49,7 @@ class MenuScene extends Phaser.Scene {
 
     // Handles everything related to starting a scene
     startScene(sceneKey) {
+        audio.start()
         if (this.caller == sceneKey) {this.continue(); return} // We are already here, we simply go back
         if (this.caller) this.scene.stop(this.caller)
         this.scene.start(sceneKey)

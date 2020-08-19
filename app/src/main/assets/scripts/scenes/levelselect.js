@@ -88,6 +88,7 @@ class LevelSelectScene extends Phaser.Scene {
                 console.log("tap")
                 var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
                 if(newPos==scene.position){
+                    Android.setHighestLevel('bestAccountAround', newPos - scene.MIN_POS) // TODO: update with pref
                     scene.scene.start('GameScene', { levelIndex: newPos - scene.MIN_POS});
                     scene.scene.stop()
                 }
