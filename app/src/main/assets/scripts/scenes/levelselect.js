@@ -37,7 +37,7 @@ class LevelSelectScene extends Phaser.Scene {
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
         const scene = this
-        this.world = new World(this, oldLevelToString(ALL_LEVELS[0]))
+        this.world = new World(this, ALL_LEVELS[0])
 
         // Make tile sprites
         this.levelSprites = []
@@ -45,7 +45,7 @@ class LevelSelectScene extends Phaser.Scene {
         const SPRITE_HEIGHT = SIZE_Y / 2
         for (let i = 0; i < ALL_LEVELS.length; i++) {
             // Create tile
-            var asset = 'btn_level_' + ALL_LEVELS[i].difficulty
+            var asset = 'btn_level_' + JSON.parse(ALL_LEVELS[i]).difficulty
             var tileSprite = this.add.sprite(0, SPRITE_HEIGHT, asset)
             tileSprite.setScale(this.TILE_SCALE)
             tileSprite.setDepth(200)
@@ -53,7 +53,7 @@ class LevelSelectScene extends Phaser.Scene {
 
             //Create tile text
             var tileNumber = selectScene.add.text(0, SPRITE_HEIGHT, i == 0 ? "" : i, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
-            tileNumber.setDepth(201).setOrigin(0.5,0.5)
+            tileNumber.setDepth(201).setOrigin(0.5, 0.5)
 
             this.levelSprites.push(tileSprite)
             this.levelNumbers.push(tileNumber)
@@ -87,8 +87,8 @@ class LevelSelectScene extends Phaser.Scene {
             if (gameObject != scrollbar && Math.abs(distance) < scene.TILE_SCALE * 400) {
                 console.log("tap")
                 var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
-                if(newPos==scene.position){
-                    scene.scene.start('GameScene', { levelIndex: newPos - scene.MIN_POS});
+                if (newPos == scene.position) {
+                    scene.scene.start('GameScene', { levelIndex: newPos - scene.MIN_POS });
                     scene.scene.stop()
                 }
                 else scene.position = newPos
@@ -109,18 +109,17 @@ class LevelSelectScene extends Phaser.Scene {
 
 function updateSprites2(scene, position, duration) { //TODO move in class
     var snappedPos = Math.min(Math.max(Math.round(position), scene.MIN_POS), scene.MAX_POS)
-    if(snappedPos != scene.lastPos){
+    if (snappedPos != scene.lastPos) {
         scene.lastPos = snappedPos
 
         // Destroy the world and kill its children ;)
-        if(scene.world!=undefined){
+        if (scene.world != undefined) {
             scene.world.destroy()
             scene.world = undefined
         }
 
         // Create new world
-        var inputString = oldLevelToString(ALL_LEVELS[snappedPos - scene.MIN_POS])
-        scene.world = new World(scene, inputString)
+        scene.world = new World(scene, ALL_LEVELS[snappedPos - scene.MIN_POS])
     }
 
     for (let i = 0; i < ALL_LEVELS.length; i++) {
@@ -150,12 +149,12 @@ function updateSprites2(scene, position, duration) { //TODO move in class
                     duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
                 });
             }
-            else{
+            else {
                 sprite.x = newPos
                 number.x = newPos
             }
         }
-        else{
+        else {
             sprite.visible = false
             number.visible = false
         }

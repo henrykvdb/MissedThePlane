@@ -15,7 +15,6 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-
         const BUTTON_SPACING = getXY(0.18)
         var scene = this
 
