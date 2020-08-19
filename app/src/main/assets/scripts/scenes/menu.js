@@ -34,7 +34,7 @@ class MenuScene extends Phaser.Scene {
         this.btnAbout.on('pointerdown',( ) => console.log("not implemented"))
 
         if (this.caller != 'LoadingScene') {
-            this.btnReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_close').setOrigin(0, 0).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_close').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnReturn.on('pointerdown', () => scene.continue())
         }
 
