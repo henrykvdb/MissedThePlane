@@ -3,16 +3,18 @@ Should do
     - Re-add
     - New controls explanation
 - UI
-    - Overlay main menu
-        - about + credits: Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
+    - Decorate main menu
+    - about + credits: Markus credit (ui info menu with contact email? -> i'd say website but we can ask)
     - Levels menu overhaul (better scalability, seperation user levels)
     - Level browser / User levels / Your levels
     - Game scene update
+    - Turn menu button into pause buttons for game & editor (as they keep make the menu a transparant pause menu)
 - Get an actual font
 - Level editor
     - export/import dialog
     - Entire publish system
     - Check if pilot/plane not in inaccessible on start
+    - Check winnable
     - database?
 - Ads
     - Admob: Add

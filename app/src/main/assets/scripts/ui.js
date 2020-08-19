@@ -8,7 +8,7 @@ class UI {
         this.gameScene = gameScene
 
         // Next button
-        this.btnNext = gameScene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_next').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnNext = gameScene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_next').setOrigin(1, 0).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnNext.visible = false
         this.btnNext.on('pointerdown', function (pointer) {
             if (!playTesting) gameScene.scene.restart({ levelIndex: ++gameScene.levelIndex })
@@ -16,13 +16,13 @@ class UI {
         })
 
         // Restart button
-        this.btnRestart = gameScene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_restart').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnRestart = gameScene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_restart').setOrigin(1, 0).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRestart.on('pointerdown', function (pointer) {
             gameScene.scene.restart({ levelIndex: gameScene.levelIndex, levelString: gameScene.levelString })
         })
 
         // Press button
-        this.btnInteract = gameScene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_interact').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnInteract = gameScene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_interact').setOrigin(1, 1).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnInteract.on('pointerdown', function (pointer) {
             gameScene.pilot.interact()
         })

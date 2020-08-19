@@ -16,7 +16,7 @@ class LevelSelectScene extends Phaser.Scene {
         const ROW_COUNT = 5
 
         const selectScene = this;
-        var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setOrigin(0, 0).setTint("0xD0EEFF").setAlpha(0.5).setDepth(50)
+        var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
         text = this.add.text(SIZE_X / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
 
         // Close button
@@ -63,7 +63,7 @@ class LevelSelectScene extends Phaser.Scene {
         // Make scrollbar
         var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150)
         scrollbar.setScale(SIZE_X).setOrigin(0)
-        scrollbar.setTint(0, 0, 0).setAlpha(0.5)
+        scrollbar.setTint(0, 0, 0).setAlpha(0.2)
         scrollbar.setInteractive({ draggable: true })
 
         // User is dragging - update positions
