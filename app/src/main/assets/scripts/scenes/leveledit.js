@@ -6,7 +6,7 @@ class LevelEditScene extends Phaser.Scene {
             shiftEnabled: false,
             position: 0,
             relativePos: 0,
-            levelString: oldLevelToString(ALL_LEVELS[1])
+            levelString: ALL_LEVELS[1]
             // We could instantiate seed here if we didn't already get a random from oldLevelToString
         }
     }

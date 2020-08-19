@@ -17,7 +17,7 @@ class GameScene extends Phaser.Scene {
         this.ui = new UI(this, this.levelString != undefined)
 
         // Create level
-        var inputString = this.levelString ? this.levelString : oldLevelToString(ALL_LEVELS[this.levelIndex])
+        var inputString = this.levelString ? this.levelString : ALL_LEVELS[this.levelIndex]
         this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, inputString)
 
