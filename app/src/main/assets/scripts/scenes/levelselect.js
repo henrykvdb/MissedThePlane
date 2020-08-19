@@ -1,35 +1,57 @@
 var assets
 var text
 
+const SELECT_MODES = {
+    OPEN: "Open a level",
+    EDIT: "Edit a level",
+    SAVE: "Save a level"
+}
+
 class LevelSelectScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'LevelSelectScene' });
     }
 
+    init(data) {
+        if (data.levelString) this.levelString = data.levelString
+
+        if (data.option) this.mode = data.option
+        else throw "Level select called without a mode"
+
+        this.LEVELS = this.mode == SELECT_MODES.OPEN ? ALL_LEVELS : USER_LEVELS
+
+        const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
+        text = this.add.text(SIZE_X / 2, Y_START / 3, this.mode, { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
+    }
+
     preload() { }
 
     create() {
-        const X_START = 160 * MIN_XY / 600
-        const Y_START = 200 * MIN_XY / 600
-        const SHIFT = 130 * MIN_XY / 600
-        const ROW_COUNT = 5
+        const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
 
         const selectScene = this;
         var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
-        text = this.add.text(SIZE_X / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
 
         // Close button
-        this.btnMenu = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(200)
-        this.btnMenu.on('pointerdown', function (pointer) {
-            selectScene.scene.launch('MenuScene', { caller: selectScene.scene.key })
-            selectScene.scene.pause() //TODO PAUSE INSTEAD OF STOP?
-        })
+        if (this.mode != SELECT_MODES.SAVE) {
+            this.btnMenu = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnMenu.on('pointerdown', function (pointer) {
+                selectScene.scene.launch('MenuScene', {caller: selectScene.scene.key});
+                selectScene.scene.pause()
+            })
+        } else {
+            this.btnInteract = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+            this.btnInteract.on('pointerdown', function (pointer) {
+                selectScene.scene.stop()
+                selectScene.scene.wake('LevelEditScene')
+            })
+        }
 
         //MAGIC TIME
         this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
         this.MIN_POS = (1 - this.COUNT_DISPLAY) / 2
-        this.MAX_POS = this.MIN_POS + ALL_LEVELS.length - 1
+        this.MAX_POS = this.MIN_POS + this.LEVELS.length - 1
         this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // No idea what kind of units this is lol
         this.TILE_SCALE = 0.1 * MIN_XY / 600
 
@@ -37,23 +59,24 @@ class LevelSelectScene extends Phaser.Scene {
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
         const scene = this
-        this.world = new World(this, ALL_LEVELS[0])
+        this.world = new World(this, this.LEVELS[0])
 
         // Make tile sprites
         this.levelSprites = []
         this.levelNumbers = []
         const SPRITE_HEIGHT = SIZE_Y / 2
-        for (let i = 0; i < ALL_LEVELS.length; i++) {
+        for (let i = 0; i < this.LEVELS.length; i++) {
             // Create tile
-            var asset = 'btn_level_' + JSON.parse(ALL_LEVELS[i]).difficulty
+            var asset = 'btn_level_' + JSON.parse(this.LEVELS[i]).difficulty
             var tileSprite = this.add.sprite(0, SPRITE_HEIGHT, asset)
             tileSprite.setScale(this.TILE_SCALE)
-            tileSprite.setDepth(200)
+            tileSprite.setDepth(100)
             tileSprite.setInteractive({ draggable: true })
 
             //Create tile text
-            var tileNumber = selectScene.add.text(0, SPRITE_HEIGHT, i == 0 ? "" : i, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
-            tileNumber.setDepth(201).setOrigin(0.5, 0.5)
+            var text = (i == 0 && this.mode == SELECT_MODES.LOAD)? "" : i
+            var tileNumber = selectScene.add.text(0, SPRITE_HEIGHT, text, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
+            tileNumber.setDepth(101).setOrigin(0.5, 0.5)
 
             this.levelSprites.push(tileSprite)
             this.levelNumbers.push(tileNumber)
@@ -61,7 +84,7 @@ class LevelSelectScene extends Phaser.Scene {
         updateSprites2(this, this.position, 0)
 
         // Make scrollbar
-        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150)
+        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50)
         scrollbar.setScale(SIZE_X).setOrigin(0)
         scrollbar.setTint(0, 0, 0).setAlpha(0.2)
         scrollbar.setInteractive({ draggable: true })
@@ -86,12 +109,9 @@ class LevelSelectScene extends Phaser.Scene {
             // User tapped a tile
             if (gameObject != scrollbar && Math.abs(distance) < scene.TILE_SCALE * 400) {
                 console.log("tap")
+                // Trigger action if tap on current tile
                 var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
-                if (newPos == scene.position) {
-                    Android.setHighestLevel('bestAccountAround', newPos - scene.MIN_POS) // TODO: update with pref
-                    scene.scene.start('GameScene', { levelIndex: newPos - scene.MIN_POS});
-                    scene.scene.stop()
-                }
+                if (newPos == scene.position) scene.handleInput()
                 else scene.position = newPos
 
                 updateSprites2(scene, scene.position, 50)
@@ -106,11 +126,36 @@ class LevelSelectScene extends Phaser.Scene {
             }
         })
     }
+
+    handleInput(){
+        var index = this.position - this.MIN_POS
+
+        if (this.mode == SELECT_MODES.OPEN) {
+            this.scene.start('GameScene', { levelIndex: index })
+            this.scene.stop()
+        }
+        else if (this.mode == SELECT_MODES.EDIT) {
+            this.scene.start('LevelEditScene', {
+                state: {
+                    drawerOpen: false, shiftEnabled: false,
+                    position: 0, relativePos: 0,
+                    levelString: this.LEVELS[index]
+                }
+            });
+            this.scene.stop()
+        }
+        else if (this.mode == SELECT_MODES.SAVE){
+            this.LEVELS[index] = this.levelString
+            this.forceReload = true
+            updateSprites2(this, this.position, 0)
+        }
+    }
 }
 
 function updateSprites2(scene, position, duration) { //TODO move in class
     var snappedPos = Math.min(Math.max(Math.round(position), scene.MIN_POS), scene.MAX_POS)
-    if (snappedPos != scene.lastPos) {
+    if (snappedPos != scene.lastPos || scene.forceReload) {
+        scene.forceReload = false
         scene.lastPos = snappedPos
 
         // Destroy the world and kill its children ;)
@@ -120,10 +165,10 @@ function updateSprites2(scene, position, duration) { //TODO move in class
         }
 
         // Create new world
-        scene.world = new World(scene, ALL_LEVELS[snappedPos - scene.MIN_POS])
+        scene.world = new World(scene, scene.LEVELS[snappedPos - scene.MIN_POS])
     }
 
-    for (let i = 0; i < ALL_LEVELS.length; i++) {
+    for (let i = 0; i < scene.LEVELS.length; i++) {
         var sprite = scene.levelSprites[i]
         var number = scene.levelNumbers[i]
 

@@ -31,7 +31,7 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Increase size button
-        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 5 * getXY(BUTTON_GAP), getXY(0.04), 'btn_plus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
+        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), 'btn_plus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
         this.btnSizeUp.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
             tiles.forEach(col => col.push(TILES.GRASS))
@@ -42,7 +42,7 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Decrease size button
-        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), 'btn_minus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
+        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), 'btn_minus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
         this.btnSizeDown.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
             if (tiles.length <= 4) return // Below 4x4 is not useful and pretty ugly
@@ -85,7 +85,7 @@ class LevelEditScene extends Phaser.Scene {
         }
 
         // Shift toggle button
-        this.btnShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), 'btn_shift_toggle').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
+        this.btnShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_shift_toggle').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
         if (scene.state.shiftEnabled) this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
         else this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         this.btnShift.on('pointerdown', function (pointer) {
@@ -96,7 +96,7 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Rotate button
-        this.btnRotate = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
+        this.btnRotate = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 1 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
         this.btnRotate.on('pointerdown', function (pointer) {
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
             scene.pilot.coords = [scene.pilot.coords[1], scene.world.tiles.length - scene.pilot.coords[0]]
@@ -107,11 +107,23 @@ class LevelEditScene extends Phaser.Scene {
             scene.scene.restart(scene.state)
         })
 
+        // Export/Save current level button
+        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04+BUTTON_GAP), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105);
+        this.btnSave.on('pointerdown', function (pointer) {
+            var levelString =scene.world.exportWorldAsString(scene.state.seed)
+            scene.scene.launch('LevelSelectScene', {option: SELECT_MODES.SAVE, levelString: levelString});
+            scene.scene.sleep()
+        })
+
         // Open tools drawer
-        var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotate]
+        var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotate, this.btnSave]
         var drawerSpritesX = drawerSprites.map(sprite => sprite.x) 
-        this.btnDrawer = this.add.sprite(SIZE_X - getXY(MARGIN_X) - getXY(BUTTON_GAP), getXY(0.04), 'btn_wrench').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110);
-        if (!this.state.drawerOpen) drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
+        var drawerSpritesY = drawerSprites.map(sprite => sprite.y) 
+        this.btnDrawer = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04), 'btn_wrench').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110);
+        if (!this.state.drawerOpen){
+            drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
+            drawerSprites.forEach(sprite => sprite.y = this.btnDrawer.y)
+        }
         this.btnDrawer.on('pointerdown', function (pointer) {
             scene.state.drawerOpen = !scene.state.drawerOpen
 
@@ -121,6 +133,7 @@ class LevelEditScene extends Phaser.Scene {
                         scene.tweens.add({
                         targets: sprite,
                         x: drawerSpritesX[i],
+                        y: drawerSpritesY[i],
                         duration: 300, delay: 0,
                         ease: 'Expo'
                     });
@@ -131,26 +144,13 @@ class LevelEditScene extends Phaser.Scene {
                     scene.tweens.add({
                         targets: sprite,
                         x: scene.btnDrawer.x,
+                        y: scene.btnDrawer.y,
                         duration: 300, delay: 0,
                         ease: 'Expo'
                     });
                     scene.btnDrawer.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
                 }
             })
-        })
-
-        // Import level button
-        this.btnLoad = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04), 'btn_open').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnLoad.on('pointerdown', function (pointer) {
-            console.log("LOADING WORLD...")
-            console.log("haha just kidding we can't do that yet ;)")
-            console.log(scene.world.exportWorldAsString(scene.state.seed)) //TODO
-        })
-
-        // Export/Save current level button
-        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04+BUTTON_GAP), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnSave.on('pointerdown', function (pointer) {
-            console.log(scene.world.exportWorldAsString(scene.state.seed)) //TODO
         })
 
         // Run button

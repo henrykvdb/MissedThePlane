@@ -22,6 +22,7 @@ Should do
     - Check if pilot/plane not in inaccessible on start (+ single runway?)
     - Check winnable on publish
     - database?
+    - fix placing block through drawer UI bug
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
