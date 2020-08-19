@@ -1,4 +1,4 @@
-package com.henrykvdb.missedtheplane
+package com.missedtheplane
 
 import android.annotation.SuppressLint
 import android.content.Context
