@@ -78,9 +78,8 @@ class LoadingScene extends Phaser.Scene {
     }
 
     create() {
-        audio = new Audio(this) //TODO START
-        var caller = this.scene.key
-        this.scene.launch('MenuScene', {caller: caller})
+        audio = new Audio(this)
+        this.scene.start('MenuScene')
     }
 }
 

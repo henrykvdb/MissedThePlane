@@ -309,6 +309,7 @@ class World {
         exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
         exportObject.pilot = [this.game.pilot.coords[0], this.game.pilot.coords[1], this.game.pilot.dir]
         exportObject.plane = [this.game.plane.coords[0], this.game.plane.coords[1], this.game.plane.dir]
+        exportObject.difficulty = this.parameters.difficulty
         exportObject.seed = seed
         return JSON.stringify(exportObject)
     }
