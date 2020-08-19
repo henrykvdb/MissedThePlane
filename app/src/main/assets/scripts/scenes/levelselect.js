@@ -10,13 +10,10 @@ class LevelSelectScene extends Phaser.Scene {
     preload() { }
 
     create() {
-        const X_START = 160 * MIN_XY / 600
         const Y_START = 200 * MIN_XY / 600
-        const SHIFT = 130 * MIN_XY / 600
-        const ROW_COUNT = 5
 
         const selectScene = this;
-        var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
+        this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
         text = this.add.text(SIZE_X / 2, Y_START / 3, 'Select a level to play', { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
 
         // Close button
@@ -88,7 +85,6 @@ class LevelSelectScene extends Phaser.Scene {
                 console.log("tap")
                 var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
                 if (newPos == scene.position) {
-                    Android.setHighestLevel('bestAccountAround', newPos - scene.MIN_POS) // TODO: update with pref
                     scene.scene.start('GameScene', { levelIndex: newPos - scene.MIN_POS});
                     scene.scene.stop()
                 }

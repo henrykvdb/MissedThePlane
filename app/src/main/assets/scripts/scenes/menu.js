@@ -6,7 +6,6 @@ class MenuScene extends Phaser.Scene {
 
     init(data) {
         this.caller = data.caller
-        // TODO: pass on the scene that launched this menu, so we can resume/kill it when switching scenes with this menu
 
         if (this.caller == 'GameScene' || this.caller == 'LevelEditScene'){
             this.background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.5)
