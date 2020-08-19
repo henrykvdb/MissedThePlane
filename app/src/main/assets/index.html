@@ -13,12 +13,17 @@
     <script src="scripts/data/tiles.js"></script>
     <script src="scripts/data/enums.js"></script>
     <script src="scripts/data/levels.js"></script>
+
+    <!-- Load all scnees -->
     <script src="scripts/scenes/game.js"></script>
     <script src="scripts/scenes/levelselect.js"></script>
     <script src="scripts/scenes/menu.js"></script>
     <script src="scripts/scenes/loading.js"></script>
     <script src="scripts/scenes/leveledit.js"></script>
     <script src="scripts/scenes/preloading.js"></script>
+    <script src="scripts/scenes/about.js"></script>
+
+    <!-- Load remaining scripts -->
     <script src="scripts/pilot.js"></script>
     <script src="scripts/plane.js"></script>
     <script src="scripts/world.js"></script>
@@ -41,7 +46,7 @@
                 target: 60,
                 forceSetTimeOut: true
             },
-            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, LevelEditScene, MenuScene]
+            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, LevelEditScene, MenuScene, AboutScene]
         }
 
         var game = new Phaser.Game(config)

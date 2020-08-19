@@ -30,7 +30,7 @@ class MenuScene extends Phaser.Scene {
         this.btnLevelEdit.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.EDIT))
 
         this.btnAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_main_about').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnAbout.on('pointerdown', () => console.log("not implemented"))
+        this.btnAbout.on('pointerdown', () => scene.startScene('AboutScene', undefined))
 
         if (this.caller != 'LoadingScene') {
             this.btnReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_close').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)

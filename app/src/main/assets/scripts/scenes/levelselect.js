@@ -30,21 +30,21 @@ class LevelSelectScene extends Phaser.Scene {
     create() {
         const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
 
-        const selectScene = this;
+        const scene = this;
         var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
 
         // Close button
         if (this.mode != SELECT_MODES.SAVE) {
-            this.btnMenu = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnMenu.on('pointerdown', function (pointer) {
-                selectScene.scene.launch('MenuScene', {caller: selectScene.scene.key});
-                selectScene.scene.pause()
+                scene.scene.launch('MenuScene', { caller: scene.scene.key });
+                scene.scene.pause()
             })
         } else {
-            this.btnInteract = selectScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+            this.btnInteract = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
             this.btnInteract.on('pointerdown', function (pointer) {
-                selectScene.scene.stop()
-                selectScene.scene.wake('LevelEditScene')
+                scene.scene.stop()
+                scene.scene.wake('LevelEditScene')
             })
         }
 
@@ -58,7 +58,6 @@ class LevelSelectScene extends Phaser.Scene {
 
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
-        const scene = this
         this.world = new World(this, this.LEVELS[0])
 
         // Make tile sprites
@@ -74,8 +73,8 @@ class LevelSelectScene extends Phaser.Scene {
             tileSprite.setInteractive({ draggable: true })
 
             //Create tile text
-            var text = (i == 0 && this.mode == SELECT_MODES.LOAD)? "" : i
-            var tileNumber = selectScene.add.text(0, SPRITE_HEIGHT, text, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
+            var text = (i == 0 && this.mode == SELECT_MODES.LOAD) ? "" : i
+            var tileNumber = scene.add.text(0, SPRITE_HEIGHT, text, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
             tileNumber.setDepth(101).setOrigin(0.5, 0.5)
 
             this.levelSprites.push(tileSprite)
@@ -127,7 +126,7 @@ class LevelSelectScene extends Phaser.Scene {
         })
     }
 
-    handleInput(){
+    handleInput() {
         var index = this.position - this.MIN_POS
 
         if (this.mode == SELECT_MODES.OPEN) {
@@ -144,7 +143,7 @@ class LevelSelectScene extends Phaser.Scene {
             });
             this.scene.stop()
         }
-        else if (this.mode == SELECT_MODES.SAVE){
+        else if (this.mode == SELECT_MODES.SAVE) {
             this.LEVELS[index] = this.levelString
             this.forceReload = true
             updateSprites2(this, this.position, 0)
