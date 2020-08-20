@@ -94,3 +94,9 @@ function getY(ratioY) {
 function getXY(ratio) {
     return MIN_XY * ratio
 }
+
+// Function to avoid ugly reference errors
+function getAndroid(){
+    if(typeof Android === "undefined") return undefined
+    else return Android
+}

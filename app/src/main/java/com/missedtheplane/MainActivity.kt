@@ -56,6 +56,11 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(context, toast, Toast.LENGTH_SHORT).show()
         }
 
+        @JavascriptInterface
+        fun getVersion(): String {
+            return context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }
+
         /** Updates this user highest reached level in the campaign
          *  Checks if the user isn't on a higher level already, and if we even have a highest level field already */
         @JavascriptInterface
