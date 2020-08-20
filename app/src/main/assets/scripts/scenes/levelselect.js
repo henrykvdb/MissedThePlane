@@ -55,10 +55,10 @@ class LevelSelectScene extends Phaser.Scene {
         this.LEVEL_BOX_SCALE = 0.1 * MIN_XY / 600 // Scale of the level select boxes
         this.LEVEL_BOX_HEIGHT = SIZE_Y / 2 // Height of the center of the level select boxes
 
-
-        const CENTER_OFFSET = 400*this.LEVEL_BOX_SCALE
-        this.add.sprite(SIZE_X/2, this.LEVEL_BOX_HEIGHT - CENTER_OFFSET, 'select_arrow').setOrigin(0.5,1).setScale(this.LEVEL_BOX_SCALE).setDepth(100)
-        this.add.sprite(SIZE_X/2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5,0).setScale(this.LEVEL_BOX_SCALE).setDepth(100).flipY = true
+        // Draw pointer arrows
+        const CENTER_OFFSET = 400 * this.LEVEL_BOX_SCALE
+        this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT - CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 1).setScale(this.LEVEL_BOX_SCALE).setDepth(100)
+        this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 0).setScale(this.LEVEL_BOX_SCALE).setDepth(100).flipY = true
 
         // Init default state
         this.position = this.MIN_POS
@@ -144,7 +144,7 @@ class LevelSelectScene extends Phaser.Scene {
 
         // Create tile text
         var text = (index == 0 && this.mode == SELECT_MODES.PLAY) ? "" : index
-        this.levelNumbers[index] =  this.add.text(posX, this.LEVEL_BOX_HEIGHT, text, { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(101).setOrigin(0.5, 0.5)
+        this.levelNumbers[index] = this.add.text(posX, this.LEVEL_BOX_HEIGHT, text, { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(101).setOrigin(0.5, 0.5)
     }
 
     updateSprites(position, duration) {
