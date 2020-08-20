@@ -129,7 +129,7 @@ class LevelSelectScene extends Phaser.Scene {
         var index = this.position - this.MIN_POS
 
         if (this.mode == SELECT_MODES.OPEN) {
-            // Android.setHighestLevel('bestAccountAround', index)
+            Android.deleteLevel('bestAccountAround', index)
             this.scene.start('GameScene', { levelIndex: index })
             this.scene.stop()
         }
