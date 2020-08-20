@@ -51,6 +51,16 @@ class UI {
         if (this.playTesting) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Testing').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
         else if (gameScene.levelIndex == 0) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Home').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
         else gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), "Level " + gameScene.levelIndex).setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
+
+        // if (gameScene.levelIndex < 1) { // TODO add here however many tutorial cards we have
+        //     var tutorialCard = gameScene.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'level_complete').setOrigin(0.5, 0.5).setScale(0.45 * MIN_XY / 600).setDepth(100)
+        //     gameScene.tweens.add({
+        //         delay: 6000,
+        //         targets: tutorialCard,
+        //         alpha: 0,
+        //         duration: 1000
+        //       })
+        // }
     }
 
     startPopupAnimation(success) {
@@ -65,50 +75,5 @@ class UI {
         var newYPos = this.MSG_BOTTOM_HEIGHT * Math.sin(this.popups.timeAnimating / this.MSG_MOVE_TIME * Math.PI - Math.PI / 2)
         this.popups.sprites[this.popups.typePopup ? 0 : 1].y = newYPos
         if (this.popups.timeAnimating >= this.MSG_MOVE_TIME) this.popups.timeAnimating = 0
-    }
-
-    showLevelText(levelIndex) {
-        return //TODO RE-ADD
-        var margin = 15 * MIN_XY / 600
-        var shiftY = 40 * MIN_XY / 600
-        var startY = getY(0.9)
-        if (levelIndex == 0) {
-            this.gameScene.add.text(margin, startY - 2 * shiftY, 'Oh no! You').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(margin, startY - 1 * shiftY, 'missed the plane.').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100);
-            this.gameScene.add.text(margin, startY - 0 * shiftY, "...and you're the pilot!", { fontStyle: "Bold" }).setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-
-            this.gameScene.add.text(SIZE_X - margin, startY - 2 * shiftY, 'Autopilot keeps').setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin, startY - 1 * shiftY, 'it in the air, but').setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin, startY - 0 * shiftY, 'you need to help it!').setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-        }
-        if (levelIndex == 1) {
-            this.gameScene.add.text(margin, startY - 3 * shiftY, 'Autopilot').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(margin, startY - 2 * shiftY, 'turns right', { fontStyle: "bold" }).setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100);
-            this.gameScene.add.text(margin, startY - 1 * shiftY, 'before a mountain').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(margin, startY - 0 * shiftY, 'to avoid a crash.').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-
-            this.gameScene.add.text(SIZE_X - margin, startY - 2 * shiftY, 'Get the').setColor("0").setOrigin(1, 0.5).setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin, startY - 1 * shiftY, 'plane to the').setColor("0").setOrigin(1, 0.5).setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin, startY - 0 * shiftY, 'landing strip!', { fontStyle: "Bold" }).setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-        }
-
-        if (levelIndex == 2) {
-            this.gameScene.add.text(margin, startY - 3 * shiftY, 'Buttons', { fontStyle: "bold" }).setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.sprite(margin + 140 * MIN_XY / 600, startY - 3 * shiftY, TILES.BUTTON.assets[0]).setOrigin(0, 0.65).setDepth(100).setScale(0.1 * MIN_XY / 600)
-            this.gameScene.add.text(margin, startY - 2 * shiftY, 'toggle adjacent').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100);
-            this.gameScene.add.text(margin, startY - 1 * shiftY, 'tiles between').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(margin, startY - 0 * shiftY, 'grass and mountains.').setOrigin(0, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-
-            this.gameScene.add.text(SIZE_X - margin, startY - 3 * shiftY, 'Use them').setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin - 130 * MIN_XY / 600, startY - 2 * shiftY, 'with ').setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin, startY - 2 * shiftY, 'spacebar', { fontStyle: "Bold" }).setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-            this.gameScene.add.text(SIZE_X - margin, startY - 1 * shiftY, 'when nearby.').setOrigin(1, 0.5).setColor("0").setFontSize(28 * MIN_XY / 600).setDepth(100)
-        }
-
-        if (levelIndex == 3) {
-            startY += 10
-            this.gameScene.add.text(margin, startY - 2 * shiftY, 'Tip:', { fontStyle: "bold" }).setOrigin(0, 0.5).setColor("0").setFontSize(28).setDepth(100)
-            this.gameScene.add.text(margin, startY - 1 * shiftY, 'You can press R to restart.').setOrigin(0, 0.5).setColor("0").setFontSize(28).setDepth(100)
-        }
     }
 }
