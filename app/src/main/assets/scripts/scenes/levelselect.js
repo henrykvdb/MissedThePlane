@@ -94,11 +94,7 @@ class LevelSelectScene extends Phaser.Scene {
             // User tapped a tile
             if (gameObject != scrollbar && Math.abs(distance) < scene.LEVEL_BOX_SCALE * 400) {
                 console.log("tap")
-                // Trigger action if tap on current tile
-                var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
-                if (newPos == scene.position) scene.handleInput()
-                else scene.position = newPos
-
+                scene.position = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
                 scene.updateSprites(scene.position, 50)
             }
 
