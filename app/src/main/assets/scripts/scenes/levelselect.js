@@ -2,9 +2,9 @@ var assets
 var text
 
 const SELECT_MODES = {
-    OPEN: "Open a level",
-    EDIT: "Edit a level",
-    SAVE: "Save a level"
+    PLAY: "Play",
+    EDIT: "Edit",
+    SAVE: "Save"
 }
 
 class LevelSelectScene extends Phaser.Scene {
@@ -19,10 +19,10 @@ class LevelSelectScene extends Phaser.Scene {
         if (data.option) this.mode = data.option
         else throw "Level select called without a mode"
 
-        this.LEVELS = this.mode == SELECT_MODES.OPEN ? ALL_LEVELS : USER_LEVELS
+        this.LEVELS = this.mode == SELECT_MODES.PLAY ? ALL_LEVELS : USER_LEVELS
 
         const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
-        text = this.add.text(SIZE_X / 2, Y_START / 3, this.mode, { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
+        text = this.add.text(SIZE_X / 2, Y_START / 3, this.mode + " a level", { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
     }
 
     preload() { }
@@ -31,7 +31,7 @@ class LevelSelectScene extends Phaser.Scene {
         const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
 
         const scene = this;
-        var background = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
+        this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
 
         // Close button
         this.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
@@ -41,11 +41,15 @@ class LevelSelectScene extends Phaser.Scene {
                 scene.scene.pause()
             })
         } else {
-            this.btnInteract.on('pointerdown', function (pointer) {
+            this.btnMenu.on('pointerdown', function (pointer) {
                 scene.scene.stop()
                 scene.scene.wake('LevelEditScene')
             })
         }
+
+        // Confirm button
+        this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_select_'+this.mode).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnConfirm.on('pointerdown', () => scene.handleInput())
 
         //MAGIC TIME
         this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
@@ -128,8 +132,7 @@ class LevelSelectScene extends Phaser.Scene {
     handleInput() {
         var index = this.position - this.MIN_POS
 
-        if (this.mode == SELECT_MODES.OPEN) {
-            if(getAndroid()) Android.deleteLevel('bestAccountAround', index)
+        if (this.mode == SELECT_MODES.PLAY) {
             this.scene.start('GameScene', { levelIndex: index })
             this.scene.stop()
         }
@@ -144,6 +147,7 @@ class LevelSelectScene extends Phaser.Scene {
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.SAVE) {
+            // TODO android code here
             this.LEVELS[index] = this.levelString
             this.forceReload = true
             updateSprites2(this, this.position, 0)
