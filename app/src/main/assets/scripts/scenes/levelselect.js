@@ -22,14 +22,10 @@ class LevelSelectScene extends Phaser.Scene {
         this.LEVELS = this.mode == SELECT_MODES.PLAY ? ALL_LEVELS : USER_LEVELS
 
         const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
-        text = this.add.text(SIZE_X / 2, Y_START / 3, this.mode + " a level", { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
+        text = this.add.text(SIZE_X / 2, Y_START / 3, this.mode + " a level", { fill: '#FFFFFF', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
     }
 
-    preload() { }
-
     create() {
-        const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
-
         const scene = this;
         this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
 
@@ -48,48 +44,35 @@ class LevelSelectScene extends Phaser.Scene {
         }
 
         // Confirm button
-        this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_select_'+this.mode).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_select_' + this.mode).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnConfirm.on('pointerdown', () => scene.handleInput())
 
-        //MAGIC TIME
+        // Display constants
         this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
         this.MIN_POS = (1 - this.COUNT_DISPLAY) / 2
         this.MAX_POS = this.MIN_POS + this.LEVELS.length - 1
         this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // No idea what kind of units this is lol
-        this.TILE_SCALE = 0.1 * MIN_XY / 600
+        this.LEVEL_BOX_SCALE = 0.1 * MIN_XY / 600 // Scale of the level select boxes
+        this.LEVEL_BOX_HEIGHT = SIZE_Y / 2 // Height of the center of the level select boxes
 
 
+        const CENTER_OFFSET = 400*this.LEVEL_BOX_SCALE
+        this.add.sprite(SIZE_X/2, this.LEVEL_BOX_HEIGHT - CENTER_OFFSET, 'select_arrow').setOrigin(0.5,1).setScale(this.LEVEL_BOX_SCALE).setDepth(100)
+        this.add.sprite(SIZE_X/2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5,0).setScale(this.LEVEL_BOX_SCALE).setDepth(100).flipY = true
+
+        // Init default state
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
         this.world = new World(this, this.LEVELS[0])
 
         // Make tile sprites
-        this.levelSprites = []
-        this.levelNumbers = []
-        const SPRITE_HEIGHT = SIZE_Y / 2
-        for (let i = 0; i < this.LEVELS.length; i++) {
-            // Create tile
-            var asset = 'btn_level_' + JSON.parse(this.LEVELS[i]).difficulty
-            var tileSprite = this.add.sprite(0, SPRITE_HEIGHT, asset)
-            tileSprite.setScale(this.TILE_SCALE)
-            tileSprite.setDepth(100)
-            tileSprite.setInteractive({ draggable: true })
-
-            //Create tile text
-            var text = (i == 0 && this.mode == SELECT_MODES.LOAD) ? "" : i
-            var tileNumber = scene.add.text(0, SPRITE_HEIGHT, text, { fill: '#000000', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' })
-            tileNumber.setDepth(101).setOrigin(0.5, 0.5)
-
-            this.levelSprites.push(tileSprite)
-            this.levelNumbers.push(tileNumber)
-        }
-        updateSprites2(this, this.position, 0)
+        this.levelSprites = Array(this.LEVELS.length)
+        this.levelNumbers = Array(this.LEVELS.length)
+        this.updateSprites(this.position, 0)
 
         // Make scrollbar
-        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50)
-        scrollbar.setScale(SIZE_X).setOrigin(0)
-        scrollbar.setTint(0, 0, 0).setAlpha(0.2)
-        scrollbar.setInteractive({ draggable: true })
+        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setInteractive({ draggable: true })
+        scrollbar.setScale(SIZE_X).setOrigin(0).setTint(0, 0, 0).setAlpha(0.2)
 
         // User is dragging - update positions
         this.input.on('drag', function (pointer, gameObject, dragX) {
@@ -101,7 +84,7 @@ class LevelSelectScene extends Phaser.Scene {
             // Calculate the absolute position
             var absolutePos = scene.position + relativePos / scene.DRAG_WEIGHT
             absolutePos = Math.min(Math.max(absolutePos, scene.MIN_POS), scene.MAX_POS)
-            updateSprites2(scene, absolutePos, 0)
+            scene.updateSprites(absolutePos, 0)
         })
 
         // User stops dragging - snap to discrete position
@@ -109,14 +92,14 @@ class LevelSelectScene extends Phaser.Scene {
             var distance = pointer.downX - pointer.upX
 
             // User tapped a tile
-            if (gameObject != scrollbar && Math.abs(distance) < scene.TILE_SCALE * 400) {
+            if (gameObject != scrollbar && Math.abs(distance) < scene.LEVEL_BOX_SCALE * 400) {
                 console.log("tap")
                 // Trigger action if tap on current tile
                 var newPos = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
                 if (newPos == scene.position) scene.handleInput()
                 else scene.position = newPos
 
-                updateSprites2(scene, scene.position, 50)
+                scene.updateSprites(scene.position, 50)
             }
 
             // User swiped to a tile
@@ -124,7 +107,7 @@ class LevelSelectScene extends Phaser.Scene {
                 console.log("swipe")
                 scene.position += distance / scene.DRAG_WEIGHT
                 scene.position = Math.min(Math.max(Math.round(scene.position), scene.MIN_POS), scene.MAX_POS)
-                updateSprites2(scene, scene.position, 50)
+                scene.updateSprites(scene.position, 50)
             }
         })
     }
@@ -150,62 +133,83 @@ class LevelSelectScene extends Phaser.Scene {
             // TODO android code here
             this.LEVELS[index] = this.levelString
             this.forceReload = true
-            updateSprites2(this, this.position, 0)
+            this.updateSprites(this.position, 0)
         }
     }
-}
 
-function updateSprites2(scene, position, duration) { //TODO move in class
-    var snappedPos = Math.min(Math.max(Math.round(position), scene.MIN_POS), scene.MAX_POS)
-    if (snappedPos != scene.lastPos || scene.forceReload) {
-        scene.forceReload = false
-        scene.lastPos = snappedPos
+    createSprite(index, posX) {
+        // Create border
+        var asset = 'btn_level_' + JSON.parse(this.LEVELS[index]).difficulty
+        this.levelSprites[index] = this.add.sprite(posX, this.LEVEL_BOX_HEIGHT, asset).setScale(this.LEVEL_BOX_SCALE).setDepth(100).setInteractive({ draggable: true })
 
-        // Destroy the world and kill its children ;)
-        if (scene.world != undefined) {
-            scene.world.destroy()
-            scene.world = undefined
-        }
-
-        // Create new world
-        scene.world = new World(scene, scene.LEVELS[snappedPos - scene.MIN_POS])
+        // Create tile text
+        var text = (index == 0 && this.mode == SELECT_MODES.PLAY) ? "" : index
+        this.levelNumbers[index] =  this.add.text(posX, this.LEVEL_BOX_HEIGHT, text, { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(101).setOrigin(0.5, 0.5)
     }
 
-    for (let i = 0; i < scene.LEVELS.length; i++) {
-        var sprite = scene.levelSprites[i]
-        var number = scene.levelNumbers[i]
+    updateSprites(position, duration) {
+        var snappedPos = Math.min(Math.max(Math.round(position), this.MIN_POS), this.MAX_POS)
+        if (snappedPos != this.lastPos || this.forceReload) {
+            this.forceReload = false
+            this.lastPos = snappedPos
 
-        if (position <= i && i <= position + scene.COUNT_DISPLAY - 1) {
-            // Set visible
-            sprite.visible = true
-            number.visible = true
-
-            // Calculate next position
-            const STEP = SIZE_X / (scene.COUNT_DISPLAY - 1)
-            var localPos = (i + 1 > position) ? (i - position) : (TILES_LEVEL_EDITOR.length + i - position)
-            var newPos = localPos * STEP
-
-            // Move the sprite to the new position
-            if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
-                scene.tweens.add({
-                    targets: number,
-                    x: newPos,
-                    duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
-                });
-                scene.tweens.add({
-                    targets: sprite,
-                    x: newPos,
-                    duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
-                });
+            // Destroy the world and kill its children ;)
+            if (this.world != undefined) {
+                this.world.destroy()
+                this.world = undefined
             }
-            else {
-                sprite.x = newPos
-                number.x = newPos
-            }
+
+            // Create new world
+            this.world = new World(this, this.LEVELS[snappedPos - this.MIN_POS])
         }
-        else {
-            sprite.visible = false
-            number.visible = false
+
+        // Itterate over all sprites
+        for (let i = 0; i < this.LEVELS.length; i++) {
+
+            var sprite = this.levelSprites[i]
+            var number = this.levelNumbers[i]
+
+            // Sprite in viewbox
+            if (position <= i && i <= position + this.COUNT_DISPLAY - 1) {
+
+                // Calculate next position
+                const STEP = SIZE_X / (this.COUNT_DISPLAY - 1)
+                var localPos = (i + 1 > position) ? (i - position) : (TILES_LEVEL_EDITOR.length + i - position)
+                var newPos = localPos * STEP
+
+                if (sprite) {
+                    // Set visible
+                    sprite.visible = true
+                    number.visible = true
+
+                    // Move the sprite to the new position
+                    if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
+                        this.tweens.add({
+                            targets: number,
+                            x: newPos,
+                            duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
+                        });
+                        this.tweens.add({
+                            targets: sprite,
+                            x: newPos,
+                            duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
+                        });
+                    }
+                    else {
+                        sprite.x = newPos
+                        number.x = newPos
+                    }
+                }
+                else {
+                    // Create sprite
+                    this.createSprite(i, newPos)
+                }
+            }
+            // Sprite not in viewbox
+            else if (sprite) {
+                sprite.visible = false
+                number.visible = false
+            }
         }
     }
 }

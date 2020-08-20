@@ -44,6 +44,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('level_failed', 'assets/menu/level_failed.png')
         this.load.image('pilot_tip', 'assets/menu/pilot_tip.png')
         this.load.image('menu_invisible', 'assets/menu/menu_invisible.png')
+        this.load.image('select_arrow', 'assets/menu/select_arrow.png')
 
         // Load terain tile assets
         for (var i = 0; i < 7; i++) this.load.image('grass' + i, 'assets/tiles/grass' + i + '.png')
