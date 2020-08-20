@@ -11,18 +11,19 @@ Should do
 - UI
     - Decorate main menu
     - Level editor: back button
-    - Levels menu overhaul (better scalability, seperation user levels)
     - Level browser / User levels / Your levels
     - Game scene update
     - Turn menu button into pause buttons for game & editor (as they keep make the menu a transparant pause menu)
+    - Add play, edit, save button to confirm an action while browsing
 - Get an actual font
 - Level editor
-    - export/import dialog
+    - save dialog + actually save in local prefs
     - Entire publish system
     - Check if pilot/plane not in inaccessible on start (+ single runway?)
     - Check winnable on publish
-    - database?
+    - database
     - fix placing block through drawer UI bug
+    - fix placing block on level editor select bug
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase

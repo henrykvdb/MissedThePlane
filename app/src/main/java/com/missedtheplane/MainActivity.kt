@@ -54,11 +54,18 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(context, toast, Toast.LENGTH_SHORT).show()
         }
 
-        /** Updates this user highest reached level in the campaign */
+        /** Updates this user highest reached level in the campaign
+         *  Checks if the user isn't on a higher level already, and if we even have a highest level field already */
         @JavascriptInterface
         fun setHighestLevel(userId: String, campaignIndex: Int) {
-            // TODO: check if current isn't higher than new (we could do with increment but might be risky)
-            updateDocument("users", userId, hashMapOf("highestLevel" to campaignIndex))
+            val db = Firebase.firestore
+            db.collection("users").document(userId).get().addOnSuccessListener { result ->
+                val resultData = result.data
+                if (result != null && resultData != null &&
+                    (resultData["highestLevel"] == null || campaignIndex > (resultData["highestLevel"] as Long).toInt())) {
+                        updateDocument("users", userId, hashMapOf("highestLevel" to campaignIndex))
+                }
+            }
         }
 
         /** Publishes one of the levels the user currently has saved locally */
@@ -68,33 +75,93 @@ class MainActivity : AppCompatActivity() {
             val newLevel = hashMapOf("author" to userId,
                                      "levelString" to levelString,
                                      "submitDate" to FieldValue.serverTimestamp(),
+                                     "public" to true,
                                      "plays" to 0,
                                      "clears" to 0)
-            addNewDocument("publicLevels", newLevel)
+            addNewDocument("levels", newLevel)
         }
 
         /** Updates a given level in a certain user slot */
         @JavascriptInterface
-        fun updateLevel(userId: String, levelIndex: Int, levelString: String) {
-
+        fun updateLevel(userId: String, levelSlot: Int, levelString: String) {
+            val db = Firebase.firestore // Welcome to boilerplate restaurant, may I take your order
+            db.collection("users").document(userId).get().addOnSuccessListener { userResult ->
+                val resultData = userResult.data
+                if (userResult != null && resultData != null && resultData["levels"] != null && (resultData["levels"] as Map<Int, String>)[levelSlot] != null) {
+                    val levelDict = resultData["levels"] as MutableMap<Int, String>
+                    val levelId = levelDict[levelSlot]
+                    if (levelId != null) {
+                        db.collection("levels").document(levelId).get().addOnSuccessListener { levelResult ->
+                            val levelData = levelResult.data
+                            if (levelResult == null || levelData == null) {
+                                addError("User $userId tried updating level slot $levelSlot which gave levelId $levelId but it wasn't found in the level table.")
+                            } else {  // Here starts the actual body of this function
+                                if (levelData["public"] == true) {
+                                    addError("User $userId tried updating levelId $levelId but it is published already! Making new level and replacing user slot (very bad).")
+                                    // TODO: here a new level should be created, and use its id to update the user dict, but this is just too much
+                                } else {
+                                    updateDocument("levels", levelId, hashMapOf("levelString" to levelString))
+                                }
+                            }
+                        }
+                    } else {
+                        addError("User $userId tried updating level slot $levelSlot but there was no levelId found in his user document for that slot.")
+                    }
+                }
+            }
         }
 
         /** 'Deletes' a level in the database (marks it deleted), as well as freeing the spot in the user document */
         @JavascriptInterface
-        fun deleteLevel(userId: String, levelIndex: Int) {
-
+        fun deleteLevel(userId: String, levelSlot: Int) {
+            val db = Firebase.firestore // Welcome to boilerplate restaurant, may I take your order
+            db.collection("users").document(userId).get().addOnSuccessListener { userResult ->
+                val resultData = userResult.data
+                if (userResult != null && resultData != null && resultData["levels"] != null && (resultData["levels"] as Map<Int, String>)[levelSlot] != null) {
+                    val levelDict = resultData["levels"] as MutableMap<Int, String>
+                    val levelId = levelDict[levelSlot]
+                    if (levelId != null) {
+                        db.collection("levels").document(levelId).get().addOnSuccessListener { levelResult ->
+                            val levelData = levelResult.data
+                            if (levelResult == null || levelData == null) {
+                                addError("User $userId tried deleting level slot $levelSlot which gave levelId $levelId but it wasn't found in the level table.")
+                            } else {  // Here starts the actual body of this function
+                                updateDocument("levels", levelId, hashMapOf("public" to false, "deleted" to true))
+                                levelDict.remove(levelSlot)
+                                updateDocument("users", userId, hashMapOf("levels" to levelDict))
+                            }
+                        }
+                    } else {
+                        addError("User $userId tried deleting level slot $levelSlot but there was no levelId found in his user document for that slot.")
+                    }
+                }
+            }
         }
 
         /** Generates a new level as well as adding a reference to it to the user array */
         @JavascriptInterface
-        fun createNewLevel(userId: String, levelIndex: Int, levelString: String) {
-
+        fun createNewLevel(userId: String, levelSlot: Int, levelString: String) {
+            val db = Firebase.firestore
+            db.collection("users").document(userId).get().addOnSuccessListener { result ->
+                val resultData = result.data
+                if (result != null && resultData != null && resultData["levels"] != null && (resultData["levels"] as Map<Int, String>)[levelSlot] != null) {
+                    val levelId = (resultData["levels"] as Map<Int, String>)[levelSlot]
+                    // Now we have the levelId, we can finally start
+                }
+            }
         }
 
         /** Returns a list of dictionaries, each representing a level object (attributes like levelString, plays, rating, etc) */
         @JavascriptInterface
         fun getPublishedLevels() {
 
+        }
+
+        /** Adds an error to the database, so we can see if something is broken */
+        fun addError(error: String) {
+            val newError = hashMapOf("error" to error,
+                "errorDate" to FieldValue.serverTimestamp())
+            addNewDocument("errors", newError)
         }
 
         // All TODO's here since they seem to get everywhere:
@@ -134,15 +201,14 @@ class MainActivity : AppCompatActivity() {
 
         fun getDocument(collection: String, document: String) {
             val db = Firebase.firestore
-            val docRef = db.collection("cities").document("SF")
-            docRef.get()
-                .addOnSuccessListener { result ->
-                    if (result != null) {
-                        Log.d("TAG", "DocumentSnapshot data: ${result.data}")
-                    } else {
-                        Log.d("TAG", "No such document")
-                    }
+            val docRef = db.collection(collection).document(document)
+            docRef.get().addOnSuccessListener { result ->
+                if (result != null) {
+                    Log.d("TAG", "DocumentSnapshot data: ${result.data}")
+                } else {
+                    Log.d("TAG", "No such document")
                 }
+            }
                 .addOnFailureListener { exception ->
                     Log.d("TAG", "get failed with ", exception)
                 }
