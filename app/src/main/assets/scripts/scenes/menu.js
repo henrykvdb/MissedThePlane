@@ -92,13 +92,22 @@ class MenuScene extends Phaser.Scene {
     }
 
     tweenSideMenu(targetX) {
-        const camera = this.cameras.main
+        const scene = this
         this.tweens.addCounter({
-            from: camera.midPoint.x,
+            from: scene.cameras.main.midPoint.x,
             to: targetX,
             duration: 1000,
             ease: 'Expo',
-            onUpdate: tween => camera.centerOnX(tween.getValue())
+            onUpdate: function(tween) {
+                // Move cameras
+                scene.cameras.main.centerOnX(tween.getValue())
+                scene.scene.get(scene.caller?scene.caller:'MenuScene').cameras.main.centerOnX(tween.getValue()) //TODO level editor tiles in background bug
+
+                // Fade background
+                if (scene.caller && scene.caller != 'LevelSelectScene'){
+                    scene.background.setAlpha(0.75-tween.getValue()/SIZE_X/2) // Fade alpha from 0.5 -> 0 and back
+                }
+            }
         })
     }
 

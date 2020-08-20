@@ -179,7 +179,7 @@ class LevelEditScene extends Phaser.Scene {
 
         // Make scrollbar
         const SCROLLBAR_HEIGHT = TILE_HEIGHT - this.TILE_SCALE * 200
-        var scrollbar = this.add.tileSprite(0, SCROLLBAR_HEIGHT, SIZE_X, SIZE_Y - SCROLLBAR_HEIGHT, 'menu_invisible').setDepth(150)
+        var scrollbar = this.add.tileSprite(0, SCROLLBAR_HEIGHT, 1, SIZE_Y - SCROLLBAR_HEIGHT, 'menu_invisible').setDepth(150)
         scrollbar.setScale(SIZE_X).setOrigin(0)
         scrollbar.setInteractive({ draggable: true })
         scrollbar.setTint(0, 0, 0).setAlpha(0.5)
