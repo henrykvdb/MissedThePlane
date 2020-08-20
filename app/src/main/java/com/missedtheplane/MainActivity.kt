@@ -15,10 +15,11 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.*
 import kotlin.collections.HashMap
+// TODO: do we import kotlin.js.Promise?
 
 
 fun log(msg: String) {
-    Log.e("MissedThePlane", msg)
+    Log.d("MissedThePlane", msg)
 }
 
 class MainActivity : AppCompatActivity() {
@@ -65,27 +66,43 @@ class MainActivity : AppCompatActivity() {
          *  Checks if the user isn't on a higher level already, and if we even have a highest level field already */
         @JavascriptInterface
         fun setHighestLevel(userId: String, campaignIndex: Int) {
-            // TODO with new method
-            val db = Firebase.firestore
-            db.collection("users").document(userId).get().addOnSuccessListener { result ->
-                val resultData = result.data
-                if (result != null && resultData != null &&
-                    (resultData["highestLevel"] == null || campaignIndex > (resultData["highestLevel"] as Long).toInt())) {
-                        updateDocument("users", userId, hashMapOf("highestLevel" to campaignIndex))
-                }
+            GlobalScope.launch {
+                val userData = getDocument("users", userId) ?: return@launch
+                if (userData["highestLevel"] == null || campaignIndex > (userData["highestLevel"] as Long).toInt())
+                    updateDocument("users", userId, hashMapOf("highestLevel" to campaignIndex))
             }
         }
 
         /** Publishes one of the levels the user currently has saved locally */
         @JavascriptInterface
-        fun publishLevel(userId: String, levelSlot: String, levelString: String) {
-            // levelIndex could be used to verify?
+        fun publishLevel(userId: String, levelSlot: String, levelString: String): Boolean {
+            // TODO: check if the user doesn't have more than x published levels total?
+            GlobalScope.launch {
+                var levelId = getLevelId(userId, levelSlot)
+                val levelData = getLevelData(levelId)
+                if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer version from his level than he currently has saved in the db
+                    addError("User $userId tried publishing a level which doesn't correspond to his saved level $levelId")
+                    levelId = createLevel(userId, levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
+                }
+                updateDocument("levels", levelId, hashMapOf("public" to true, "submitDate" to FieldValue.serverTimestamp()))
+            }
+            return true // TODO - in case publishing can fail (max levels reached or whatever), find a way to notify js
         }
 
-        /** Updates a given level in a certain user slot */
+        /** Updates a given level in a certain user slot, and if it doesn't exist yet, create it */
+        // TODO: maybe simply make this the main method of creating new levels as well?
         @JavascriptInterface
         fun updateLevel(userId: String, levelSlot: String, levelString: String) {
-
+            GlobalScope.launch {
+                var levelId = getLevelId(userId, levelSlot)
+                if (levelId == null) {
+                    addError("User $userId tried updating level on slot $levelSlot which was not filled for us")
+                    levelId = createLevel(userId, levelSlot, levelString)
+                }
+                val newData = hashMapOf("levelString" to levelString,
+                                        "lastUpdate" to FieldValue.serverTimestamp())
+                updateDocument("levels", levelId, newData)
+            }
         }
 
         /** 'Deletes' a level in the database (marks it deleted), as well as freeing the spot in the user document */
@@ -104,63 +121,70 @@ class MainActivity : AppCompatActivity() {
         /** Generates a new level as well as adding a reference to it to the user array */
         @JavascriptInterface
         fun createNewLevel(userId: String, levelSlot: String, levelString: String) {
-            val newLevel = hashMapOf("author" to userId,
-                "levelString" to levelString,
-                "submitDate" to FieldValue.serverTimestamp(),
-                "public" to true,
-                "plays" to 0,
-                "clears" to 0)
+            GlobalScope.launch {
+                createLevel(userId, levelSlot, levelString) // Simply because i'm not sure js can call suspended functions
+            }
         }
 
         /** Returns a list of dictionaries, each representing a level object (attributes like levelString, plays, rating, etc) */
+        // TODO: figure out how to return a promise
         @JavascriptInterface
         fun getPublishedLevels() {
 
         }
 
         /** Adds an error to the database, so we can see if something is broken */
-        fun addError(error: String) {
+        suspend fun addError(error: String) {
             val newError = hashMapOf("error" to error,
                 "errorDate" to FieldValue.serverTimestamp())
             addNewDocument("errors", newError)
         }
 
-        // All TODO's here since they seem to get everywhere:
         // TODO: move all 'backend functions' which js does not need to know about to other class/file
-        // TODO: extract each 'val db' to a place where it can be reused
-        // TODO: listeners should be able to return their outcome to the callers
         // Useful for later: `"timestamp" to FieldValue.serverTimestamp()` in a hashmap automatically sets timestamp
         //                   `washingtonRef.update("population", FieldValue.increment(50))` increments given value
 
-        fun addNewDocument(collection: String, data: HashMap<String, *>) {
-            val db = Firebase.firestore
-
-            db.collection(collection).add(data).addOnSuccessListener { documentReference ->
-                Log.d("TAG", "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
+        /** Adds a new document to a given collection and returns its id. */
+        suspend fun addNewDocument(collection: String, data: HashMap<String, *>): String {
+            return Firebase.firestore.collection(collection).add(data).await().id
         }
 
         fun updateDocument(collection: String, document: String, newData: HashMap<String, *>) {
-            log("updating document $document in collection $collection")
             val db = Firebase.firestore
             db.collection(collection).document(document).update(newData)
                 .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
                 .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
         }
 
+        /** Generates a new level as well as adding a reference to it to the user array
+         *  Returns the id of the newly created level */
+        suspend fun createLevel(userId: String, levelSlot: String, levelString: String): String {
+            val newLevel = hashMapOf(
+                "author" to userId,
+                "levelString" to levelString,
+                "lastUpdate" to FieldValue.serverTimestamp(),
+                "submitDate" to null,
+                "public" to false,
+                "deleted" to false,
+                "plays" to 0,
+                "clears" to 0
+            )
+            val levelId = addNewDocument("levels", newLevel)
+            updateSlot(userId, levelSlot, levelId)
+            return levelId
+        }
+
         /** Replaces a level slot in the user object with the new id (or removes it, if the new id is null) */
         suspend fun updateSlot(userId: String, levelSlot: String, newLevelId: String?) {
-            log("updating slot $levelSlot, with newLevelId $newLevelId")
             val userData = getDocument("users", userId)
-            if (userData == null || userData["levels"] == null) return // TODO maybe: add error if the user couldn't be found?
+            if (userData == null || userData["levels"] == null) {addError("User $userId does not have a level map!"); return}
             val levelDict = userData["levels"] as MutableMap<String, String>
-            if (newLevelId == null) levelDict.remove(levelSlot) // We want to remove this level from the user array
+            if (newLevelId == null) levelDict.remove(levelSlot) // levelId is null, we want to remove this level from the user array
             else levelDict[levelSlot] = newLevelId
             updateDocument("users", userId, hashMapOf("levels" to levelDict))
         }
 
         suspend fun getLevelData(levelId: String?): MutableMap<String, Any>? {
-            log("getting level data for $levelId")
             if (levelId == null) return null
             val levelData = getDocument("levels", levelId)
             if (levelData == null) addError("Request was made to fetch level $levelId but it could not be found!")
@@ -171,7 +195,6 @@ class MainActivity : AppCompatActivity() {
             val userData = getDocument("users", userId)
             if (userData == null || userData["levels"] == null) return null // TODO maybe: add error if the user couldn't be found?
             val levelDict = userData["levels"] as Map<String, String>
-            log("dict $levelDict with slot is ${levelDict[levelSlot]}")
             if (levelDict[levelSlot] == null) addError("Did not find levelId at slot $levelSlot for user $userId")
             return levelDict[levelSlot]
         }
