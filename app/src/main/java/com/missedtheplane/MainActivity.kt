@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(context, toast, Toast.LENGTH_SHORT).show()
         }
 
+        @JavascriptInterface
+        fun getVersion(): String {
+            return context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }
+
         /** Updates this user highest reached level in the campaign */
         @JavascriptInterface
         fun setHighestLevel(userId: String, campaignIndex: Int) {
@@ -65,11 +70,13 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun publishLevel(userId: String, levelIndex: Int, levelString: String) {
             // levelIndex could be used to verify?
-            val newLevel = hashMapOf("author" to userId,
-                                     "levelString" to levelString,
-                                     "submitDate" to FieldValue.serverTimestamp(),
-                                     "plays" to 0,
-                                     "clears" to 0)
+            val newLevel = hashMapOf(
+                "author" to userId,
+                "levelString" to levelString,
+                "submitDate" to FieldValue.serverTimestamp(),
+                "plays" to 0,
+                "clears" to 0
+            )
             addNewDocument("publicLevels", newLevel)
         }
 
