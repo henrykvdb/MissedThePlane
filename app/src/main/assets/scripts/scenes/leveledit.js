@@ -271,7 +271,7 @@ class LevelEditScene extends Phaser.Scene {
 
                 var planeCoords = this.world.game.plane.coords
                 if (coords[0] == Math.floor(planeCoords[0]) && coords[1] == Math.floor(planeCoords[1]) && TILES_IMPASSABLE_PLANE.includes(newTile)) {
-                    this.world.game.plane.coords = [1.5, 1.5]
+                    this.world.game.plane.coords = [this.world.tiles.length, 1.5]
                 }
 
                 this.world.tiles[coords[0]][coords[1]] = newTile
