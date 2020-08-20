@@ -236,7 +236,7 @@ class LevelEditScene extends Phaser.Scene {
 
     // Plane bounds are special because they don't include corners (cause plane can't go to island from a corner block) and they go one block out
     inPlaneBounds(coords) {
-        if ((coords[0] == 0 || coords[0] == this.world.tiles.length) && (coords[1] == 0 || coords[1] == this.world.tiles.length)) return false
+        if ((coords[0] == -1 || coords[0] == this.world.tiles.length) && (coords[1] == -1 || coords[1] == this.world.tiles.length)) return false
         else return coords[0] >= -1 && coords[1] >= -1 && coords[0] <= this.world.tiles.length && coords[1] <= this.world.tiles.length
     }
 
