@@ -1,13 +1,13 @@
 class MenuScene extends Phaser.Scene {
 
     constructor() {
-        super({ key: 'MenuScene' });
+        super({ key: 'MenuScene' })
     }
 
     init(data) {
         this.caller = data.caller
 
-        if (!this.caller || this.caller == 'LevelSelectScene') { // Opaque background
+        if (!this.caller || this.caller == 'LevelSelectScene' || this.caller == 'BrowserScene') { // Opaque background
             this.background = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x59AACA")
         }
         else { // Transparant background + return button
@@ -54,7 +54,7 @@ class MenuScene extends Phaser.Scene {
 
         const Y_START = 200 * MIN_XY / 600 / 3
         this.settingsText = this.add.text(SIZE_X + SIZE_X / 2, Y_START, "Settings", { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
-        this.settingsPilot = this.add.sprite(2*SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(100).setScale(MIN_XY / 600).setOrigin(1, 1)
+        this.settingsPilot = this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(100).setScale(MIN_XY / 600).setOrigin(1, 1)
 
         this.settingsMenu = [this.settingsText, this.settingsPilot]
 
@@ -64,12 +64,12 @@ class MenuScene extends Phaser.Scene {
         const version = getAndroid() ? "Version: " + Android.getVersion() : "version: 0.0.0"
         this.aboutHeaderContainer.add(this.add.text(0, Y_START, "Missed The Plane", { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }))
         this.aboutHeaderContainer.add(this.add.text(0, Y_START + 1 * TEXT_SPACING, version, { fill: '#000000', fontSize: 36 * MIN_XY / 600, }))
-        const START_X = 3*SIZE_X / 2 - this.aboutHeaderContainer.getBounds().width / 2
+        const START_X = 3 * SIZE_X / 2 - this.aboutHeaderContainer.getBounds().width / 2
         this.aboutHeaderContainer.x = START_X
 
-        this.aboutCredits0 = this.add.text(START_X, Y_START + 2.5 * TEXT_SPACING, "Winand Appels (Code/Art)", { fill: '#000000', fontSize: 25 * MIN_XY / 600,fontStyle: 'bold'  }).setDepth(100)
+        this.aboutCredits0 = this.add.text(START_X, Y_START + 2.5 * TEXT_SPACING, "Winand Appels (Code/Art)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
         this.aboutCredits1 = this.add.text(START_X, Y_START + 3.5 * TEXT_SPACING, "Henryk Van der Bruggen (Code/Art)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
-        this.aboutCredits2  = this.add.text(START_X, Y_START + 4.5 * TEXT_SPACING, "Markus W00d (Music/SFX)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold'  }).setDepth(100)
+        this.aboutCredits2 = this.add.text(START_X, Y_START + 4.5 * TEXT_SPACING, "Markus W00d (Music/SFX)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
         this.aboutMenu = [this.aboutHeaderContainer, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane]
@@ -78,9 +78,16 @@ class MenuScene extends Phaser.Scene {
     // Handles everything related to starting a scene
     startScene(sceneKey, option) {
         audio.start()
+
+        // Kill/Resume old scene
         if (this.caller == sceneKey && this.lastOption == option) { this.resume(); return } // We are already here, we simply go back
         if (this.caller) this.scene.stop(this.caller)
 
+        // Reset camera
+        this.cameras.main.centerOnX(SIZE_X/2)
+        this.scene.get(this.caller ? this.caller : 'MenuScene').cameras.main.centerOnX(SIZE_X/2)
+
+        // Start new scene
         this.scene.start(sceneKey, { option: option })
         this.lastOption = option
     }
@@ -98,15 +105,15 @@ class MenuScene extends Phaser.Scene {
             to: targetX,
             duration: 1000,
             ease: 'Expo',
-            onUpdate: function(tween) {
+            onUpdate: function (tween) {
                 // Move cameras
                 scene.cameras.main.centerOnX(tween.getValue())
-                scene.scene.get(scene.caller?scene.caller:'MenuScene').cameras.main.centerOnX(tween.getValue()) //TODO level editor tiles in background bug
+                scene.scene.get(scene.caller ? scene.caller : 'MenuScene').cameras.main.centerOnX(tween.getValue()) //TODO level editor tiles in background bug
 
                 // Fade background
-                if (scene.caller && scene.caller != 'LevelSelectScene'){
-                    var progress = (3*SIZE_X/2 - tween.getValue())/SIZE_X
-                    scene.background.setAlpha(0.4*progress) // Fade alpha from 0.4 -> 0 and back
+                if (scene.caller && scene.caller != 'LevelSelectScene' && scene.caller != 'BrowserScene') {
+                    var progress = (3 * SIZE_X / 2 - tween.getValue()) / SIZE_X
+                    scene.background.setAlpha(0.4 * progress) // Fade alpha from 0.4 -> 0 and back
                 }
             }
         })
