@@ -73,10 +73,10 @@ class UI {
         if (![1].includes(index)) return // Add all levels with tutorials here
         var tutorialElements = []
         // TODO: stop inputs during tutorial?
-        tutorialElements.push(this.gameScene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0).setTint(0, 0, 0).setAlpha(0.4))
+        tutorialElements.push(this.gameScene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150).setOrigin(0).setTint(0, 0, 0).setAlpha(0.4))
         if (index == 1) {
             var title = this.gameScene.add.text(SIZE_X / 2, getXY(0.14), "Plane turns RIGHT before a mountain", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' })
-            title.setDepth(100).setOrigin(0.5, 0)
+            title.setDepth(150).setOrigin(0.5, 0)
             tutorialElements.push(title)
             this.gameScene.anims.create({
                 key: 'tutorial1',
@@ -85,7 +85,7 @@ class UI {
                 hideOnComplete: false,
                 repeat: -1
             })
-            var tutorialCard = this.gameScene.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'tutorial10').setOrigin(0.5, 0.5).setScale(0.65 * MIN_XY / 600).setDepth(100)
+            var tutorialCard = this.gameScene.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'tutorial10').setOrigin(0.5, 0.5).setScale(0.65 * MIN_XY / 600).setDepth(150)
             tutorialCard.anims.play('tutorial1')
             tutorialElements.push(tutorialCard)
         }

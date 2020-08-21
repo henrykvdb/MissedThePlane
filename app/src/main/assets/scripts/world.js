@@ -32,7 +32,7 @@ class World {
     // Given a list of tiles, convert the runway's E and R to R0, R1, etc
     markRunway() {
         var endCoords = this.findCoord(TILES.RUNWAY_END)
-        if (endCoords == undefined) { console.log("No end tile found!"); return }
+        if (endCoords == undefined) return
         this.runwayTiles = [endCoords]
 
         // Find runway direction

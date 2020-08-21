@@ -9,10 +9,12 @@ Should do
     - Re-add
     - New controls explanation
 - UI
+    - Bug when quickly switching to any level selector when coming from settings/about
     - Decorate main menu
     - Scene destroy warning popup | save overwrite popup | can't edit after publish popup
     - Level browser
     - Game scene update
+    ~ Use seperate sprites for shift arrows/tool button toggles instead of tint
     ~ Hide UI of gamescene when in pause
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Get an actual font
