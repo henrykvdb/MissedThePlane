@@ -52,15 +52,7 @@ class UI {
         else if (gameScene.levelIndex == 0) gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Home').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
         else gameScene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), "Level " + gameScene.levelIndex).setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
 
-        // if (gameScene.levelIndex < 1) { // TODO add here however many tutorial cards we have
-        //     var tutorialCard = gameScene.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'level_complete').setOrigin(0.5, 0.5).setScale(0.45 * MIN_XY / 600).setDepth(100)
-        //     gameScene.tweens.add({
-        //         delay: 6000,
-        //         targets: tutorialCard,
-        //         alpha: 0,
-        //         duration: 1000
-        //       })
-        // }
+        this.showTutorial(gameScene.levelIndex) // Will show a tutorial if there is one for this level index
     }
 
     startPopupAnimation(success) {
@@ -75,5 +67,34 @@ class UI {
         var newYPos = this.MSG_BOTTOM_HEIGHT * Math.sin(this.popups.timeAnimating / this.MSG_MOVE_TIME * Math.PI - Math.PI / 2)
         this.popups.sprites[this.popups.typePopup ? 0 : 1].y = newYPos
         if (this.popups.timeAnimating >= this.MSG_MOVE_TIME) this.popups.timeAnimating = 0
+    }
+    
+    showTutorial(index) {
+        if (![1].includes(index)) return // Add all levels with tutorials here
+        var tutorialElements = []
+        // TODO: stop inputs during tutorial?
+        tutorialElements.push(this.gameScene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0).setTint(0, 0, 0).setAlpha(0.4))
+        if (index == 1) {
+            var title = this.gameScene.add.text(SIZE_X / 2, getXY(0.14), "Plane turns RIGHT before a mountain", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' })
+            title.setDepth(100).setOrigin(0.5, 0)
+            tutorialElements.push(title)
+            this.gameScene.anims.create({
+                key: 'tutorial1',
+                frames: [{key: 'tutorial10'}, {key: 'tutorial11'},{key: 'tutorial12'},{key: 'tutorial13'},{key: 'tutorial14'},{key: 'tutorial15'}],
+                frameRate: 5,
+                hideOnComplete: false,
+                repeat: -1
+            })
+            var tutorialCard = this.gameScene.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'tutorial10').setOrigin(0.5, 0.5).setScale(0.65 * MIN_XY / 600).setDepth(100)
+            tutorialCard.anims.play('tutorial1')
+            tutorialElements.push(tutorialCard)
+        }
+        tutorialElements.forEach(e => this.gameScene.tweens.add({
+            delay: 6000,
+            targets: e,
+            alpha: 0,
+            duration: 1000
+        }))
+
     }
 }

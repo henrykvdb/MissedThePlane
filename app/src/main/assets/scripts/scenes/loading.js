@@ -38,6 +38,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_select_Save', 'assets/menu/button_select_save.png')
         for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')
         for (var i = 0; i < 4; i++) this.load.image('btn_shift_' + i, 'assets/menu/button_shift_' + i + '.png')
+        for (var i = 0; i < 6; i++) this.load.image('tutorial1' + i, 'assets/tutorial/turn' + i + '.png')
         this.load.image('btn_level_todo', 'assets/menu/button_level_todo.png')
         this.load.image('btn_level_home', 'assets/menu/button_level_home.png')
         this.load.image('level_complete', 'assets/menu/level_complete.png')

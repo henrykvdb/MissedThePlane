@@ -254,7 +254,7 @@ class LevelEditScene extends Phaser.Scene {
 
             if (texture.includes('plane')) { //TODO @winnie dir to center
                 if (!this.inPlaneBounds(coords)) return
-                if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.tiles[coords[0]][coords[1]])) return
+                if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.getTile(coords))) return
                 this.world.game.plane.coords = [coords[0] + 0.5, coords[1] + 0.5]
                 this.state.levelString = this.world.exportWorldAsString(this.state.seed)
                 this.scene.restart(this.state)
