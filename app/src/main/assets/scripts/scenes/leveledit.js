@@ -86,7 +86,7 @@ class LevelEditScene extends Phaser.Scene {
         }
 
         // Shift toggle button
-        this.btnShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_shift_toggle').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
+        this.btnShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 1 * getXY(BUTTON_GAP), getXY(0.04), 'btn_shift_toggle_0').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
         if (scene.state.shiftEnabled) this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
         else this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         this.btnShift.on('pointerdown', function (pointer) {
@@ -97,8 +97,8 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Rotate button
-        this.btnRotate = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 1 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
-        this.btnRotate.on('pointerdown', function (pointer) {
+        this.btnRotateWorld = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate_world').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
+        this.btnRotateWorld.on('pointerdown', function (pointer) {
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
             scene.pilot.coords = [scene.pilot.coords[1], scene.world.tiles.length - scene.pilot.coords[0]]
             scene.pilot.dir = (scene.pilot.dir + 2) % 8
@@ -117,13 +117,15 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         // Open tools drawer
-        var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotate, this.btnSave]
+        var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotateWorld, this.btnSave]
         var drawerSpritesX = drawerSprites.map(sprite => sprite.x)
         var drawerSpritesY = drawerSprites.map(sprite => sprite.y)
         this.btnDrawer = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04), 'btn_wrench').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110);
         if (!this.state.drawerOpen) {
             drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
             drawerSprites.forEach(sprite => sprite.y = this.btnDrawer.y)
+        } else {
+            scene.btnDrawer.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
         }
         this.btnDrawer.on('pointerdown', function (pointer) {
             scene.state.drawerOpen = !scene.state.drawerOpen
@@ -160,6 +162,11 @@ class LevelEditScene extends Phaser.Scene {
             scene.scene.launch('GameScene', { levelString: scene.state.levelString })
             scene.scene.sleep()
         })
+
+        // Rotate button for plane and pilot (default hidden)
+        this.btnRotate = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.20), 'btn_rotate_1').setOrigin(0, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnRotate.on('pointerdown', () => scene.rotateCurrentEntity())
+        this.btnRotate.visible = false
 
         //MAGIC TIME
         this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
@@ -240,41 +247,61 @@ class LevelEditScene extends Phaser.Scene {
         else return coords[0] >= -1 && coords[1] >= -1 && coords[0] <= this.world.tiles.length && coords[1] <= this.world.tiles.length
     }
 
+    
+    rotateCurrentEntity() {
+        // Get the sprite index and texture asset
+        var index = Math.round(this.state.position + this.state.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
+        while (index<0) index += this.sprites.length
+        var texture = this.sprites[index].texture.key
+
+        if (texture.includes('plane') && this.plane) this.plane.dir = (this.plane.dir + 2) % 8
+        else if (texture.includes('pilot') && this.pilot) this.pilot.dir = (this.pilot.dir + 2) % 8
+        else {
+            console.log("Tried to rotate current entity but neither pilot or plane is selected!")
+            return
+        }
+        this.state.levelString = this.world.exportWorldAsString(this.state.seed)
+        this.scene.restart(this.state)
+    }   
+
+
     update(_, dt) {
+        // Get the sprite index and texture asset
+        var index = Math.round(this.state.position + this.state.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
+        while (index<0) index += this.sprites.length
+        var texture = this.sprites[index].texture.key
+
+        this.btnRotate.visible = (texture.includes('plane') || texture.includes('pilot'))
+
         var pointer = this.input.activePointer;
         if (pointer.isDown) {
-            var coords = getGridCoords(this.world.game, pointer.x, pointer.y)
+            var coords = getGridCoords(this, pointer.x, pointer.y)
 
-            // Get the sprite index and texture asset
-            var index = Math.round(this.state.position + this.state.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
-            while (index<0) index += this.sprites.length
-            var texture = this.sprites[index].texture.key
-
-            if (texture.includes('plane')) { //TODO @winnie dir to center
+            if (texture.includes('plane')) {
                 if (!this.inPlaneBounds(coords)) return
-                if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.tiles[coords[0]][coords[1]])) return
-                this.world.game.plane.coords = [coords[0] + 0.5, coords[1] + 0.5]
+                if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.getTile(coords))) return
+                this.plane.coords = [coords[0] + 0.5, coords[1] + 0.5]
                 this.state.levelString = this.world.exportWorldAsString(this.state.seed)
                 this.scene.restart(this.state)
             }
-            else if (texture.includes('pilot')) { //TODO @winnie dir to center
+            else if (texture.includes('pilot')) {
                 if (!this.inWorldBounds(coords)) return
                 if (TILES_IMPASSABLE_PILOT.includes(this.world.tiles[coords[0]][coords[1]])) return
-                this.world.game.pilot.coords = [coords[0] + 0.5, coords[1] + 0.5]
+                this.pilot.coords = [coords[0] + 0.5, coords[1] + 0.5]
                 this.state.levelString = this.world.exportWorldAsString(this.state.seed)
                 this.scene.restart(this.state)
             }
             else if (this.inWorldBounds(coords)) {
                 var newTile = TILES_LEVEL_EDITOR[index]
 
-                var pilotCoords = this.world.game.pilot.coords
+                var pilotCoords = this.pilot.coords
                 if (coords[0] == Math.floor(pilotCoords[0]) && coords[1] == Math.floor(pilotCoords[1]) && TILES_IMPASSABLE_PILOT.includes(newTile)) {
-                    this.world.game.pilot.coords = [-10, -10] // He gone
+                    this.pilot.coords = [-10, -10] // He gone
                 }
 
-                var planeCoords = this.world.game.plane.coords
+                var planeCoords = this.plane.coords
                 if (coords[0] == Math.floor(planeCoords[0]) && coords[1] == Math.floor(planeCoords[1]) && TILES_IMPASSABLE_PLANE.includes(newTile)) {
-                    this.world.game.plane.coords = [this.world.tiles.length, 1.5]
+                    this.plane.coords = [this.world.tiles.length, 1.5]
                 }
 
                 this.world.tiles[coords[0]][coords[1]] = newTile

@@ -15,8 +15,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.*
 import kotlin.collections.HashMap
-// TODO: do we import kotlin.js.Promise?
-
+// todo import kotlin.js.Promise :(
 
 fun log(msg: String) {
     Log.d("MissedThePlane", msg)
@@ -61,6 +60,12 @@ class MainActivity : AppCompatActivity() {
         fun getVersion(): String {
             return context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }
+
+        @JavascriptInterface
+        fun returnPromise() {
+
+        }
+
 
         /** Updates this user highest reached level in the campaign
          *  Checks if the user isn't on a higher level already, and if we even have a highest level field already */
