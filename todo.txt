@@ -2,7 +2,7 @@ To get something releaseable:
 - Barebones tutorial
 - Level editor plane and pilot moving/rotating
 - Local level saving and loading
-- Credits to Marcus
+- Mail markus to ask how he wants to be credited
 
 Should do
 - Tutorial
@@ -10,20 +10,18 @@ Should do
     - New controls explanation
 - UI
     - Decorate main menu
-    - Level editor: back button
-    - Level browser / User levels / Your levels
+    - Scene destroy warning popup | save overwrite popup | can't edit after publish popup
+    - Level browser
     - Game scene update
-    - Turn menu button into pause buttons for game & editor (as they keep make the menu a transparant pause menu)
-    - Add play, edit, save button to confirm an action while browsing
+    ~ Hide UI of gamescene when in pause
+    ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Get an actual font
 - Level editor
     - save dialog + actually save in local prefs
-    - Entire publish system
-    - Check if pilot/plane not in inaccessible on start (+ single runway?)
-    - Check winnable on publish
+    - Entire publish system + winnable check
+    - Pilot/Plane direction to center
     - database
-    - fix placing block through drawer UI bug
-    - fix placing block on level editor select bug
+    ~ Fix placing block through drawer UI bug
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
@@ -31,10 +29,13 @@ Should do
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 
 Nice to have
+- Better level editor tile order
 - Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
 - Water animations
 - Level spawn animation
+- Scroll bar momentum
+- Better runway support
 
 Marketing
 - Epic trailer
