@@ -124,6 +124,8 @@ class LevelEditScene extends Phaser.Scene {
         if (!this.state.drawerOpen) {
             drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
             drawerSprites.forEach(sprite => sprite.y = this.btnDrawer.y)
+        } else {
+            scene.btnDrawer.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
         }
         this.btnDrawer.on('pointerdown', function (pointer) {
             scene.state.drawerOpen = !scene.state.drawerOpen
@@ -162,7 +164,7 @@ class LevelEditScene extends Phaser.Scene {
         })
 
         //MAGIC TIME
-        this.COUNT_DISPLAY = 5 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
+        this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
         this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // No idea what kind of units this is lol
         this.TILE_SCALE = 0.35 * MIN_XY / 600
 
