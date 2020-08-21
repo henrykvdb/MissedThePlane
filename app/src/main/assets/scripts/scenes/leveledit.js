@@ -7,7 +7,6 @@ class LevelEditScene extends Phaser.Scene {
             position: 0,
             relativePos: 0,
             levelString: ALL_LEVELS[1]
-            // We could instantiate seed here if we didn't already get a random from oldLevelToString
         }
     }
 
@@ -17,7 +16,6 @@ class LevelEditScene extends Phaser.Scene {
 
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
-        this.state.seed = JSON.parse(this.state.levelString).seed // Copy over the seed of the world if it is present
         this.world = new World(this, this.state.levelString)
         const scene = this
         const BUTTON_GAP = 0.2
@@ -38,7 +36,7 @@ class LevelEditScene extends Phaser.Scene {
             tiles.forEach(col => col.push(TILES.GRASS))
             tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
             scene.world.tiles = tiles
-            scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+            scene.state.levelString = scene.world.exportWorldAsString()
             scene.scene.restart(scene.state)
         })
 
@@ -60,7 +58,7 @@ class LevelEditScene extends Phaser.Scene {
                 else if (planePos[0] > planePos[1]) scene.plane.coords = [planePos[0] - 1, planePos[1]]
                 else if (planePos[0] < planePos[1]) scene.plane.coords = [planePos[0], planePos[1] - 1]
             }
-            scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+            scene.state.levelString = scene.world.exportWorldAsString()
             scene.scene.restart(scene.state)
         })
 
@@ -79,7 +77,7 @@ class LevelEditScene extends Phaser.Scene {
                 else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
                 scene.pilot.coords = [(scene.pilot.coords[0] + scene.world.tiles.length + (i % 2 == 0 ? (i == 0 ? -1 : 1) : 0)) % scene.world.tiles.length,
                 (scene.pilot.coords[1] + scene.world.tiles.length + (i % 2 != 0 ? (i == 3 ? -1 : 1) : 0)) % scene.world.tiles.length]
-                scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+                scene.state.levelString = scene.world.exportWorldAsString()
                 scene.scene.restart(scene.state)
             })
             shiftArrows.push(btnMove)
@@ -104,14 +102,14 @@ class LevelEditScene extends Phaser.Scene {
             scene.pilot.dir = (scene.pilot.dir + 2) % 8
             scene.plane.coords = [scene.plane.coords[1], scene.world.tiles.length - scene.plane.coords[0]]
             scene.plane.dir = (scene.plane.dir + 2) % 8
-            scene.state.levelString = scene.world.exportWorldAsString(scene.state.seed)
+            scene.state.levelString = scene.world.exportWorldAsString()
             scene.scene.restart(scene.state)
         })
 
         // Export/Save current level button
         this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105);
         this.btnSave.on('pointerdown', function (pointer) {
-            var levelString = scene.world.exportWorldAsString(scene.state.seed)
+            var levelString = scene.world.exportWorldAsString()
             scene.scene.launch('LevelSelectScene', { option: SELECT_MODES.SAVE, levelString: levelString });
             scene.scene.sleep()
         })

@@ -11,7 +11,8 @@ class World {
         var idToTile = {}
         Object.keys(TILES).forEach(name => idToTile[TILES[name].id] = TILES[name])
         this.tiles = this.parameters.tiles.map(row => row.map(tileId => idToTile[tileId]))
-        this.seed = this.parameters.seed ? this.parameters.seed : Math.random() * 100000
+        if (!this.parameters.seed) this.parameters.seed = Math.random() * 100000
+        this.seed = this.parameters.seed
         this.markRunway()
 
         //Define game drawing constants
@@ -304,13 +305,14 @@ class World {
     }
 
     // Save it in a string of format {"size": size, "tiles": [1,1,1,2,1,1,1,etc], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
-    exportWorldAsString(seed) {
+    exportWorldAsString() {
         var exportObject = {"size": this.tiles.length}
         exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
         exportObject.pilot = [this.game.pilot.coords[0], this.game.pilot.coords[1], this.game.pilot.dir]
         exportObject.plane = [this.game.plane.coords[0], this.game.plane.coords[1], this.game.plane.dir]
         exportObject.difficulty = this.parameters.difficulty
-        exportObject.seed = seed
+        exportObject.seed = this.parameters.seed
+        console.log(this.seed)
         return JSON.stringify(exportObject)
     }
 
