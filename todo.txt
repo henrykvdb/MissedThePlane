@@ -1,6 +1,5 @@
 To get something releaseable:
 - Barebones tutorial
-- Level editor plane and pilot moving/rotating
 - Local level saving and loading
 - Mail markus to ask how he wants to be credited
 
@@ -29,11 +28,12 @@ Should do
     - Google billing: Remove ads in-app purchase
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
+- Better level editor tile order
 
 Nice to have
-- Better level editor tile order
 - Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
+- Write us anything box
 - Water animations
 - Level spawn animation
 - Scroll bar momentum

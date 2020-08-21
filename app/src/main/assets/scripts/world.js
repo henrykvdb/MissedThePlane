@@ -11,7 +11,7 @@ class World {
         var idToTile = {}
         Object.keys(TILES).forEach(name => idToTile[TILES[name].id] = TILES[name])
         this.tiles = this.parameters.tiles.map(row => row.map(tileId => idToTile[tileId]))
-        this.seed = this.parameters.seed
+        this.seed = this.parameters.seed ? this.parameters.seed : Math.random() * 100000
         this.markRunway()
 
         //Define game drawing constants

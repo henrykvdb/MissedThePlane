@@ -47,6 +47,21 @@ class LevelSelectScene extends Phaser.Scene {
         this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_select_' + this.mode).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnConfirm.on('pointerdown', () => scene.handleInput())
 
+        if (this.mode == SELECT_MODES.EDIT) {
+            this.btnPublish = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.17), 'btn_publish').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnPublish.on('pointerdown', () => {
+                var index = scene.position - scene.MIN_POS
+                //if (getAndroid()) Android.publishLevel(userId, index, scene.LEVELS[index])
+            })
+
+            this.btnDelete = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_delete').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnDelete.on('pointerdown', () => {
+                var index = scene.position - scene.MIN_POS
+                //if (getAndroid()) Android.deleteLevel(userId, scene.LEVELS[index])
+                scene.LEVELS[index] = DEFAULT_LEVEL
+            })
+        }
+
         // Display constants
         this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
         this.MIN_POS = (1 - this.COUNT_DISPLAY) / 2
@@ -61,6 +76,7 @@ class LevelSelectScene extends Phaser.Scene {
         this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 0).setScale(this.LEVEL_BOX_SCALE).setDepth(100).flipY = true
 
         // Init default state
+        // TODO: if the user is saving, maybe it makes sense to let the select start on the current save slot
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
         this.world = new World(this, this.LEVELS[0])
@@ -126,7 +142,7 @@ class LevelSelectScene extends Phaser.Scene {
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.SAVE) {
-            // TODO android code here
+            // TODO android code here + save locally
             this.LEVELS[index] = this.levelString
             this.forceReload = true
             this.updateSprites(this.position, 0)

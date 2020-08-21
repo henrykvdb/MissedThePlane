@@ -42,12 +42,8 @@ const ALL_LEVELS = [
 "{\"size\":1,\"tiles\":[[1]],\"pilot\":[0.5,0.5,3],\"plane\":[1.5,-0.5,3],\"difficulty\":\"4\",\"seed\":1191}",
 ]
 
-const USER_LEVELS = [
-// Filler levels for level select menu
-"{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":2000}",
-"{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,1.5,1],\"difficulty\":\"0\",\"seed\":2001}",
-"{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,1.5,1],\"difficulty\":\"0\",\"seed\":2002}",
-"{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,1.5,1],\"difficulty\":\"0\",\"seed\":2003}",
-"{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,1.5,1],\"difficulty\":\"0\",\"seed\":2004}",
-]
+const DEFAULT_LEVEL = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
+
+// Todo maybe change this to have undefineds as well, which then render/initialize as the default level, so we know when a new level has been created (for our database)
+const USER_LEVELS = [DEFAULT_LEVEL, DEFAULT_LEVEL, DEFAULT_LEVEL, DEFAULT_LEVEL]
 
