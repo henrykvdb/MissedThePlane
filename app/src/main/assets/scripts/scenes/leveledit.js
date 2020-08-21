@@ -238,7 +238,7 @@ class LevelEditScene extends Phaser.Scene {
 
     // Plane bounds are special because they don't include corners (cause plane can't go to island from a corner block) and they go one block out
     inPlaneBounds(coords) {
-        if ((coords[0] == 0 || coords[0] == this.world.tiles.length) && (coords[1] == 0 || coords[1] == this.world.tiles.length)) return false
+        if ((coords[0] == -1 || coords[0] == this.world.tiles.length) && (coords[1] == -1 || coords[1] == this.world.tiles.length)) return false
         else return coords[0] >= -1 && coords[1] >= -1 && coords[0] <= this.world.tiles.length && coords[1] <= this.world.tiles.length
     }
 
@@ -247,8 +247,11 @@ class LevelEditScene extends Phaser.Scene {
         if (pointer.isDown) {
             var coords = getGridCoords(this.world.game, pointer.x, pointer.y)
 
-            var index = Math.round(this.state.position + this.state.relativePos + 2) % this.sprites.length
+            // Get the sprite index and texture asset
+            var index = Math.round(this.state.position + this.state.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
+            while (index<0) index += this.sprites.length
             var texture = this.sprites[index].texture.key
+
             if (texture.includes('plane')) { //TODO @winnie dir to center
                 if (!this.inPlaneBounds(coords)) return
                 if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.tiles[coords[0]][coords[1]])) return
@@ -264,7 +267,7 @@ class LevelEditScene extends Phaser.Scene {
                 this.scene.restart(this.state)
             }
             else if (this.inWorldBounds(coords)) {
-                var newTile = TILES_LEVEL_EDITOR[Math.round(this.state.position + this.state.relativePos + 2) % this.sprites.length]
+                var newTile = TILES_LEVEL_EDITOR[index]
 
                 var pilotCoords = this.world.game.pilot.coords
                 if (coords[0] == Math.floor(pilotCoords[0]) && coords[1] == Math.floor(pilotCoords[1]) && TILES_IMPASSABLE_PILOT.includes(newTile)) {

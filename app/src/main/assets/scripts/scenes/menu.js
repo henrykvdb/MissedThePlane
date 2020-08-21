@@ -12,7 +12,7 @@ class MenuScene extends Phaser.Scene {
         }
         else { // Transparant background + return button
             this.background = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.4)
-            this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_close').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_playtest').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.mainReturn.on('pointerdown', () => this.resume())
         }
     }
