@@ -21,6 +21,7 @@
     <script src="scripts/scenes/loading.js"></script>
     <script src="scripts/scenes/leveledit.js"></script>
     <script src="scripts/scenes/preloading.js"></script>
+    <script src="scripts/scenes/browser.js"></script>
 
     <!-- Load remaining scripts -->
     <script src="scripts/pilot.js"></script>
@@ -45,7 +46,7 @@
                 target: 60,
                 forceSetTimeOut: true
             },
-            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, LevelEditScene, MenuScene]
+            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, LevelEditScene, BrowserScene, MenuScene]
         }
 
         var game = new Phaser.Game(config)

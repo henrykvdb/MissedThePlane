@@ -28,7 +28,7 @@ class MenuScene extends Phaser.Scene {
         this.mainCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.PLAY))
 
         this.mainUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_browser').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainUserLevels.on('pointerdown', () => console.log("not implemented"))
+        this.mainUserLevels.on('pointerdown', () => scene.startScene('BrowserScene'))
 
         this.mainLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_main_editor').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainLevelEdit.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.EDIT))
@@ -79,7 +79,7 @@ class MenuScene extends Phaser.Scene {
     startScene(sceneKey, option) {
         audio.start()
         if (this.caller == sceneKey && this.lastOption == option) { this.resume(); return } // We are already here, we simply go back
-        if (this.caller && sceneKey) this.scene.stop(this.caller)
+        if (this.caller) this.scene.stop(this.caller)
 
         this.scene.start(sceneKey, { option: option })
         this.lastOption = option
@@ -105,7 +105,8 @@ class MenuScene extends Phaser.Scene {
 
                 // Fade background
                 if (scene.caller && scene.caller != 'LevelSelectScene'){
-                    scene.background.setAlpha(0.75-tween.getValue()/SIZE_X/2) // Fade alpha from 0.5 -> 0 and back
+                    var progress = (3*SIZE_X/2 - tween.getValue())/SIZE_X
+                    scene.background.setAlpha(0.4*progress) // Fade alpha from 0.4 -> 0 and back
                 }
             }
         })
