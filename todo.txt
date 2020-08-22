@@ -18,8 +18,7 @@ Should do
 - Level editor
     - save dialog + actually save in local prefs
     - Entire publish system + winnable check
-    - Pilot/Plane direction to center
-    - database
+    - database extra fields like plays/clears etc
     ~ Fix placing block through drawer UI bug
 - Ads
     - Admob: Add
@@ -31,6 +30,7 @@ Should do
 Nice to have
 - Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
+- Try-catch-send-error around entire program so we can see when games are crashing
 - Write us anything box
 - Water animations
 - Level spawn animation

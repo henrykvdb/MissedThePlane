@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         webView.settings.loadWithOverviewMode = true
         webView.settings.allowFileAccessFromFileURLs = true
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        webView.addJavascriptInterface(JavaScriptInterface(this), "Android")
+        webView.addJavascriptInterface(JavaScriptInterface(this, webView), "Android")
         webView.loadUrl("file:///android_asset/index.html")
     }
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
 
-    class JavaScriptInterface internal constructor(val context: Context) {
+    class JavaScriptInterface internal constructor(val context: Context, val webView: WebView) {
         /** Show a toast from the web page  */
         @JavascriptInterface
         fun showToast(toast: String?) {
@@ -132,10 +132,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         /** Returns a list of dictionaries, each representing a level object (attributes like levelString, plays, rating, etc) */
-        // TODO: figure out how to return a promise
         @JavascriptInterface
         fun getPublishedLevels() {
+            val citiesRef = Firebase.firestore.collection("levels")
+            val query = citiesRef.whereEqualTo("public", true)
+            query.get().addOnSuccessListener { documents ->
+                val onlyData: MutableList<String> = ArrayList()
+                for (document in documents) {
+                    onlyData.add(convertToJSONString(document.data))
+                }
+                webView.loadUrl("javascript:receivePublicLevels('$onlyData')");
+            }
+        }
 
+        /** Converts a kotlin map to a JSON parsable string */
+        fun convertToJSONString(kotlinMap: Map<String, Any>): String {
+            var jsonString = "{"
+            for ((key, value) in kotlinMap) {
+                if (value is Boolean) {
+                    jsonString += "\"$key\": $value, "
+                } else if (value is String) {
+                    jsonString += "\"$key\": \"$value\", "
+                }
+            }
+            jsonString = jsonString.dropLast(2)
+            jsonString += "}"
+            return jsonString
         }
 
         /** Adds an error to the database, so we can see if something is broken */
