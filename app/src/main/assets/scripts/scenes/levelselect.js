@@ -1,6 +1,7 @@
 var assets
 var text
 
+const SAVE_SLOTS = 10
 const SELECT_MODES = {
     PLAY: "Play",
     EDIT: "Edit",
@@ -19,7 +20,18 @@ class LevelSelectScene extends Phaser.Scene {
         if (data.option) this.mode = data.option
         else throw "Level select called without a mode"
 
-        this.LEVELS = this.mode == SELECT_MODES.PLAY ? ALL_LEVELS : USER_LEVELS
+        if (this.mode == SELECT_MODES.PLAY) {
+            this.LEVELS = ALL_LEVELS
+        }
+        else if (!getAndroid()) {
+            this.LEVELS = USER_LEVELS // Default local levels
+        }
+        else {
+            this.LEVELS = []
+            for (let i = 0; i < SAVE_SLOTS; i++) {
+                this.LEVELS.push(Android.getLocalLevel(i))
+            }
+        }
 
         const Y_START = 200 * MIN_XY / 600 //TODO figure out what to do with this stupid text and var
         text = this.add.text(SIZE_X / 2, Y_START / 3, this.mode + " a level", { fill: '#FFFFFF', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
@@ -128,12 +140,10 @@ class LevelSelectScene extends Phaser.Scene {
         var index = this.position - this.MIN_POS
 
         if (this.mode == SELECT_MODES.PLAY) {
-            console.log("starting")
             this.scene.start('GameScene', { levelIndex: index })
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.EDIT) {
-            console.log("starting eee")
             this.scene.start('EditorScene', {
                 state: {
                     drawerOpen: false, shiftEnabled: false,
@@ -144,7 +154,7 @@ class LevelSelectScene extends Phaser.Scene {
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.SAVE) {
-            // TODO android code here + save locally
+            if (getAndroid()) Android.setLocalLevel(index, this.levelString)
             this.LEVELS[index] = this.levelString
             this.forceReload = true
             this.updateSprites(this.position, 0)

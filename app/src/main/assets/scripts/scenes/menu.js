@@ -83,9 +83,6 @@ class MenuScene extends Phaser.Scene {
     startSceneAsk(sceneKey, option) {
         audio.start()
 
-        console.log(":", sceneKey, ":", option, ":", this.caller, ":", this.lastOption)
-        console.log(this.caller == sceneKey && this.lastOption == option)
-
         // NO INPUT NEEDED:
         // - We are already here, we simply go back
         if (this.caller == sceneKey && this.lastOption == option) {
@@ -143,7 +140,7 @@ class MenuScene extends Phaser.Scene {
 
             align: { actions: 'right' },
             expand: { content: false }
-        }).layout().popUp(1000).setDepth(500);
+        }).layout().popUp(500).setDepth(500);
 
         this.dialog.on('button.click', function (button, groupName, index) {
             this.dialog.destroy()
@@ -151,8 +148,6 @@ class MenuScene extends Phaser.Scene {
                 this.scene.stop(this.caller)
                 this.startScene(sceneKey, option)
             }
-
-            console.log(index)
         }, this).on('button.over', function (button, groupName, index) {
             button.getElement('background').setStrokeStyle(1, 0xffffff);
         }).on('button.out', function (button, groupName, index) {

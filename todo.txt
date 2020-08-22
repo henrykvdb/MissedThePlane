@@ -1,6 +1,5 @@
 To get something releaseable:
 - Barebones tutorial
-- Local level saving and loading
 - Mail markus to ask how he wants to be credited
 
 Should do
@@ -9,9 +8,6 @@ Should do
     - New controls explanation
 - UI
     - Decorate main menu
-    - Scene destroy warning popup | save overwrite popup | can't edit after publish popup
-    - Level browser
-    - Game scene update
     ~ Hide UI of gamescene when in pause
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Get an actual font
@@ -19,7 +15,6 @@ Should do
     - save dialog + actually save in local prefs
     - Entire publish system + winnable check
     - database extra fields like plays/clears etc
-    ~ Fix placing block through drawer UI bug
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
@@ -37,6 +32,7 @@ Nice to have
 - Level spawn animation
 - Scroll bar momentum
 - Better runway support
+- No progress lost popup when no changes
 
 Marketing
 - Epic trailer
