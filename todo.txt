@@ -26,6 +26,7 @@ Should do
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 - Better level editor tile order
+- Database access mode -> make secure!
 
 Nice to have
 - Show selected tile when walking (highlight/arrow model on target tile?)

@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         /** Publishes one of the levels the user currently has saved locally */
         @JavascriptInterface
-        fun publishLevel(userId: String, levelSlot: String, levelString: String): Boolean {
+        fun publishLevel(userId: String, levelSlot: String, levelString: String, levelName: String): Boolean {
             // TODO: check if the user doesn't have more than x published levels total?
             GlobalScope.launch {
                 var levelId = getLevelId(userId, levelSlot)
@@ -89,21 +89,23 @@ class MainActivity : AppCompatActivity() {
                     addError("User $userId tried publishing a level which doesn't correspond to his saved level $levelId")
                     levelId = createLevel(userId, levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
                 }
-                updateDocument("levels", levelId, hashMapOf("public" to true, "submitDate" to FieldValue.serverTimestamp()))
+                updateDocument("levels", levelId, hashMapOf("public" to true,
+                                                                     "submitDate" to FieldValue.serverTimestamp(),
+                                                                     "name" to levelName))
             }
             return true // TODO - in case publishing can fail (max levels reached or whatever), find a way to notify js
         }
 
         /** Updates a given level in a certain user slot, and if it doesn't exist yet, create it */
-        // TODO: maybe simply make this the main method of creating new levels as well?
         @JavascriptInterface
         fun updateLevel(userId: String, levelSlot: String, levelString: String) {
             GlobalScope.launch {
                 var levelId = getLevelId(userId, levelSlot)
                 if (levelId == null) {
-                    addError("User $userId tried updating level on slot $levelSlot which was not filled for us")
+                    // The user doesn't have a level id linked to this slot, we assume he simply made a new level
                     levelId = createLevel(userId, levelSlot, levelString)
                 }
+                //TODO do we want to check if level isn't published already? extra safety but an extra read every update
                 val newData = hashMapOf("levelString" to levelString,
                                         "lastUpdate" to FieldValue.serverTimestamp())
                 updateDocument("levels", levelId, newData)
@@ -116,18 +118,9 @@ class MainActivity : AppCompatActivity() {
             GlobalScope.launch {
                 val levelId = getLevelId(userId, levelSlot)
                 val levelData = getLevelData(levelId)
-                log("level id is $levelId, levelData is $levelData")
                 if (levelId == null || levelData == null || levelData["deleted"] as Boolean) return@launch
                 updateSlot(userId, levelSlot, null)
                 updateDocument("levels", levelId, hashMapOf("deleted" to true, "public" to false))
-            }
-        }
-
-        /** Generates a new level as well as adding a reference to it to the user array */
-        @JavascriptInterface
-        fun createNewLevel(userId: String, levelSlot: String, levelString: String) {
-            GlobalScope.launch {
-                createLevel(userId, levelSlot, levelString) // Simply because i'm not sure js can call suspended functions
             }
         }
 
@@ -139,6 +132,7 @@ class MainActivity : AppCompatActivity() {
             query.get().addOnSuccessListener { documents ->
                 val onlyData: MutableList<String> = ArrayList()
                 for (document in documents) {
+                    document.data["id"] = document.id
                     onlyData.add(convertToJSONString(document.data))
                 }
                 webView.loadUrl("javascript:receivePublicLevels('$onlyData')");
@@ -160,6 +154,58 @@ class MainActivity : AppCompatActivity() {
             return jsonString
         }
 
+        /** Keeps track of which user has played (and cleared) which levels already, and updates the values for
+         *  that level as well. */
+        fun playLevel(userId: String, levelId: String, cleared: Boolean) {
+            GlobalScope.launch {
+                val actualId = userId+levelId // yeah...
+                val playerStatus = getDocument("userPlays", actualId)
+                if (playerStatus == null) { // The player never played this before
+                    val newRelation = hashMapOf("cleared" to cleared, "upvote" to null)
+                    addNewDocument("userPlays", newRelation, actualId)
+                    if (!cleared) {
+                        updateDocument("levels", levelId, hashMapOf("plays" to FieldValue.increment(1)))
+                    } else { // The player never played this level before, but cleared it now...
+                        addError("User $userId cleared level $levelId without ever playing it!")
+                        updateDocument("levels", levelId, hashMapOf("plays" to FieldValue.increment(1),
+                            "clears" to FieldValue.increment(1)))
+                    }
+                }
+                else if (cleared) { // The player has played before, and now finished the level
+                    if (!(playerStatus["cleared"] as Boolean)) { // He didn't clear it before, we update clear counter
+                        updateDocument("levels", levelId, hashMapOf("clears" to FieldValue.increment(1)))
+                        updateDocument("userPlays", actualId, hashMapOf("cleared" to true))
+                    } // If the user did clear it already, we don't need to change anything
+                }
+                else { // The player played this level previously, now starts again
+                    // No need to do anything
+                }
+            }
+        }
+
+        fun voteForLevel(userId: String, levelId: String, upvote: Boolean) {
+            GlobalScope.launch {
+                val actualId = userId + levelId // yeah...
+                val playerStatus = getDocument("userPlays", actualId)
+                if (playerStatus == null) {
+                    addError("User $userId tried to vote on $levelId without ever playing it!"); return@launch
+                }
+                if (playerStatus["upvote"] == null) { // The user didn't vote before on this level
+                    updateDocument("userPlays", actualId, hashMapOf("upvote" to upvote))
+                    if (upvote) updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1)))
+                    else updateDocument("levels", levelId, hashMapOf("downvotes" to FieldValue.increment(1)))
+                } else if (playerStatus["upvote"] as Boolean && !upvote) { // The user wants to change upvote to downvote
+                    updateDocument("userPlays", actualId, hashMapOf("upvote" to false))
+                    updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(-1),
+                                                                         "downvotes" to FieldValue.increment(1)))
+                } else if (!(playerStatus["upvote"] as Boolean) && upvote) { // The user wants to change downvote to upvote
+                    updateDocument("userPlays", actualId, hashMapOf("upvote" to true))
+                    updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1),
+                                                                         "downvotes" to FieldValue.increment(-1)))
+                }
+            }
+        }
+
         /** Adds an error to the database, so we can see if something is broken */
         suspend fun addError(error: String) {
             val newError = hashMapOf("error" to error,
@@ -171,9 +217,11 @@ class MainActivity : AppCompatActivity() {
         // Useful for later: `"timestamp" to FieldValue.serverTimestamp()` in a hashmap automatically sets timestamp
         //                   `washingtonRef.update("population", FieldValue.increment(50))` increments given value
 
-        /** Adds a new document to a given collection and returns its id. */
-        suspend fun addNewDocument(collection: String, data: HashMap<String, *>): String {
-            return Firebase.firestore.collection(collection).add(data).await().id
+        /** Adds a new document to a given collection and returns its automatically generated id if none was given. */
+        suspend fun addNewDocument(collection: String, data: HashMap<String, *>, customId: String? = null): String {
+            if (customId == null) return Firebase.firestore.collection(collection).add(data).await().id
+            Firebase.firestore.collection(collection).document(customId).set(data).await()
+            return customId
         }
 
         fun updateDocument(collection: String, document: String, newData: HashMap<String, *>) {
@@ -194,7 +242,10 @@ class MainActivity : AppCompatActivity() {
                 "public" to false,
                 "deleted" to false,
                 "plays" to 0,
-                "clears" to 0
+                "clears" to 0,
+                "upvotes" to 0,
+                "downvotes" to 0,
+                "name" to "Private level"
             )
             val levelId = addNewDocument("levels", newLevel)
             updateSlot(userId, levelSlot, levelId)
