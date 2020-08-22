@@ -55,7 +55,7 @@ class GameScene extends Phaser.Scene {
 
     returnToEditor() {
         this.scene.stop()
-        this.scene.wake('LevelEditScene')
+        this.scene.wake('EditorScene')
     }
 }
 

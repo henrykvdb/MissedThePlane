@@ -39,7 +39,7 @@ class LevelSelectScene extends Phaser.Scene {
         } else {
             this.btnMenu.on('pointerdown', function (pointer) {
                 scene.scene.stop()
-                scene.scene.wake('LevelEditScene')
+                scene.scene.wake('EditorScene')
             })
         }
 
@@ -128,11 +128,13 @@ class LevelSelectScene extends Phaser.Scene {
         var index = this.position - this.MIN_POS
 
         if (this.mode == SELECT_MODES.PLAY) {
+            console.log("starting")
             this.scene.start('GameScene', { levelIndex: index })
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.EDIT) {
-            this.scene.start('LevelEditScene', {
+            console.log("starting eee")
+            this.scene.start('EditorScene', {
                 state: {
                     drawerOpen: false, shiftEnabled: false,
                     position: 0, relativePos: 0,

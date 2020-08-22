@@ -1,6 +1,6 @@
-class LevelEditScene extends Phaser.Scene {
+class EditorScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'LevelEditScene' })
+        super({ key: 'EditorScene' })
         this.state = {
             drawerOpen: false,
             shiftEnabled: false,

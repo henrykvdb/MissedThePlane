@@ -9,16 +9,12 @@ class BrowserScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.scenePlugin({
-            key: 'rexuiplugin',
-            url: 'scripts/libraries/rexuiplugin.min.js',
-            sceneKey: 'rexUI'
-        })
+        this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
+        this.load.scenePlugin({ key: 'rexuiplugin', url: 'scripts/libraries/rexuiplugin.min.js', sceneKey: 'rexUI' })
     }
 
     create() {
         const scene = this
-        this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
 
         // Close button
         this.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
@@ -121,23 +117,23 @@ var createCard = function (scene, data) {
             scene.rexUI.add.roundRectangle(0, 0, getXY(0.2), getXY(0.2), 5, COLOR_LIGHT)
         )
         .add(
-            scene.add.text(0, 0, "\"Very hard map\"\nby Henrykvdb\nETL-LFC",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
+            scene.add.text(0, 0, "\"Very hard map\"\nby Henrykvdb\nETL-LFC", { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
         )
         .addSpace()
         .add(
-            scene.add.text(0, 0, "WINRATE\n19/45\n" + (100 * 19 / 45).toFixed(2) + "%",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
+            scene.add.text(0, 0, "WINRATE\n19/45\n" + (100 * 19 / 45).toFixed(2) + "%", { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
         )
         .add(
             scene.add.rectangle(0, 0, getXY(0.008), getXY(0.2), COLOR_LIGHT)
         )
         .add(
-            scene.add.text(0, 0, "2\ndays\nago",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
+            scene.add.text(0, 0, "2\ndays\nago", { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
         )
         .add(
             scene.add.rectangle(0, 0, getXY(0.008), getXY(0.2), COLOR_LIGHT)
         )
         .add(
-            scene.add.text(0, 0, "6 votes\n" + (100 * 5 / 6).toFixed(2) + "%\nupvoted",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
+            scene.add.text(0, 0, "6 votes\n" + (100 * 5 / 6).toFixed(2) + "%\nupvoted", { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' })
         )
         .addSpace()
         .add(

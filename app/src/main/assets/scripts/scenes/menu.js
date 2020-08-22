@@ -5,9 +5,10 @@ class MenuScene extends Phaser.Scene {
     }
 
     init(data) {
+        this.ASK_CLOSE = ['GameScene', 'EditorScene']
         this.caller = data.caller
 
-        if (!this.caller || this.caller == 'LevelSelectScene' || this.caller == 'BrowserScene') { // Opaque background
+        if (!this.caller || !this.ASK_CLOSE.includes(this.caller)) { // Opaque background
             this.background = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x59AACA")
         }
         else { // Transparant background + return button
@@ -15,6 +16,10 @@ class MenuScene extends Phaser.Scene {
             this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_playtest').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.mainReturn.on('pointerdown', () => this.resume())
         }
+    }
+
+    preload() {
+        this.load.scenePlugin({ key: 'rexuiplugin', url: 'scripts/libraries/rexuiplugin.min.js', sceneKey: 'rexUI' })
     }
 
     create() {
@@ -25,13 +30,13 @@ class MenuScene extends Phaser.Scene {
         // MAIN MENU
 
         this.mainCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_main_campaign').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.PLAY))
+        this.mainCampaign.on('pointerdown', () => scene.startSceneAsk('LevelSelectScene', SELECT_MODES.PLAY))
 
         this.mainUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_browser').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainUserLevels.on('pointerdown', () => scene.startScene('BrowserScene'))
+        this.mainUserLevels.on('pointerdown', () => scene.startSceneAsk('BrowserScene'))
 
         this.mainLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_main_editor').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainLevelEdit.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.EDIT))
+        this.mainLevelEdit.on('pointerdown', () => scene.startSceneAsk('LevelSelectScene', SELECT_MODES.EDIT))
 
         this.mainAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_main_about').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainAbout.on('pointerdown', () => scene.openSideMenu(true))
@@ -75,17 +80,91 @@ class MenuScene extends Phaser.Scene {
         this.aboutMenu = [this.aboutHeaderContainer, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane]
     }
 
-    // Handles everything related to starting a scene
-    startScene(sceneKey, option) {
+    startSceneAsk(sceneKey, option) {
         audio.start()
 
-        // Kill/Resume old scene
-        if (this.caller == sceneKey && this.lastOption == option) { this.resume(); return } // We are already here, we simply go back
-        if (this.caller) this.scene.stop(this.caller)
+        console.log(":", sceneKey, ":", option, ":", this.caller, ":", this.lastOption)
+        console.log(this.caller == sceneKey && this.lastOption == option)
 
+        // NO INPUT NEEDED:
+        // - We are already here, we simply go back
+        if (this.caller == sceneKey && this.lastOption == option) {
+            this.resume(); return
+        } // - No previous, just open
+        else if (!this.caller) {
+            this.startScene(sceneKey, option); return
+        } // - Previous not important enough, just close
+        else if (!this.ASK_CLOSE.includes(this.caller)) {
+            this.scene.stop(this.caller)
+            this.startScene(sceneKey, option); return
+        }
+
+        if (this.dialog) this.dialog.destroy()
+        this.dialog = this.rexUI.add.dialog({
+            x: SIZE_X / 2, y: SIZE_Y / 2,
+            background: this.rexUI.add.roundRectangle(0, 0, 100, 100, 20, 0x1565c0).setInteractive(),
+
+            title: this.rexUI.add.label({
+                background: this.rexUI.add.roundRectangle(0, 0, 100, 40, 20, 0x003c8f).setInteractive(),
+                text: this.add.text(0, 0, 'Unsaved progress', { fontSize: 35 * MIN_XY / 600, fontStyle: 'bold' }),
+                space: {
+                    left: 15,
+                    right: 15,
+                    top: 10,
+                    bottom: 10
+                }
+            }),
+
+            content: this.add.text(0, 0, 'You are about to start a new instance,\nany unsaved progress will be lost', { fontSize: 30 * MIN_XY / 600 }),
+
+            actions: [
+                this.rexUI.add.label({
+                    background: this.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
+                    text: this.add.text(0, 0, 'Cancel', { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                    space: { left: 10, right: 10, top: 10, bottom: 10 }
+                }),
+                this.rexUI.add.label({
+                    background: this.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
+                    text: this.add.text(0, 0, 'Continue', { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                    space: { left: 10, right: 10, top: 10, bottom: 10 }
+                })
+            ],
+
+            space: {
+                title: 25,
+                content: 25,
+                action: 15,
+
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20,
+            },
+
+            align: { actions: 'right' },
+            expand: { content: false }
+        }).layout().popUp(1000).setDepth(500);
+
+        this.dialog.on('button.click', function (button, groupName, index) {
+            this.dialog.destroy()
+            if (index == 1) {
+                this.scene.stop(this.caller)
+                this.startScene(sceneKey, option)
+            }
+
+            console.log(index)
+        }, this).on('button.over', function (button, groupName, index) {
+            button.getElement('background').setStrokeStyle(1, 0xffffff);
+        }).on('button.out', function (button, groupName, index) {
+            button.getElement('background').setStrokeStyle();
+        });
+    }
+
+    // Handles everything related to starting a scene
+    startScene(sceneKey, option) {
         // Reset camera
-        this.cameras.main.centerOnX(SIZE_X/2)
-        this.scene.get(this.caller ? this.caller : 'MenuScene').cameras.main.centerOnX(SIZE_X/2)
+        this.cameras.main.centerOnX(SIZE_X / 2)
+        this.scene.get(this.caller ? this.caller : 'MenuScene').cameras.main.centerOnX(SIZE_X / 2)
 
         // Start new scene
         this.scene.start(sceneKey, { option: option })
@@ -111,7 +190,7 @@ class MenuScene extends Phaser.Scene {
                 scene.scene.get(scene.caller ? scene.caller : 'MenuScene').cameras.main.centerOnX(tween.getValue()) //TODO level editor tiles in background bug
 
                 // Fade background
-                if (scene.caller && scene.caller != 'LevelSelectScene' && scene.caller != 'BrowserScene') {
+                if (scene.caller && scene.ASK_CLOSE.includes(scene.caller)) {
                     var progress = (3 * SIZE_X / 2 - tween.getValue()) / SIZE_X
                     scene.background.setAlpha(0.4 * progress) // Fade alpha from 0.4 -> 0 and back
                 }
