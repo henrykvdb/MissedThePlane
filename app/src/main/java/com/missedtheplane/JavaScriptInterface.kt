@@ -15,6 +15,7 @@ import kotlinx.coroutines.tasks.await
 private const val KEY_SHARED_PREFS = "missedtheplane"
 private const val KEY_USER_ID = "userid"
 private const val KEY_LOCAL_LEVEL = "locallevel"
+private const val KEY_SOLVABLE = "solvable"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
 class JavaScriptInterface internal constructor(private val context: Context, private val webView: WebView) {
@@ -41,13 +42,24 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     }
 
     @JavascriptInterface
-    fun getLocalLevel(index: Int): String {
+    fun getLocalLevel(index: String): String {
         return prefs.getString(KEY_LOCAL_LEVEL + index, DEFAULT_LEVEL_STRING)!!
     }
 
     @JavascriptInterface
-    fun setLocalLevel(index: Int, levelString: String) {
+    fun setLocalLevel(index: String, levelString: String) {
         editor.putString(KEY_LOCAL_LEVEL + index,levelString)
+        editor.apply()
+    }
+
+    @JavascriptInterface
+    fun getSolvable(index: String): Boolean {
+        return prefs.getBoolean(KEY_SOLVABLE + index, false)
+    }
+
+    @JavascriptInterface
+    fun setSolvable(index: String, isSolvable: Boolean) {
+        editor.putBoolean(KEY_SOLVABLE + index, isSolvable)
         editor.apply()
     }
 
@@ -85,7 +97,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
             var levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
             if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer version from his level than he currently has saved in the db
-                addError("User $userId tried publishing a level which doesn't correspond to his saved level $levelId")
+                addError("User $userId published a level which doesn't correspond to his saved level $levelId")
                 levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
             }
             updateDocument("levels", levelId, hashMapOf(
@@ -235,7 +247,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     fun updateDocument(collection: String, document: String?, newData: HashMap<String, *>) {
         if (document == null) return
         Firebase.firestore.collection(collection).document(document).update(newData)
-            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+            .addOnSuccessListener { Log.d("TAG", "Document $collection-$document successfully updated!") }
             .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
     }
 

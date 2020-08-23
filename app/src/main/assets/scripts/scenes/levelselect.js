@@ -5,7 +5,6 @@ const SAVE_SLOTS = 10
 const SELECT_MODES = {
     PLAY: "Play",
     EDIT: "Edit",
-    SAVE: "Save"
 }
 
 class LevelSelectScene extends Phaser.Scene {
@@ -63,7 +62,7 @@ class LevelSelectScene extends Phaser.Scene {
             this.btnPublish = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.17), 'btn_publish').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnPublish.on('pointerdown', () => {
                 var index = scene.position - scene.MIN_POS
-                if (getAndroid()) Android.publishLevel(index, Android.getLocalLevel(index), "My public level") // TODO fix name input etc
+                if (getAndroid() && Android.getSolvable(index)) Android.publishLevel(index, Android.getLocalLevel(index), "My public level") // TODO fix name input etc
                 scene.redraw()
             })
 
@@ -157,19 +156,11 @@ class LevelSelectScene extends Phaser.Scene {
                 state: {
                     drawerOpen: false, shiftEnabled: false,
                     position: 0, relativePos: 0,
+                    levelIndex: index,
                     levelString: this.LEVELS[index]
                 }
             });
             this.scene.stop()
-        }
-        else if (this.mode == SELECT_MODES.SAVE) {
-            if (getAndroid()) {
-                Android.setLocalLevel(index, this.levelString)
-                Android.updateLevel(index, this.levelString)
-            }
-            // TODO: return to editor after save?
-            this.LEVELS[index] = this.levelString
-            this.redraw()
         }
     }
 
