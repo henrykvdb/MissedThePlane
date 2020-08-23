@@ -19,7 +19,6 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.scenePlugin({ key: 'rexuiplugin', url: 'scripts/libraries/rexuiplugin.min.js', sceneKey: 'rexUI' })
     }
 
     create() {
@@ -140,7 +139,7 @@ class MenuScene extends Phaser.Scene {
 
             align: { actions: 'right' },
             expand: { content: false }
-        }).layout().popUp(500).setDepth(50);
+        }).layout().popUp(500).setDepth(500);
 
         this.dialog.on('button.click', function (button, groupName, index) {
             this.dialog.destroy()

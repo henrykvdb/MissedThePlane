@@ -9,6 +9,7 @@
 <head>
     <link rel="icon" href="assets/menu/favicon.ico" type="image/x-icon" />
     <script src="scripts/libraries/phaser.min.js"></script>
+    <script src="scripts/libraries/rexuiplugin.min.js"></script>
     <script src="scripts/libraries/priority-queue.min.js"></script>
     <script src="scripts/data/tiles.js"></script>
     <script src="scripts/data/enums.js"></script>
@@ -42,11 +43,20 @@
             type: Phaser.AUTO,
             width: SIZE_X,
             height: SIZE_Y,
+            plugins: {
+                scene: [
+                    {
+                        key: 'rexUI',
+                        plugin: rexuiplugin,
+                        mapping: 'rexUI'
+                    }
+                ]
+            },
             fps: {
                 target: 60,
                 forceSetTimeOut: true
             },
-            scene: [PreLoadingScene, LoadingScene, GameScene, LevelSelectScene, EditorScene, BrowserScene, MenuScene]
+            scene: [PreLoadingScene, GameScene, LevelSelectScene, EditorScene, BrowserScene, MenuScene, LoadingScene]
         }
 
         var game = new Phaser.Game(config)
