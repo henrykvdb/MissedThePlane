@@ -10,6 +10,8 @@ class LoadingScene extends Phaser.Scene {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#59AACA")
         this.splash = this.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'splash').setScale(MIN_XY / 800).setDepth(100);
 
+        if (getAndroid()) Android.getNewUserIdIfNeeded() // Every time we launch, we check if we have no id so we can create one if this is first time launch
+
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png')
         this.load.image('btn_restart', 'assets/menu/button_restart.png')

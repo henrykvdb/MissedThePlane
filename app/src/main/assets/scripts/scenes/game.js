@@ -42,6 +42,7 @@ class GameScene extends Phaser.Scene {
         if (newStatus == this.levelStatus) return
         this.levelStatus = newStatus
         if (newStatus == LEVEL_STATUS.COMPLETED) {
+            if (getAndroid()) Android.setHighestLevel(this.levelIndex)
             this.world.clearRunway()
             audio.playPopup(true)
             this.ui.startPopupAnimation(true)
