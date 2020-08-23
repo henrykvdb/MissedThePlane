@@ -116,7 +116,8 @@ class EditorScene extends Phaser.Scene {
                 Android.setLocalLevel(scene.state.levelIndex, levelString)
                 Android.updateLevel(scene.state.levelIndex, levelString)
                 Android.setSolvable(scene.state.levelIndex, scene.state.isSolvable)
-            }    // TODO: if not android, where should this be saved?
+            }
+            else USER_LEVELS[scene.state.levelIndex] = levelString
             scene.btnSave.setTexture('btn_save_0')
         })
 
