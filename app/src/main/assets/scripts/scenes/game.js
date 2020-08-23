@@ -21,11 +21,6 @@ class GameScene extends Phaser.Scene {
         this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, inputString)
 
-        // Add pilot control listeners
-        var pilot = this.pilot
-        this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', function () { pilot.interact() })
-
         this.input.on('pointerdown', () => this.world.handleMouseInput(this.input.activePointer.x, this.input.activePointer.y));
     }
 

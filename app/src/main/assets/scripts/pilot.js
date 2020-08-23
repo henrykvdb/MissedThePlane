@@ -104,7 +104,6 @@ class Pilot {
     }
 
     interact() {
-        if (this.game.world.getTile(this.coords) != TILES.BUTTON) return
         this.game.world.triggerButton(this.coords)
         // If we are currently moving (nextTile != undefined) and it is not to the tile we have currently interacted with, we cancel our movement to stay on the button.
         if (this.nextTile && (Math.floor(this.coords[0]) != this.nextTile[0] || Math.floor(this.coords[1]) != this.nextTile[1])) this.cancelCurrent()
