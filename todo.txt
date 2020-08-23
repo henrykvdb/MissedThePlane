@@ -9,7 +9,6 @@ Should do
     - Decorate main menu
     ~ Hide UI of gamescene when in pause
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
-- Get an actual font
 - Level editor
     - Publish name input box (+author name?)
     - Rating system
@@ -31,6 +30,7 @@ Nice to have
 - Scroll bar momentum
 - Better runway support
 - No progress lost popup when no changes
+- Get an actual font
 
 Marketing
 - Epic trailer

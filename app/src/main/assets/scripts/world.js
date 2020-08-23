@@ -24,8 +24,8 @@ class World {
         this.createSprites()
 
         // Instantiate pilot and plane with given parameters
-        this.game.pilot = new Pilot(this.game, this.parameters.pilot.slice(0,2), this.parameters.pilot[2])
-        this.game.plane = new Plane(this.game, this.parameters.plane.slice(0,2), this.parameters.plane[2])
+        this.game.pilot = new Pilot(this.game, this.parameters.pilot.slice(0, 2), this.parameters.pilot[2])
+        this.game.plane = new Plane(this.game, this.parameters.plane.slice(0, 2), this.parameters.plane[2])
 
         this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp'), this.game.sound.add('buttonBlocked')]
     }
@@ -39,7 +39,7 @@ class World {
         // Find runway direction
         var neighbourRunway = getNeighbourCoords(endCoords, this.tiles.length)
             .filter(c => this.tiles[c[0]][c[1]] == TILES.RUNWAY || this.tiles[c[0]][c[1]] == TILES.RUNWAY_START)[0]
-        if(neighbourRunway==undefined) return
+        if (neighbourRunway == undefined) return
         var dir = endCoords.map((e, i) => e - neighbourRunway[i])
 
         // Choose asset types
@@ -62,14 +62,7 @@ class World {
     }
 
     createSprites() {
-        for (var i = 0; i < 4; i++) { // loop through each viewAngle
-            this.game.anims.create({
-                key: 'shrink' + i,
-                frames: [{ key: 'mountain0' + i }, { key: 'mountain1' + i }, { key: 'mountain2' + i }, { key: 'mountain3' + i }],
-                frameRate: 18,
-                hideOnComplete: true,
-                repeat: 0
-            })
+        for (var i = 0; i < 4; i++) {
             this.game.anims.create({
                 key: 'grow' + i,
                 frames: [{ key: 'mountain3' + i }, { key: 'mountain2' + i }, { key: 'mountain1' + i }, { key: 'mountain0' + i }],
@@ -81,21 +74,8 @@ class World {
         this.sprites = Array.from(Array(this.tiles.length)).map(() => Array.from(Array(this.tiles.length)).map(() => undefined))
         for (var x = 0; x < this.tiles.length; x++) {
             for (var y = 0; y < this.tiles[0].length; y++) {
-                var rng = this.pseudoRandom() // We always get a rng, even if it is not necessary, to ensure the seed will be the same for each tile afterwards
-                var tileSprites = [] // Array because it can be a mountain+grass combo
-                var tileType = this.tiles[x][y]
-                if (tileType == TILES.MOUNTAIN || tileType == TILES.GRASS) {
-                    tileSprites.push(this.createTileSprite(x, y, TILES.GRASS, true, rng)) // Always first grass
-                    tileSprites.push(this.createTileSprite(x, y, TILES.MOUNTAIN, true, rng))
-                    if (tileType != TILES.MOUNTAIN) tileSprites[1].visible = false
-                } else if (tileType == TILES.BUTTON) {
-                    tileSprites.push(this.createTileSprite(x, y, TILES.BUTTON, false, 0))
-                    tileSprites.push(this.createTileSprite(x, y, TILES.BUTTON, false, 1))
-                    tileSprites[1].visible = false
-                } else {
-                    tileSprites.push(this.createTileSprite(x, y, this.tiles[x][y], true, rng))
-                }
-                this.sprites[x][y] = tileSprites
+                var rng = this.pseudoRandom()
+                this.sprites[x][y] = this.createTileSprite(x, y, this.tiles[x][y], true, rng)
             }
         }
     }
@@ -134,6 +114,18 @@ class World {
         return collisionTiles.some(v => collisionList.includes(v))
     }
 
+    toggleTile(coords, typeA, typeB) {
+        if (this.getTile(coords) == typeA) this.setTile(coords, typeB)
+        else this.setTile(coords, typeA)
+    }
+
+    setTile(coords, type) {
+        var x = coords[0]; var y = coords[1]
+        this.tiles[x][y] = type
+        this.sprites[x][y].destroy()
+        this.sprites[x][y] = this.createTileSprite(x, y, this.tiles[x][y], true, 0) //TODO fix seed
+    }
+
     getTile(coords) {
         if (isNaN(coords[0]) || isNaN(coords[1])) return TILES.AIR
         if (coords[0] >= this.tiles.length || coords[0] < 0 || coords[1] >= this.tiles[0].length || coords[1] < 0) return TILES.AIR
@@ -151,14 +143,15 @@ class World {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
             coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
-        if (this.getTile(tilePos) != TILES.BUTTON) return // todo maybe throw error here or something
+        if (this.getTile(tilePos) != TILES.BUTTON && this.getTile(tilePos) != TILES.BUTTON_PRESSED) return // todo maybe throw error here or something
 
+        // Check if blocked
         var neighbours = getNeighbourCoords(tilePos, this.tiles.length)
         var withPlane = neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) &&
             c[1] == Math.floor(this.game.plane.coords[1]) &&
             [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
         if (withPlane.length > 0) { // The plane is flying over an adjacent, blocking tile
-            var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]][0]
+            var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]]
             this.game.tweens.addCounter({ // We will tint the tile "red", or well, remove the other colors to make it dark red
                 from: 50,
                 to: 255,
@@ -171,20 +164,28 @@ class World {
             this.buttonSounds[2].play()
             return
         }
-        this.buttonSounds[this.sprites[tilePos[0]][tilePos[1]][0].visible ? 0 : 1].play()
-        this.sprites[tilePos[0]][tilePos[1]].forEach(s => s.visible = !s.visible)
+
+        this.buttonSounds[this.getTile(tilePos) == TILES.BUTTON ? 0 : 1].play()
+        this.toggleTile(tilePos, TILES.BUTTON, TILES.BUTTON_PRESSED)
 
         // We switch neighbouring tiles from grass to mountain and vice versa
-        neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.tiles[c[0]][c[1]])).forEach(c => {
+        neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))).forEach(c => {
+            var scene = this
+            var tile = this.tiles[c[0]][c[1]]
             var sprite = this.sprites[c[0]][c[1]]
-            if (this.tiles[c[0]][c[1]] == TILES.MOUNTAIN) {
-                sprite[1].anims.play('shrink' + sprite[1].texture.key.substr(-1), true)
-            } else {
-                sprite[1].visible = true
-                sprite[1].anims.play('grow' + sprite[1].texture.key.substr(-1), true)
+
+            // Play switch animation
+            if(sprite.anims.isPlaying) sprite.anims.reverse('grow0')
+            else{
+                if (tile == TILES.MOUNTAIN) sprite.anims.playReverse('grow0')
+                else sprite.anims.play('grow0')
+                sprite.on('animationcomplete', function () {
+                    sprite.destroy()
+                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], scene.tiles[c[0]][c[1]], true, 0) //TODO fix seed
+                })
             }
-        })
-        neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))).forEach(c => { // Swap M to G and other way around in tiles
+
+            // Flip tiles
             this.tiles[c[0]][c[1]] = this.getTile(c) == TILES.MOUNTAIN ? TILES.GRASS : TILES.MOUNTAIN
         })
     }
@@ -198,12 +199,12 @@ class World {
             this.runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(n => neighbourRunway.push(n))) // We add all tiles next to each runway tile (has duplicates)
             neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && !runwayTiles.includes(this.getTile(c))).map(c => {
                 // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
-                return {coord: c, distance: Math.hypot(c[0]+0.5 - this.game.pilot.coords[0], c[1]+0.5 - this.game.pilot.coords[1])}
+                return { coord: c, distance: Math.hypot(c[0] + 0.5 - this.game.pilot.coords[0], c[1] + 0.5 - this.game.pilot.coords[1]) }
             })
             neighbourRunway.sort((c1, c2) => c1.distance - c2.distance)
             if (neighbourRunway.length != 0) this.updatePilotPath(neighbourRunway[0].coord) // Path to closest accessible tile
             else // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
-                this.updatePilotPath(this.findCoord(this.runwayTiles.length > PLANE_LANDING_LENGTH + 1 ? TILES.RUNWAY_END : TILES.RUNWAY_START)) 
+                this.updatePilotPath(this.findCoord(this.runwayTiles.length > PLANE_LANDING_LENGTH + 1 ? TILES.RUNWAY_END : TILES.RUNWAY_START))
             // TODO check if PLANE_LANDING_LENGTH is great enough when on a small enclosed runway to kill the pilot
         }
         //TILES_IMPASSABLE_PILOT = TILES_IMPASSABLE_PILOT.concat(runwayTiles) // Now we have our path, we make the current tiles inaccessible.
@@ -286,7 +287,7 @@ class World {
             else console.log("ERROR: Clicked on tile below pilot without it being related to it?")
             return
         }
-        if (!this.game.pilot.nextTile) {this.game.pilot.setPath(this.calculatePath(this.game.pilot.coords, clickedTile)); return} // We are not on a path already, no need for optimization mess
+        if (!this.game.pilot.nextTile) { this.game.pilot.setPath(this.calculatePath(this.game.pilot.coords, clickedTile)); return } // We are not on a path already, no need for optimization mess
 
         if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) // We want to go where we just came from, might as well simply cancel our current movement
             this.game.pilot.cancelCurrent()
@@ -300,13 +301,13 @@ class World {
     }
 
     handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
-       var endCoord = getGridCoords(this.game, mouseX, mouseY)
-       this.updatePilotPath(endCoord)
+        var endCoord = getGridCoords(this.game, mouseX, mouseY)
+        this.updatePilotPath(endCoord)
     }
 
     // Save it in a string of format {"size": size, "tiles": [1,1,1,2,1,1,1,etc], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
     exportWorldAsString() {
-        var exportObject = {"size": this.tiles.length}
+        var exportObject = { "size": this.tiles.length }
         exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
         exportObject.pilot = [this.game.pilot.coords[0], this.game.pilot.coords[1], this.game.pilot.dir]
         exportObject.plane = [this.game.plane.coords[0], this.game.plane.coords[1], this.game.plane.dir]
@@ -322,7 +323,7 @@ class World {
     }
 
     destroy() {
-        this.sprites.forEach(row => row.forEach(spriteArray => spriteArray.forEach(sprite => sprite.destroy())))
+        this.sprites.forEach(row => row.forEach(sprite => sprite.destroy()))
         this.game.plane.destroy()
         this.game.pilot.destroy()
     }

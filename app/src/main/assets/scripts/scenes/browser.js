@@ -13,7 +13,6 @@ class BrowserScene extends Phaser.Scene {
 
     preload() {
         this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
-        this.load.scenePlugin({ key: 'rexuiplugin', url: 'scripts/libraries/rexuiplugin.min.js', sceneKey: 'rexUI' })
     }
 
     create() {

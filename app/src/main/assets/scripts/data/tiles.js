@@ -1,7 +1,6 @@
 const TILES = {
     AIR: {
         id: 0,
-        description: 'toggles between grass/mountain',
         assets: [],
         passable_pilot: false,
         passable_plane: true,
@@ -10,7 +9,6 @@ const TILES = {
     },
     GRASS: {
         id: 1,
-        description: 'toggles between grass/mountain',
         assets: ['grass0', 'grass1', 'grass2', 'grass3', 'grass4', 'grass5', 'grass6'],
         passable_pilot: true,
         passable_plane: true,
@@ -19,16 +17,14 @@ const TILES = {
     },
     MOUNTAIN: {
         id: 2,
-        description: 'toggles between grass/mountain',
         assets: ['mountain00', 'mountain01', 'mountain02', 'mountain03'],
         passable_pilot: false,
         passable_plane: false,
         levelEditor: true,
-        z_index: 1
+        z_index: 0.99
     },
     MOUNTAIN_WATER: {
         id: 3,
-        description: 'WATERMOUNTAIN //TODO',
         assets: ['mountainwater0', 'mountainwater1', 'mountainwater2', 'mountainwater3'],
         passable_pilot: false,
         passable_plane: false,
@@ -37,7 +33,6 @@ const TILES = {
     },
     RUNWAY_START: {
         id: 4,
-        description: 'STRIP*start //TODO',
         assets: ['stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
         passable_pilot: true,
         passable_plane: true,
@@ -46,7 +41,6 @@ const TILES = {
     },
     RUNWAY: {
         id: 5,
-        description: 'STRIP //TODO',
         assets: ['stripmiddle0', 'stripmiddle1'],
         preferedAssetIndex: 0,
         passable_pilot: true,
@@ -56,7 +50,6 @@ const TILES = {
     },
     RUNWAY_END: {
         id: 6,
-        description: 'STRIP*end //TODO',
         assets: ['stripend0', 'stripend1', 'stripend2', 'stripend3'],
         preferedAssetIndex: 0,
         passable_pilot: true,
@@ -66,7 +59,6 @@ const TILES = {
     },
     PLANK: {
         id: 7,
-        description: 'plank //TODO',
         assets: ['plank'],
         passable_pilot: true,
         passable_plane: true,
@@ -75,7 +67,6 @@ const TILES = {
     },
     WATER: {
         id: 8,
-        description: 'Water //TODO',
         assets: ['water'],
         passable_pilot: false,
         passable_plane: true,
@@ -84,11 +75,18 @@ const TILES = {
     },
     BUTTON: {
         id: 9,
-        description: 'Button //TODO',
-        assets: ['button0', 'button1'],
+        assets: ['button0'],
         passable_pilot: true,
         passable_plane: true,
         levelEditor: true,
+        z_index: 0
+    },
+    BUTTON_PRESSED: {
+        id: 10,
+        assets: ['button1'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: false,
         z_index: 0
     },
     MISC_0: {

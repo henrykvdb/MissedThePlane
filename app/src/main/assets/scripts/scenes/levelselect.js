@@ -42,17 +42,10 @@ class LevelSelectScene extends Phaser.Scene {
 
         // Close button
         this.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        if (this.mode != SELECT_MODES.SAVE) {
-            this.btnMenu.on('pointerdown', function (pointer) {
-                scene.scene.launch('MenuScene', { caller: scene.scene.key });
-                scene.scene.pause()
-            })
-        } else {
-            this.btnMenu.on('pointerdown', function (pointer) {
-                scene.scene.stop()
-                scene.scene.wake('EditorScene')
-            })
-        }
+        this.btnMenu.on('pointerdown', function (pointer) {
+            scene.scene.launch('MenuScene', { caller: scene.scene.key });
+            scene.scene.pause()
+        })
 
         // Confirm button
         this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_select_' + this.mode).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
