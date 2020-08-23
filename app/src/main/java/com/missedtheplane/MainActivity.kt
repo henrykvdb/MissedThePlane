@@ -7,10 +7,9 @@ import android.view.View
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 
-// todo import kotlin.js.Promise :(
 
 fun log(msg: String) {
-    Log.d("MissedThePlane", msg)
+    Log.d("MTP", msg)
 }
 
 class MainActivity : AppCompatActivity() {

@@ -5,7 +5,6 @@ const SAVE_SLOTS = 10
 const SELECT_MODES = {
     PLAY: "Play",
     EDIT: "Edit",
-    SAVE: "Save"
 }
 
 class LevelSelectScene extends Phaser.Scene {
@@ -63,14 +62,19 @@ class LevelSelectScene extends Phaser.Scene {
             this.btnPublish = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.17), 'btn_publish').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnPublish.on('pointerdown', () => {
                 var index = scene.position - scene.MIN_POS
-                //if (getAndroid()) Android.publishLevel(userId, index, scene.LEVELS[index])
+                if (getAndroid() && Android.getSolvable(index)) Android.publishLevel(index, Android.getLocalLevel(index), "My public level") // TODO fix name input etc
+                scene.redraw()
             })
 
             this.btnDelete = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_delete').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnDelete.on('pointerdown', () => {
                 var index = scene.position - scene.MIN_POS
-                //if (getAndroid()) Android.deleteLevel(userId, scene.LEVELS[index])
+                if (getAndroid()) {
+                    Android.deleteLevel(index)
+                    Android.setLocalLevel(index, DEFAULT_LEVEL)
+                }
                 scene.LEVELS[index] = DEFAULT_LEVEL
+                scene.redraw()
             })
         }
 
@@ -96,7 +100,7 @@ class LevelSelectScene extends Phaser.Scene {
         // Make tile sprites
         this.levelSprites = Array(this.LEVELS.length)
         this.levelNumbers = Array(this.LEVELS.length)
-        this.updateSprites(this.position, 0)
+        this.redraw()
 
         // Make scrollbar
         var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setInteractive({ draggable: true })
@@ -136,6 +140,10 @@ class LevelSelectScene extends Phaser.Scene {
         })
     }
 
+    redraw() {
+        this.updateSprites(this.position, 0, true)
+    }
+
     handleInput() {
         var index = this.position - this.MIN_POS
 
@@ -148,16 +156,11 @@ class LevelSelectScene extends Phaser.Scene {
                 state: {
                     drawerOpen: false, shiftEnabled: false,
                     position: 0, relativePos: 0,
+                    levelIndex: index,
                     levelString: this.LEVELS[index]
                 }
             });
             this.scene.stop()
-        }
-        else if (this.mode == SELECT_MODES.SAVE) {
-            if (getAndroid()) Android.setLocalLevel(index, this.levelString)
-            this.LEVELS[index] = this.levelString
-            this.forceReload = true
-            this.updateSprites(this.position, 0)
         }
     }
 
@@ -171,10 +174,9 @@ class LevelSelectScene extends Phaser.Scene {
         this.levelNumbers[index] = this.add.text(posX, this.LEVEL_BOX_HEIGHT, text, { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(101).setOrigin(0.5, 0.5)
     }
 
-    updateSprites(position, duration) {
+    updateSprites(position, duration, forceReload) {
         var snappedPos = Math.min(Math.max(Math.round(position), this.MIN_POS), this.MAX_POS)
-        if (snappedPos != this.lastPos || this.forceReload) {
-            this.forceReload = false
+        if (snappedPos != this.lastPos || forceReload) {
             this.lastPos = snappedPos
 
             // Destroy the world and kill its children ;)

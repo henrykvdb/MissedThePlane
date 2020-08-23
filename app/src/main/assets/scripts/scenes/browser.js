@@ -128,7 +128,7 @@ var createCard = function (scene, levelData) {
     .add(scene.add.text(0, 0, "6 votes\n" + (100 * 5 / 6).toFixed(2) + "%\nupvoted",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .addSpace()
 
-    .add(scene.add.sprite(0, 0, 'btn_playtest').setScale(0.3 * MIN_XY / 600).setInteractive())
+    .add(scene.add.sprite(0, 0, 'btn_playtest').setScale(0.3 * MIN_XY / 600).setInteractive()) // TODO add functionality (start game scene and call Android.playLevel)
 }
 
 function receivePublicLevels(levelData) {

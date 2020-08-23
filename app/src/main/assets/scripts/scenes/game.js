@@ -5,8 +5,8 @@ class GameScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.levelIndex = data.levelIndex ? data.levelIndex : 0
-        this.levelString = data.levelString // We are playing a loaded level, we hide most of the UI
+        this.levelIndex = data.levelIndex != undefined ? data.levelIndex : -1 // Is either campaign index or level edit index
+        this.levelString = data.levelString // If this is passed, we are playtesting a level with this string
     }
 
     create() {
@@ -17,7 +17,7 @@ class GameScene extends Phaser.Scene {
         this.ui = new UI(this, this.levelString != undefined)
 
         // Create level
-        var inputString = this.levelString ? this.levelString : ALL_LEVELS[this.levelIndex]
+        var inputString = this.levelString != undefined ? this.levelString : ALL_LEVELS[this.levelIndex]
         this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, inputString)
 
@@ -37,6 +37,7 @@ class GameScene extends Phaser.Scene {
         if (newStatus == this.levelStatus) return
         this.levelStatus = newStatus
         if (newStatus == LEVEL_STATUS.COMPLETED) {
+            if (getAndroid() && this.levelString == undefined) Android.setHighestLevel(this.levelIndex)
             this.world.clearRunway()
             audio.playPopup(true)
             this.ui.startPopupAnimation(true)
@@ -48,9 +49,10 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    returnToEditor() {
+    returnToEditor(solved) {
         this.scene.stop()
         this.scene.wake('EditorScene')
+        this.scene.get('EditorScene').setSolvable(solved)
     }
 }
 

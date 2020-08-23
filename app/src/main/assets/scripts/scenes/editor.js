@@ -2,11 +2,14 @@ class EditorScene extends Phaser.Scene {
     constructor() {
         super({ key: 'EditorScene' })
         this.state = {
+            madeChanges: false,
+            isSolvable: false, // Changes like madeChanges but only gets set to true on playtest completion
             drawerOpen: false,
             shiftEnabled: false,
             position: 0,
             relativePos: 0,
-            levelString: ALL_LEVELS[1]
+            levelString: ALL_LEVELS[1],
+            levelIndex: 0
         }
     }
 
@@ -36,8 +39,7 @@ class EditorScene extends Phaser.Scene {
             tiles.forEach(col => col.push(TILES.GRASS))
             tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
             scene.world.tiles = tiles
-            scene.state.levelString = scene.world.exportWorldAsString()
-            scene.scene.restart(scene.state)
+            scene.makeChanges()
         })
 
         // Decrease size button
@@ -58,8 +60,7 @@ class EditorScene extends Phaser.Scene {
                 else if (planePos[0] > planePos[1]) scene.plane.coords = [planePos[0] - 1, planePos[1]]
                 else if (planePos[0] < planePos[1]) scene.plane.coords = [planePos[0], planePos[1] - 1]
             }
-            scene.state.levelString = scene.world.exportWorldAsString()
-            scene.scene.restart(scene.state)
+            scene.makeChanges()
         })
 
         // Shift arrows
@@ -77,8 +78,7 @@ class EditorScene extends Phaser.Scene {
                 else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
                 scene.pilot.coords = [(scene.pilot.coords[0] + scene.world.tiles.length + (i % 2 == 0 ? (i == 0 ? -1 : 1) : 0)) % scene.world.tiles.length,
                 (scene.pilot.coords[1] + scene.world.tiles.length + (i % 2 != 0 ? (i == 3 ? -1 : 1) : 0)) % scene.world.tiles.length]
-                scene.state.levelString = scene.world.exportWorldAsString()
-                scene.scene.restart(scene.state)
+                scene.makeChanges()
             })
             shiftArrows.push(btnMove)
         }
@@ -102,16 +102,22 @@ class EditorScene extends Phaser.Scene {
             scene.pilot.dir = (scene.pilot.dir + 2) % 8
             scene.plane.coords = [scene.plane.coords[1], scene.world.tiles.length - scene.plane.coords[0]]
             scene.plane.dir = (scene.plane.dir + 2) % 8
-            scene.state.levelString = scene.world.exportWorldAsString()
-            scene.scene.restart(scene.state)
+            scene.makeChanges()
         })
 
         // Export/Save current level button
-        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105);
+        // TODO: confirmation on save maybe
+        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save_' + (this.state.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105);
         this.btnSave.on('pointerdown', function (pointer) {
+            if (!scene.state.madeChanges) return
+            scene.state.madeChanges = false
             var levelString = scene.world.exportWorldAsString()
-            scene.scene.launch('LevelSelectScene', { option: SELECT_MODES.SAVE, levelString: levelString });
-            scene.scene.sleep()
+            if (getAndroid()) {
+                Android.setLocalLevel(scene.state.levelIndex, levelString)
+                Android.updateLevel(scene.state.levelIndex, levelString)
+                Android.setSolvable(scene.state.levelIndex, scene.state.isSolvable)
+            }    // TODO: if not android, where should this be saved?
+            scene.btnSave.setTexture('btn_save_0')
         })
 
         // Open tools drawer
@@ -155,9 +161,9 @@ class EditorScene extends Phaser.Scene {
         })
 
         // Run button
-        this.btnRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'btn_playtest').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'btn_playtest_' + (scene.state.isSolvable ? 1 : 0)).setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRun.on('pointerdown', function (pointer) {
-            scene.scene.launch('GameScene', { levelString: scene.state.levelString })
+            scene.scene.launch('GameScene', { levelIndex: scene.state.levelIndex, levelString: scene.state.levelString }) // todo add levelIndex here
             scene.scene.sleep()
         })
 
@@ -258,9 +264,31 @@ class EditorScene extends Phaser.Scene {
             console.log("Tried to rotate current entity but neither pilot or plane is selected!")
             return
         }
-        this.state.levelString = this.world.exportWorldAsString(this.state.seed)
+        this.makeChanges()
+    }
+
+    makeChanges() {
+        this.state.levelString = this.world.exportWorldAsString()
+        if (this.state.isSolvable) this.btnRun.setTexture('btn_run_0')
+        this.state.isSolvable = false
+        if (!this.state.madeChanges) {
+            this.state.madeChanges = true
+            if (getAndroid()) Android.setSolvable(this.state.levelIndex, false)
+        }
+        // todo toggle save button vis
         this.scene.restart(this.state)
-    }   
+    }
+
+    // The user returned from playtesting, we update the solvability of this field
+    // todo on complete, set state.solvable on true, unless no changes, then immediately android prefs
+    setSolvable(solved) {
+        if (this.state.isSolvable || !solved) return // The user didn't finish it, it doesn't give new information
+        this.state.isSolvable = true
+        this.btnRun.setTexture("btn_playtest_1")
+        // The user completed the level, and while we should wait until a save to store this value, there have been no changes since last save
+        // Which means it is save to save the solvability immediately
+        if (getAndroid() && !this.state.madeChanges) Android.setSolvable(this.state.levelIndex, true)
+    }
 
 
     update(_, dt) {
@@ -278,19 +306,20 @@ class EditorScene extends Phaser.Scene {
             if (texture.includes('plane')) {
                 if (!this.inPlaneBounds(coords)) return
                 if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.getTile(coords))) return
+                if (this.plane.coords[0] == coords[0] + 0.5 && this.plane.coords[1] == coords[1] + 0.5) return
                 this.plane.coords = [coords[0] + 0.5, coords[1] + 0.5]
-                this.state.levelString = this.world.exportWorldAsString(this.state.seed)
-                this.scene.restart(this.state)
+                this.makeChanges()
             }
             else if (texture.includes('pilot')) {
                 if (!this.inWorldBounds(coords)) return
                 if (TILES_IMPASSABLE_PILOT.includes(this.world.tiles[coords[0]][coords[1]])) return
+                if (this.pilot.coords[0] == coords[0] + 0.5 && this.pilot.coords[1] == coords[1] + 0.5) return
                 this.pilot.coords = [coords[0] + 0.5, coords[1] + 0.5]
-                this.state.levelString = this.world.exportWorldAsString(this.state.seed)
-                this.scene.restart(this.state)
+                this.makeChanges()
             }
             else if (this.inWorldBounds(coords)) {
                 var newTile = TILES_LEVEL_EDITOR[index]
+                if (this.world.getTile(coords) == newTile) return // No need to edit anything if this tile is already the selected tile
 
                 var pilotCoords = this.pilot.coords
                 if (coords[0] == Math.floor(pilotCoords[0]) && coords[1] == Math.floor(pilotCoords[1]) && TILES_IMPASSABLE_PILOT.includes(newTile)) {
@@ -303,8 +332,7 @@ class EditorScene extends Phaser.Scene {
                 }
 
                 this.world.tiles[coords[0]][coords[1]] = newTile
-                this.state.levelString = this.world.exportWorldAsString(this.state.seed)
-                this.scene.restart(this.state)
+                this.makeChanges()
             }
         }
     }

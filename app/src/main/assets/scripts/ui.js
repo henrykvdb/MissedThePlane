@@ -12,7 +12,7 @@ class UI {
         this.btnNext.visible = false
         this.btnNext.on('pointerdown', function (pointer) {
             if (!playTesting) gameScene.scene.restart({ levelIndex: ++gameScene.levelIndex })
-            else gameScene.returnToEditor()
+            else gameScene.returnToEditor(true)
         })
 
         // Restart button
@@ -27,6 +27,7 @@ class UI {
             gameScene.pilot.interact()
         })
 
+        // Back/menu button
         if (!this.playTesting) {
             this.btnMenu = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnMenu.on('pointerdown', function (pointer) {
@@ -36,7 +37,7 @@ class UI {
         } else {
             this.btnInteract = gameScene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
             this.btnInteract.on('pointerdown', function (pointer) {
-                gameScene.returnToEditor()
+                gameScene.returnToEditor(gameScene.levelStatus == LEVEL_STATUS.COMPLETED)
             })
         }
 

@@ -10,6 +10,8 @@ class LoadingScene extends Phaser.Scene {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#59AACA")
         this.splash = this.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'splash').setScale(MIN_XY / 800).setDepth(100);
 
+        if (getAndroid()) Android.getNewUserIdIfNeeded() // Every time we launch, we check if we have no id so we can create one if this is first time launch
+
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png')
         this.load.image('btn_restart', 'assets/menu/button_restart.png')
@@ -19,11 +21,9 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_removeads', 'assets/menu/button_removeads.png')
         this.load.image('btn_info', 'assets/menu/button_info.png')
         this.load.image('btn_rotate_world', 'assets/menu/button_rotate_world.png')
-        this.load.image('btn_save', 'assets/menu/button_save.png')
         this.load.image('btn_open', 'assets/menu/button_open.png')
         this.load.image('btn_plus', 'assets/menu/button_plus.png')
         this.load.image('btn_minus', 'assets/menu/button_minus.png')
-        this.load.image('btn_playtest', 'assets/menu/button_playtest.png')
         this.load.image('btn_wrench', 'assets/menu/button_wrench.png')
         this.load.image('btn_menu', 'assets/menu/button_menu.png')
         this.load.image('btn_back', 'assets/menu/button_back.png')
@@ -37,6 +37,8 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_select_Play', 'assets/menu/button_select_play.png') // Capital so i can do `+this.mode` in levelselect.js
         this.load.image('btn_select_Edit', 'assets/menu/button_select_edit.png')
         this.load.image('btn_select_Save', 'assets/menu/button_select_save.png')
+        for (var i = 0; i < 2; i++) this.load.image('btn_playtest_' + i, 'assets/menu/button_playtest_' + i + '.png')
+        for (var i = 0; i < 2; i++) this.load.image('btn_save_' + i, 'assets/menu/button_save_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_shift_toggle_' + i, 'assets/menu/button_shift_toggle_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_rotate_' + i, 'assets/menu/button_rotate_' + i + '.png')
         for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')

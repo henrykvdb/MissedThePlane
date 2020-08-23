@@ -15,6 +15,7 @@ import kotlinx.coroutines.tasks.await
 private const val KEY_SHARED_PREFS = "missedtheplane"
 private const val KEY_USER_ID = "userid"
 private const val KEY_LOCAL_LEVEL = "locallevel"
+private const val KEY_SOLVABLE = "solvable"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
 class JavaScriptInterface internal constructor(private val context: Context, private val webView: WebView) {
@@ -22,9 +23,9 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     val editor = prefs.edit()
 
     // TODO INLINE?
-    fun getUserId() = prefs.getLong(KEY_USER_ID, -1L)
-    fun setUserId(id: Long) {
-        editor.putLong(KEY_USER_ID, id)
+    fun getUserId() = prefs.getString(KEY_USER_ID, null)
+    fun setUserId(id: String) {
+        editor.putString(KEY_USER_ID, id)
         editor.apply()
     }
 
@@ -41,26 +42,46 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     }
 
     @JavascriptInterface
-    fun getLocalLevel(index: Int): String {
+    fun getLocalLevel(index: String): String {
         return prefs.getString(KEY_LOCAL_LEVEL + index, DEFAULT_LEVEL_STRING)!!
     }
 
     @JavascriptInterface
-    fun setLocalLevel(index: Int, levelString: String) {
+    fun setLocalLevel(index: String, levelString: String) {
         editor.putString(KEY_LOCAL_LEVEL + index,levelString)
         editor.apply()
     }
 
     @JavascriptInterface
-    fun returnPromise() {
+    fun getSolvable(index: String): Boolean {
+        return prefs.getBoolean(KEY_SOLVABLE + index, false)
+    }
 
+    @JavascriptInterface
+    fun setSolvable(index: String, isSolvable: Boolean) {
+        editor.putBoolean(KEY_SOLVABLE + index, isSolvable)
+        editor.apply()
+    }
+
+    /** If there isn't a user id saved locally yet, this function will
+     * create a new user in the database and saves the automatically generated id to shared prefs */
+    @JavascriptInterface
+    fun getNewUserIdIfNeeded() {
+        GlobalScope.launch {
+            if (getUserId() != null) return@launch
+            log("No user id found, creating a new one in the database.")
+            val newUserData = hashMapOf("highestLevel" to -1, "levels" to emptyMap<Int, String>())
+            val newUserId = addNewDocument("users", newUserData)
+            setUserId(newUserId)
+        }
     }
 
     /** Updates this user highest reached level in the campaign
      *  Checks if the user isn't on a higher level already, and if we even have a highest level field already */
     @JavascriptInterface
-    fun setHighestLevel(userId: String, campaignIndex: Int) {
+    fun setHighestLevel(campaignIndex: Int) {
         GlobalScope.launch {
+            val userId = getUserId()
             val userData = getDocument("users", userId) ?: return@launch
             if (userData["highestLevel"] == null || campaignIndex > (userData["highestLevel"] as Long).toInt())
                 updateDocument("users", userId, hashMapOf("highestLevel" to campaignIndex))
@@ -69,26 +90,17 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
 
     /** Publishes one of the levels the user currently has saved locally */
     @JavascriptInterface
-    fun publishLevel(
-        userId: String,
-        levelSlot: String,
-        levelString: String,
-        levelName: String
-    ): Boolean {
+    fun publishLevel(levelSlot: String, levelString: String, levelName: String): Boolean {
         // TODO: check if the user doesn't have more than x published levels total?
+        val userId = getUserId()
         GlobalScope.launch {
-            var levelId = getLevelId(userId, levelSlot)
+            var levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
             if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer version from his level than he currently has saved in the db
-                addError("User $userId tried publishing a level which doesn't correspond to his saved level $levelId")
-                levelId = createLevel(
-                    userId,
-                    levelSlot,
-                    levelString
-                ) // We create a new level and overwrite it on the slot the user published it on
+                addError("User $userId published a level which doesn't correspond to his saved level $levelId")
+                levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
             }
-            updateDocument(
-                "levels", levelId, hashMapOf(
+            updateDocument("levels", levelId, hashMapOf(
                     "public" to true,
                     "submitDate" to FieldValue.serverTimestamp(),
                     "name" to levelName
@@ -100,12 +112,12 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
 
     /** Updates a given level in a certain user slot, and if it doesn't exist yet, create it */
     @JavascriptInterface
-    fun updateLevel(userId: String, levelSlot: String, levelString: String) {
+    fun updateLevel(levelSlot: String, levelString: String) {
         GlobalScope.launch {
-            var levelId = getLevelId(userId, levelSlot)
+            var levelId = getLevelId(levelSlot)
             if (levelId == null) {
                 // The user doesn't have a level id linked to this slot, we assume he simply made a new level
-                levelId = createLevel(userId, levelSlot, levelString)
+                levelId = createLevel(levelSlot, levelString)
             }
             //TODO do we want to check if level isn't published already? extra safety but an extra read every update
             val newData = hashMapOf(
@@ -118,12 +130,12 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
 
     /** 'Deletes' a level in the database (marks it deleted), as well as freeing the spot in the user document */
     @JavascriptInterface
-    fun deleteLevel(userId: String, levelSlot: String) {
+    fun deleteLevel(levelSlot: String) {
         GlobalScope.launch {
-            val levelId = getLevelId(userId, levelSlot)
+            val levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
             if (levelId == null || levelData == null || levelData["deleted"] as Boolean) return@launch
-            updateSlot(userId, levelSlot, null)
+            updateSlot(levelSlot, null)
             updateDocument("levels", levelId, hashMapOf("deleted" to true, "public" to false))
         }
     }
@@ -160,7 +172,9 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
 
     /** Keeps track of which user has played (and cleared) which levels already, and updates the values for
      *  that level as well. */
-    fun playLevel(userId: String, levelId: String, cleared: Boolean) {
+    @JavascriptInterface
+    fun playLevel(levelId: String, cleared: Boolean) {
+        val userId = getUserId()
         GlobalScope.launch {
             val actualId = userId + levelId // yeah...
             val playerStatus = getDocument("userPlays", actualId)
@@ -171,8 +185,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
                     updateDocument("levels", levelId, hashMapOf("plays" to FieldValue.increment(1)))
                 } else { // The player never played this level before, but cleared it now...
                     addError("User $userId cleared level $levelId without ever playing it!")
-                    updateDocument(
-                        "levels", levelId, hashMapOf(
+                    updateDocument("levels", levelId, hashMapOf(
                             "plays" to FieldValue.increment(1),
                             "clears" to FieldValue.increment(1)
                         )
@@ -193,7 +206,9 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         }
     }
 
-    fun voteForLevel(userId: String, levelId: String, upvote: Boolean) {
+    @JavascriptInterface
+    fun voteForLevel(levelId: String, upvote: Boolean) {
+        val userId = getUserId()
         GlobalScope.launch {
             val actualId = userId + levelId // yeah...
             val playerStatus = getDocument("userPlays", actualId)
@@ -202,70 +217,44 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
             }
             if (playerStatus["upvote"] == null) { // The user didn't vote before on this level
                 updateDocument("userPlays", actualId, hashMapOf("upvote" to upvote))
-                if (upvote) updateDocument(
-                    "levels",
-                    levelId,
-                    hashMapOf("upvotes" to FieldValue.increment(1))
-                )
-                else updateDocument(
-                    "levels",
-                    levelId,
-                    hashMapOf("downvotes" to FieldValue.increment(1))
-                )
+                if (upvote) updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1)))
+                else updateDocument("levels", levelId, hashMapOf("downvotes" to FieldValue.increment(1)))
             } else if (playerStatus["upvote"] as Boolean && !upvote) { // The user wants to change upvote to downvote
                 updateDocument("userPlays", actualId, hashMapOf("upvote" to false))
-                updateDocument(
-                    "levels", levelId, hashMapOf(
-                        "upvotes" to FieldValue.increment(-1),
-                        "downvotes" to FieldValue.increment(1)
-                    )
-                )
+                updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(-1),"downvotes" to FieldValue.increment(1)))
             } else if (!(playerStatus["upvote"] as Boolean) && upvote) { // The user wants to change downvote to upvote
                 updateDocument("userPlays", actualId, hashMapOf("upvote" to true))
-                updateDocument(
-                    "levels", levelId, hashMapOf(
-                        "upvotes" to FieldValue.increment(1),
-                        "downvotes" to FieldValue.increment(-1)
-                    )
-                )
+                updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1),"downvotes" to FieldValue.increment(-1)))
             }
         }
     }
 
     /** Adds an error to the database, so we can see if something is broken */
     suspend fun addError(error: String) {
-        val newError = hashMapOf(
-            "error" to error,
-            "errorDate" to FieldValue.serverTimestamp()
-        )
+        val newError = hashMapOf("error" to error, "errorDate" to FieldValue.serverTimestamp())
         addNewDocument("errors", newError)
     }
 
     // TODO: move all 'backend functions' which js does not need to know about to other class/file
-    // Useful for later: `"timestamp" to FieldValue.serverTimestamp()` in a hashmap automatically sets timestamp
-    //                   `washingtonRef.update("population", FieldValue.increment(50))` increments given value
 
     /** Adds a new document to a given collection and returns its automatically generated id if none was given. */
-    suspend fun addNewDocument(
-        collection: String,
-        data: HashMap<String, *>,
-        customId: String? = null
-    ): String {
+    suspend fun addNewDocument(collection: String, data: HashMap<String, *>, customId: String? = null): String {
         if (customId == null) return Firebase.firestore.collection(collection).add(data).await().id
         Firebase.firestore.collection(collection).document(customId).set(data).await()
         return customId
     }
 
-    fun updateDocument(collection: String, document: String, newData: HashMap<String, *>) {
-        val db = Firebase.firestore
-        db.collection(collection).document(document).update(newData)
-            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+    fun updateDocument(collection: String, document: String?, newData: HashMap<String, *>) {
+        if (document == null) return
+        Firebase.firestore.collection(collection).document(document).update(newData)
+            .addOnSuccessListener { Log.d("TAG", "Document $collection-$document successfully updated!") }
             .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
     }
 
     /** Generates a new level as well as adding a reference to it to the user array
      *  Returns the id of the newly created level */
-    suspend fun createLevel(userId: String, levelSlot: String, levelString: String): String {
+    suspend fun createLevel(levelSlot: String, levelString: String): String {
+        val userId = getUserId()
         val newLevel = hashMapOf(
             "author" to userId,
             "levelString" to levelString,
@@ -280,12 +269,13 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
             "name" to "Private level"
         )
         val levelId = addNewDocument("levels", newLevel)
-        updateSlot(userId, levelSlot, levelId)
+        updateSlot(levelSlot, levelId)
         return levelId
     }
 
     /** Replaces a level slot in the user object with the new id (or removes it, if the new id is null) */
-    suspend fun updateSlot(userId: String, levelSlot: String, newLevelId: String?) {
+    suspend fun updateSlot(levelSlot: String, newLevelId: String?) {
+        val userId = getUserId()
         val userData = getDocument("users", userId)
         if (userData == null || userData["levels"] == null) {
             addError("User $userId does not have a level map!"); return
@@ -303,7 +293,8 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         return levelData
     }
 
-    suspend fun getLevelId(userId: String, levelSlot: String): String? {
+    suspend fun getLevelId(levelSlot: String): String? {
+        val userId = getUserId()
         val userData = getDocument("users", userId)
         if (userData == null || userData["levels"] == null) return null // TODO maybe: add error if the user couldn't be found?
         val levelDict = userData["levels"] as Map<String, String>
@@ -311,7 +302,8 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         return levelDict[levelSlot]
     }
 
-    suspend fun getDocument(collection: String, documentId: String): MutableMap<String, Any>? {
+    suspend fun getDocument(collection: String, documentId: String?): MutableMap<String, Any>? {
+        if (documentId == null) return null
         return try {
             Firebase.firestore.collection(collection).document(documentId).get().await().data
         } catch (e: Exception) {

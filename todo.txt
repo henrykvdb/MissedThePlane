@@ -1,18 +1,16 @@
 To get something releaseable:
 - Barebones tutorial
-- Mail markus to ask how he wants to be credited
 
 Should do
 - Tutorial
     - Re-add
-    - New controls explanation
+    ~ New controls explanation
 - UI
     - Decorate main menu
     ~ Hide UI of gamescene when in pause
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Level editor
     - Entire publish system + winnable check
-    - database extra fields like plays/clears etc
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
