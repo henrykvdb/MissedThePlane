@@ -75,7 +75,7 @@ class World {
         for (var x = 0; x < this.tiles.length; x++) {
             for (var y = 0; y < this.tiles[0].length; y++) {
                 var rng = this.pseudoRandom()
-                this.sprites[x][y] = [this.createTileSprite(x, y, this.tiles[x][y], true, rng)]
+                this.sprites[x][y] = this.createTileSprite(x, y, this.tiles[x][y], true, rng)
             }
         }
     }
@@ -122,8 +122,8 @@ class World {
     setTile(coords, type) {
         var x = coords[0]; var y = coords[1]
         this.tiles[x][y] = type
-        this.sprites[x][y].forEach(s => s.destroy())
-        this.sprites[x][y] = [this.createTileSprite(x, y, this.tiles[x][y], true, 0)] //TODO fix seed
+        this.sprites[x][y].destroy()
+        this.sprites[x][y] = this.createTileSprite(x, y, this.tiles[x][y], true, 0) //TODO fix seed
     }
 
     getTile(coords) {
@@ -151,7 +151,7 @@ class World {
             c[1] == Math.floor(this.game.plane.coords[1]) &&
             [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
         if (withPlane.length > 0) { // The plane is flying over an adjacent, blocking tile
-            var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]][0]
+            var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]]
             this.game.tweens.addCounter({ // We will tint the tile "red", or well, remove the other colors to make it dark red
                 from: 50,
                 to: 255,
@@ -172,7 +172,7 @@ class World {
         neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))).forEach(c => {
             var scene = this
             var tile = this.tiles[c[0]][c[1]]
-            var sprite = this.sprites[c[0]][c[1]][0]
+            var sprite = this.sprites[c[0]][c[1]]
 
             // Play switch animation
             if(sprite.anims.isPlaying) sprite.anims.reverse('grow0')
@@ -181,7 +181,7 @@ class World {
                 else sprite.anims.play('grow0')
                 sprite.on('animationcomplete', function () {
                     sprite.destroy()
-                    scene.sprites[c[0]][c[1]] = [scene.createTileSprite(c[0], c[1], scene.tiles[c[0]][c[1]], true, 0)] //TODO fix seed
+                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], scene.tiles[c[0]][c[1]], true, 0) //TODO fix seed
                 })
             }
 
@@ -323,7 +323,7 @@ class World {
     }
 
     destroy() {
-        this.sprites.forEach(row => row.forEach(spriteArray => spriteArray.forEach(sprite => sprite.destroy())))
+        this.sprites.forEach(row => row.forEach(sprite => sprite.destroy()))
         this.game.plane.destroy()
         this.game.pilot.destroy()
     }
