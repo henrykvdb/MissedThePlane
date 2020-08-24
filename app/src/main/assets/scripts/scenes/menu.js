@@ -122,7 +122,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     switchToMainMenu() {
-        if (this.caller == null) return // should never happen
+        if (this.caller == null) {console.log("Error: no caller?"); return} // should never happen
         if (!this.ASK_CLOSE.includes(this.caller)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
@@ -157,7 +157,6 @@ class MenuScene extends Phaser.Scene {
 
         // Start new scene
         this.scene.start(sceneKey, { option: option })
-        this.lastOption = option
     }
 
     tweenSideMenu(targetX) {

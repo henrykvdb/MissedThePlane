@@ -5,6 +5,7 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -16,6 +17,7 @@ private const val KEY_SHARED_PREFS = "missedtheplane"
 private const val KEY_USER_ID = "userid"
 private const val KEY_LOCAL_LEVEL = "locallevel"
 private const val KEY_SOLVABLE = "solvable"
+private const val KEY_AUTHOR = "authorname"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
 class JavaScriptInterface internal constructor(private val context: Context, private val webView: WebView) {
@@ -63,6 +65,18 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         editor.apply()
     }
 
+    @JavascriptInterface
+    fun getAuthorName(): String {
+        return prefs.getString(KEY_AUTHOR, "defaultAuthor")!!
+    }
+
+    @JavascriptInterface
+    fun setAuthorName(newName: String) {
+        editor.putString(KEY_AUTHOR, newName)
+        editor.apply()
+        updateDocument("users", getUserId(), hashMapOf("name" to newName))
+    }
+
     /** If there isn't a user id saved locally yet, this function will
      * create a new user in the database and saves the automatically generated id to shared prefs */
     @JavascriptInterface
@@ -70,7 +84,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         GlobalScope.launch {
             if (getUserId() != null) return@launch
             log("No user id found, creating a new one in the database.")
-            val newUserData = hashMapOf("highestLevel" to -1, "levels" to emptyMap<Int, String>())
+            val newUserData = hashMapOf("highestLevel" to -1, "levels" to emptyMap<Int, String>(), "name" to null)
             val newUserId = addNewDocument("users", newUserData)
             setUserId(newUserId)
         }
@@ -96,6 +110,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         GlobalScope.launch {
             var levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
+            if (getAuthorName() == "defaultAuthor") {addError("User $userId tried publishing without having author name!"); return@launch}
             if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer version from his level than he currently has saved in the db
                 addError("User $userId published a level which doesn't correspond to his saved level $levelId")
                 levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
@@ -103,7 +118,8 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
             updateDocument("levels", levelId, hashMapOf(
                     "public" to true,
                     "submitDate" to FieldValue.serverTimestamp(),
-                    "name" to levelName
+                    "name" to levelName,
+                    "authorName" to getAuthorName()
                 )
             )
         }
@@ -119,7 +135,6 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
                 // The user doesn't have a level id linked to this slot, we assume he simply made a new level
                 levelId = createLevel(levelSlot, levelString)
             }
-            //TODO do we want to check if level isn't published already? extra safety but an extra read every update
             val newData = hashMapOf(
                 "levelString" to levelString,
                 "lastUpdate" to FieldValue.serverTimestamp()
@@ -148,10 +163,14 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         query.get().addOnSuccessListener { documents ->
             val onlyData: MutableList<String> = ArrayList()
             for (document in documents) {
-                document.data["id"] = document.id
-                onlyData.add(convertToJSONString(document.data))
+                val dataToParse = document.data.toMutableMap()
+                dataToParse["id"] = document.id
+                onlyData.add(convertToJSONString(dataToParse))
             }
-            webView.loadUrl("javascript:receivePublicLevels('$onlyData')");
+            log(onlyData.toString())
+            val urlData = "\'" + onlyData.toString() + "\'"
+            log(urlData)
+            webView.loadUrl("javascript:receivePublicLevels($urlData)");
         }
     }
 
@@ -159,10 +178,13 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     fun convertToJSONString(kotlinMap: Map<String, Any>): String {
         var jsonString = "{"
         for ((key, value) in kotlinMap) {
-            if (value is Boolean) {
+            if (value is String) {
+                if (key == "levelString") jsonString += "\"$key\": \"${value.replace("\"", "\\\\\"")}\", "
+                else jsonString += "\"$key\": \"$value\", "
+            } else if (value is Timestamp) {
+                jsonString += "\"$key\": ${value.seconds}, "
+            } else {
                 jsonString += "\"$key\": $value, "
-            } else if (value is String) {
-                jsonString += "\"$key\": \"$value\", "
             }
         }
         jsonString = jsonString.dropLast(2)
@@ -256,7 +278,8 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     suspend fun createLevel(levelSlot: String, levelString: String): String {
         val userId = getUserId()
         val newLevel = hashMapOf(
-            "author" to userId,
+            "authorId" to userId,
+            "authorName" to null, // Gets set on publish
             "levelString" to levelString,
             "lastUpdate" to FieldValue.serverTimestamp(),
             "submitDate" to null,

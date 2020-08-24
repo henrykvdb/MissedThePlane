@@ -1,9 +1,7 @@
-To get something releaseable:
-- Barebones tutorial
-
 Should do
+- Maybe some story? explain why plane is flying
+- Seed fix
 - Tutorial
-    - Re-add
     ~ New controls explanation
 - UI
     - Decorate main menu
