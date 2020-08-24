@@ -105,9 +105,10 @@ class UI {
     }
 
     setVote(upvote) {
+        this.currentVote = upvote
+        if (!this.upvote || !this.downvote) return
         this.upvote.setTint(upvote ? "0xffffff" : "0x777777")
         this.downvote.setTint(upvote ? "0x777777" : "0xffffff")
-        this.currentVote = upvote
     }
     
     showTutorial(index) {

@@ -31,6 +31,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_main_browser', 'assets/menu/button_main_browser.png')
         this.load.image('btn_main_editor', 'assets/menu/button_main_editor.png')
         this.load.image('btn_main_about', 'assets/menu/button_main_about.png')
+        this.load.image('btn_main_menu', 'assets/menu/button_main_menu.png')
         this.load.image('btn_settings', 'assets/menu/button_settings.png')
         this.load.image('btn_delete', 'assets/menu/button_delete.png')
         this.load.image('btn_publish', 'assets/menu/button_publish.png')

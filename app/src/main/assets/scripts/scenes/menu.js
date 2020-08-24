@@ -8,17 +8,12 @@ class MenuScene extends Phaser.Scene {
         this.ASK_CLOSE = ['GameScene', 'EditorScene']
         this.caller = data.caller
 
-        if (!this.caller || !this.ASK_CLOSE.includes(this.caller)) { // Opaque background
-            this.background = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x59AACA")
-        }
-        else { // Transparant background + return button
-            this.background = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.4)
-            this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-            this.mainReturn.on('pointerdown', () => {
-                if (this.caller == 'GameScene') this.scene.get('GameScene').ui.toggleVisibility(true)
-                this.resume()
-            })
-        }
+        // Return button gets initialised here already (will be hidden if this is a main menu)
+        this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainReturn.on('pointerdown', () => {
+            if (this.caller == 'GameScene') this.scene.get('GameScene').ui.toggleVisibility(true)
+            this.scene.resume(this.caller); this.scene.stop()
+        })
 
         return // TODO move name dialog to first publish
         // Ask name dialog
@@ -46,14 +41,29 @@ class MenuScene extends Phaser.Scene {
 
         // MAIN MENU
 
+        this.upvote = this.add.sprite(SIZE_X / 2 - getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'btn_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
+        this.upvote.on('pointerdown', () => {
+            scene.scene.get('GameScene').ui.setVote(true)
+            scene.upvote.setTint("0xffffff"); scene.downvote.setTint("0x777777")
+        })
+
+        this.downvote = this.add.sprite(SIZE_X / 2 + getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'btn_downvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
+        this.downvote.on('pointerdown', () => {
+            scene.scene.get('GameScene').ui.setVote(false)
+            scene.downvote.setTint("0xffffff"); scene.upvote.setTint("0x777777")
+        })
+
+        this.mainMenu = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_menu').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainMenu.on('pointerdown', () => scene.switchToMainMenu()) // todo reset this menu?
+
         this.mainCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_main_campaign').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainCampaign.on('pointerdown', () => scene.startSceneAsk('LevelSelectScene', SELECT_MODES.PLAY))
+        this.mainCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.PLAY))
 
         this.mainUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_browser').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainUserLevels.on('pointerdown', () => scene.startSceneAsk('BrowserScene'))
+        this.mainUserLevels.on('pointerdown', () => scene.startScene('BrowserScene'))
 
         this.mainLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_main_editor').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainLevelEdit.on('pointerdown', () => scene.startSceneAsk('LevelSelectScene', SELECT_MODES.EDIT))
+        this.mainLevelEdit.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.EDIT))
 
         this.mainAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_main_about').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainAbout.on('pointerdown', () => scene.openSideMenu(true))
@@ -64,8 +74,14 @@ class MenuScene extends Phaser.Scene {
         this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings
 
-        this.mainMenu = [this.mainCampaign, this.mainUserLevels, this.mainLevelEdit, this.mainAbout, this.mainRemoveAds, this.mainSettings, this.mainReturn].filter(x => x)
-        this.mainMenu = this.mainMenu.map(sprite => [sprite, sprite.x, sprite.y])
+        this.pauseText = this.add.text(SIZE_X / 2,  SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'Game paused', { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100).setOrigin(0.5, 0.5)
+        this.solidBackground = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x59AACA")
+        this.transBackground = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.4)
+
+        this.mainMenuSprites = [this.mainCampaign, this.mainUserLevels, this.mainLevelEdit, this.mainAbout, this.solidBackground]
+        this.pauseMenuSprites = [this.mainMenu, this.mainReturn, this.pauseText, this.transBackground]
+        if (this.caller == 'GameScene' && this.scene.get('GameScene').public) 
+            {this.pauseMenuSprites.push(this.upvote); this.pauseMenuSprites.push(this.downvote)}
 
         // SHARED - side menu return button
 
@@ -95,46 +111,42 @@ class MenuScene extends Phaser.Scene {
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
         this.aboutMenu = [this.aboutHeaderContainer, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane]
+
+        // If menu was launched from a scene without pause, we show main menu, otherwise we show pause menu
+        this.setVisibility(!this.caller || !this.ASK_CLOSE.includes(this.caller))
     }
 
-    startSceneAsk(sceneKey, option) {
-        audio.start()
+    setVisibility(isMainMenu) {
+        this.mainMenuSprites.forEach(s => s.visible = isMainMenu)
+        this.pauseMenuSprites.forEach(s => s.visible = !isMainMenu)
+    }
 
-        // NO INPUT NEEDED:
-        // - We are already here, we simply go back
-        if (this.caller == sceneKey && this.lastOption == option) {
-            this.resume(); return
-        } // - No previous, just open
-        else if (!this.caller) {
-            this.startScene(sceneKey, option); return
-        } // - Previous not important enough, just close
-        else if (!this.ASK_CLOSE.includes(this.caller)) {
+    switchToMainMenu() {
+        if (this.caller == null) return // should never happen
+        if (!this.ASK_CLOSE.includes(this.caller)) {
+            this.setVisibility(true)
             this.scene.stop(this.caller)
-            this.startScene(sceneKey, option); return
-        } // We come from editing, but changes are saved
-        else if (this.caller == "EditorScene" && !this.scene.get('EditorScene').state.madeChanges) {
+        } else if (this.caller == "EditorScene" && !this.scene.get('EditorScene').state.madeChanges) {
+            this.setVisibility(true)
             this.scene.stop(this.caller)
-            this.startScene(sceneKey, option); return
-        } // We come from a game, but perhaps it's not worth notifying the user
-        else if (this.caller == "GameScene") {
-            var gameScene = this.scene.get('GameScene')
-            if (gameScene.levelStatus != LEVEL_STATUS.PLAYING || gameScene.timePlaying < 4000) {
+        } else if (this.caller == "GameScene" && (this.scene.get('GameScene').levelStatus != LEVEL_STATUS.PLAYING ||
+                                                  this.scene.get('GameScene').timePlaying < 4000)) {
+                this.setVisibility(true)
                 this.scene.stop(this.caller)
-                this.startScene(sceneKey, option); return
-            }
+        } else {
+            if (this.dialog) this.dialog.destroy()
+            var stopInputs = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(499).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+            this.dialog = createTextDialog(this, 'Leaving world', 'Stop without saving?', 'Cancel', 'Continue')
+            this.dialog.on('button.click', function (button, groupName, index) {
+                this.dialog.destroy()
+                stopInputs.destroy()
+                if (index == 1) {
+                    this.scene.stop(this.caller)
+                    this.setVisibility(true)
+                }
+            }, this)
         }
-
-        if (this.dialog) this.dialog.destroy()
-        var stopInputs = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(499).setOrigin(0, 0).setAlpha(0.01).setInteractive()
-        this.dialog = createTextDialog(this, 'Leaving world', 'Stop without saving?', 'Cancel', 'Continue')
-        this.dialog.on('button.click', function (button, groupName, index) {
-            this.dialog.destroy()
-            stopInputs.destroy()
-            if (index == 1) {
-                this.scene.stop(this.caller)
-                this.startScene(sceneKey, option)
-            }
-        }, this)
+        this.caller = null
     }
 
     // Handles everything related to starting a scene
@@ -146,12 +158,6 @@ class MenuScene extends Phaser.Scene {
         // Start new scene
         this.scene.start(sceneKey, { option: option })
         this.lastOption = option
-    }
-
-    // Go back to what we were doing before we opened this menu
-    resume() {
-        this.scene.resume(this.caller)
-        this.scene.stop()
     }
 
     tweenSideMenu(targetX) {
