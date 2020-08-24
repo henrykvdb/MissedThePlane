@@ -37,6 +37,10 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_select_Play', 'assets/menu/button_select_play.png') // Capital so i can do `+this.mode` in levelselect.js
         this.load.image('btn_select_Edit', 'assets/menu/button_select_edit.png')
         this.load.image('btn_select_Save', 'assets/menu/button_select_save.png')
+        this.load.image('btn_upvote_rect', 'assets/menu/button_upvote_rect.png')
+        this.load.image('btn_upvote_square', 'assets/menu/button_upvote_square.png')
+        this.load.image('btn_downvote_rect', 'assets/menu/button_downvote_rect.png')
+        this.load.image('btn_downvote_square', 'assets/menu/button_downvote_square.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_playtest_' + i, 'assets/menu/button_playtest_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_save_' + i, 'assets/menu/button_save_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_shift_toggle_' + i, 'assets/menu/button_shift_toggle_' + i + '.png')

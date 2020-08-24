@@ -5,8 +5,9 @@ class GameScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.levelIndex = data.levelIndex != undefined ? data.levelIndex : -1 // Is either campaign index or level edit index
+        this.levelIndex = data.levelIndex != undefined ? data.levelIndex : -1 // Is either campaign index or level edit index OR public level id
         this.levelString = data.levelString // If this is passed, we are playtesting a level with this string
+        this.public = data.public // If this is true, the levelIndex is the databse levelId of the level we are playing
     }
 
     create() {
@@ -38,11 +39,12 @@ class GameScene extends Phaser.Scene {
         this.levelStatus = newStatus
         if (newStatus == LEVEL_STATUS.COMPLETED) {
             if (getAndroid() && this.levelString == undefined) Android.setHighestLevel(this.levelIndex)
+            if (this.public) this.ui.showRatingOptions()
             this.world.clearRunway()
             audio.playPopup(true)
             this.ui.startPopupAnimation(true)
             this.ui.btnRestart.visible = false
-            if (this.levelIndex < ALL_LEVELS.length - 1) this.ui.btnNext.visible = true
+            if (this.levelIndex < ALL_LEVELS.length - 1 && !this.public) this.ui.btnNext.visible = true
         } else if (newStatus == LEVEL_STATUS.FAILED) {
             audio.playPopup(false)
             this.ui.startPopupAnimation(false)
@@ -53,6 +55,12 @@ class GameScene extends Phaser.Scene {
         this.scene.stop()
         this.scene.wake('EditorScene')
         this.scene.get('EditorScene').setSolvable(solved)
+    }
+
+    returnToBrowser() {
+        if (getAndroid() && this.currentVote != undefined) Android.voteForLevel(this.levelIndex, this.currentVote)
+        this.scene.stop()
+        this.scene.start('BrowserScene')
     }
 }
 

@@ -10,14 +10,15 @@ Should do
     ~ Hide UI of gamescene when in pause
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Level editor
-    - Entire publish system + winnable check
+    - Publish name input box (+author name?)
+    - Rating system
 - Ads
     - Admob: Add
     - Google billing: Remove ads in-app purchase
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 - Better level editor tile order
-- Database access mode -> make secure!
+- Database access mode -> make secure! -> haha, pranked
 
 Nice to have
 - Show selected tile when walking (highlight/arrow model on target tile?)
