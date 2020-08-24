@@ -21,6 +21,7 @@ class GameScene extends Phaser.Scene {
         var inputString = this.levelString != undefined ? this.levelString : ALL_LEVELS[this.levelIndex]
         this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, inputString)
+        this.timePlaying = 0;
 
         this.input.on('pointerdown', () => this.world.handleMouseInput(this.input.activePointer.x, this.input.activePointer.y));
     }
@@ -32,6 +33,7 @@ class GameScene extends Phaser.Scene {
         this.pilot.update(dt)
         this.plane.update(dt)
         this.ui.updatePopup(dt)
+        this.timePlaying += dt
     }
 
     setLevelStatus(newStatus) {

@@ -111,10 +111,12 @@ class UI {
     }
     
     showTutorial(index) {
-        if (![1].includes(index)) return // Add all levels with tutorials here
+        var LEVELS_WITH_TUTORIAL = [1, 2]
+        var SHOW_TIMES = {1: 6000, 2: 8000}
+        if (!LEVELS_WITH_TUTORIAL.includes(index)) return // Add all levels with tutorials here
         var tutorialElements = []
         // TODO: stop inputs during tutorial?
-        tutorialElements.push(this.scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150).setOrigin(0).setTint(0, 0, 0).setAlpha(0.4).setInteractive())
+        tutorialElements.push(this.scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150).setOrigin(0).setTint(0, 0, 0).setAlpha(0.6).setInteractive())
         if (index == 1) {
             var title = this.scene.add.text(SIZE_X / 2, getXY(0.14), "Plane turns RIGHT before a mountain", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' })
             title.setDepth(150).setOrigin(0.5, 0)
@@ -130,8 +132,25 @@ class UI {
             tutorialCard.anims.play('tutorial1')
             tutorialElements.push(tutorialCard)
         }
+        if (index == 2) {
+            var title = this.scene.add.text(SIZE_X / 2, getXY(0.14), "Buttons toggle adjacent tiles", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' })
+            tutorialElements.push(this.scene.add.text(SIZE_X - getXY(0.03), SIZE_Y / 2, "Use with", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(1, 1).setDepth(150))
+            tutorialElements.push(this.scene.add.sprite(SIZE_X - getXY(0.08), SIZE_Y - getXY(0.27), 'arrow_down').setOrigin(0.5, 0.5).setScale(0.35 * MIN_XY / 600).setDepth(150).setOrigin(1, 1))
+            title.setDepth(150).setOrigin(0.5, 0)
+            tutorialElements.push(title)
+            this.scene.anims.create({
+                key: 'tutorial2',
+                frames: [{key: 'tutorial20'}, {key: 'tutorial21'}],
+                frameRate: 1.5,
+                hideOnComplete: false,
+                repeat: -1
+            })
+            var tutorialCard = this.scene.add.sprite(SIZE_X / 2, SIZE_Y / 2, 'tutorial20').setOrigin(0.5, 0.5).setScale(0.65 * MIN_XY / 600).setDepth(150)
+            tutorialCard.anims.play('tutorial2')
+            tutorialElements.push(tutorialCard)
+        }
         tutorialElements.forEach(e => this.scene.tweens.add({
-            delay: 6000,
+            delay: SHOW_TIMES[index],
             targets: e,
             alpha: 0,
             duration: 1000

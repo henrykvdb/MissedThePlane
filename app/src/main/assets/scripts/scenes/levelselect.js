@@ -61,13 +61,21 @@ class LevelSelectScene extends Phaser.Scene {
 
             this.btnDelete = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_delete').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnDelete.on('pointerdown', () => {
-                var index = scene.position - scene.MIN_POS
-                if (getAndroid()) {
-                    Android.deleteLevel(index)
-                    Android.setLocalLevel(index, DEFAULT_LEVEL)
-                }
-                scene.LEVELS[index] = DEFAULT_LEVEL
-                scene.redraw()
+                var stopInputs = scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(499).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+                scene.dialog = createTextDialog(scene, 'Deleting world', 'Are you sure?', 'Cancel', 'Delete')
+                scene.dialog.on('button.click', function (button, groupName, index) {
+                    this.dialog.destroy()
+                    stopInputs.destroy()
+                    if (index == 1) {
+                        var index = scene.position - scene.MIN_POS
+                        if (getAndroid()) {
+                            Android.deleteLevel(index)
+                            Android.setLocalLevel(index, DEFAULT_LEVEL)
+                        }
+                        scene.LEVELS[index] = DEFAULT_LEVEL
+                        scene.redraw()
+                    }
+                }, this)
             })
         }
 

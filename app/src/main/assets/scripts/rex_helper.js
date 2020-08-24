@@ -21,12 +21,14 @@ function createTextDialog(scene, title, body, negative, positive) {
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
                 text: scene.add.text(0, 0, negative, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
-                space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) }
+                space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
+                align: 'left'
             }),
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
                 text: scene.add.text(0, 0, positive, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
-                space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) }
+                space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
+                align: 'right'
             })
         ],
 
@@ -40,8 +42,6 @@ function createTextDialog(scene, title, body, negative, positive) {
             top: getXY(0.02),
             bottom: getXY(0.02),
         },
-
-        align: { actions: 'right' },
         expand: { content: false }
     }).layout().popUp(500).setDepth(500)
 

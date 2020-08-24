@@ -20,6 +20,7 @@ class MenuScene extends Phaser.Scene {
             })
         }
 
+        return // TODO move name dialog to first publish
         // Ask name dialog
         var scene = this
         var inputDialog = createInputDialog(this,"What's your name?","cancel","continue")
@@ -57,10 +58,10 @@ class MenuScene extends Phaser.Scene {
         this.mainAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_main_about').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainAbout.on('pointerdown', () => scene.openSideMenu(true))
 
-        this.mainRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(0, 1).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(0, 1).setScale(0.2 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainRemoveAds.on('pointerdown', function (pointer) { }) //TODO CALL TO KOTLIN TO SHOW ANDROID PAYMENT POPUP
 
-        this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_settings').setOrigin(1, 1).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings
 
         this.mainMenu = [this.mainCampaign, this.mainUserLevels, this.mainLevelEdit, this.mainAbout, this.mainRemoveAds, this.mainSettings, this.mainReturn].filter(x => x)
@@ -114,12 +115,21 @@ class MenuScene extends Phaser.Scene {
         else if (this.caller == "EditorScene" && !this.scene.get('EditorScene').state.madeChanges) {
             this.scene.stop(this.caller)
             this.startScene(sceneKey, option); return
+        } // We come from a game, but perhaps it's not worth notifying the user
+        else if (this.caller == "GameScene") {
+            var gameScene = this.scene.get('GameScene')
+            if (gameScene.levelStatus != LEVEL_STATUS.PLAYING || gameScene.timePlaying < 4000) {
+                this.scene.stop(this.caller)
+                this.startScene(sceneKey, option); return
+            }
         }
 
         if (this.dialog) this.dialog.destroy()
-        this.dialog = createTextDialog(this, 'Unsaved progress', 'You are about to start a new instance,\nany unsaved progress will be lost', 'Cancel', 'Continue')
+        var stopInputs = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(499).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+        this.dialog = createTextDialog(this, 'Leaving world', 'Stop without saving?', 'Cancel', 'Continue')
         this.dialog.on('button.click', function (button, groupName, index) {
             this.dialog.destroy()
+            stopInputs.destroy()
             if (index == 1) {
                 this.scene.stop(this.caller)
                 this.startScene(sceneKey, option)
