@@ -18,6 +18,7 @@ private const val KEY_USER_ID = "userid"
 private const val KEY_LOCAL_LEVEL = "locallevel"
 private const val KEY_SOLVABLE = "solvable"
 private const val KEY_AUTHOR = "authorname"
+private const val KEY_PUBLISHED = "published"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
 class JavaScriptInterface internal constructor(private val context: Context, private val webView: WebView) {
@@ -77,6 +78,17 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         updateDocument("users", getUserId(), hashMapOf("name" to newName))
     }
 
+    @JavascriptInterface
+    fun getPublished(index: String): Boolean {
+        return prefs.getBoolean(KEY_PUBLISHED + index, false)
+    }
+
+    @JavascriptInterface
+    fun setPublished(index: String, isPublished: Boolean) {
+        editor.putBoolean(KEY_PUBLISHED + index, isPublished)
+        editor.apply()
+    }
+
     /** If there isn't a user id saved locally yet, this function will
      * create a new user in the database and saves the automatically generated id to shared prefs */
     @JavascriptInterface
@@ -130,11 +142,9 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     @JavascriptInterface
     fun updateLevel(levelSlot: String, levelString: String) {
         GlobalScope.launch {
-            var levelId = getLevelId(levelSlot)
-            if (levelId == null) {
-                // The user doesn't have a level id linked to this slot, we assume he simply made a new level
-                levelId = createLevel(levelSlot, levelString)
-            }
+            var levelId: String? = ""
+            if (slotExists(levelSlot)) levelId = getLevelId(levelSlot)
+            else levelId = createLevel(levelSlot, levelString)  // The user doesn't have a level id linked to this slot, we assume he simply made a new level
             val newData = hashMapOf(
                 "levelString" to levelString,
                 "lastUpdate" to FieldValue.serverTimestamp()
@@ -261,6 +271,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
 
     /** Adds a new document to a given collection and returns its automatically generated id if none was given. */
     suspend fun addNewDocument(collection: String, data: HashMap<String, *>, customId: String? = null): String {
+        log("adding document to $collection with data $data")
         if (customId == null) return Firebase.firestore.collection(collection).add(data).await().id
         Firebase.firestore.collection(collection).document(customId).set(data).await()
         return customId
@@ -314,6 +325,14 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         val levelData = getDocument("levels", levelId)
         if (levelData == null) addError("Request was made to fetch level $levelId but it could not be found!")
         return levelData
+    }
+
+    suspend fun slotExists(levelSlot: String): Boolean {
+        val userId = getUserId()
+        val userData = getDocument("users", userId)
+        if (userData == null || userData["levels"] == null) return false // TODO maybe: add error if the user couldn't be found?
+        val levelDict = userData["levels"] as Map<String, String>
+        return levelDict[levelSlot] != null
     }
 
     suspend fun getLevelId(levelSlot: String): String? {

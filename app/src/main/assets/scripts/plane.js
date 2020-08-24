@@ -1,6 +1,6 @@
 const PLANE_MOVE_SPEED = 0.001 // [tiles/ms]
 const PLANE_WAIT_TIME = 300 // [ms]
-const PLANE_LANDING_LENGTH = 1.7 // [tiles] // TODO eventually: base this on strip length (although maybe even better to simply drive over ground after tile 2)
+const PLANE_LANDING_LENGTH = 1.7 // [tiles]
 const PLANE_HEIGHT = 120 // [px]
 
 class Plane {

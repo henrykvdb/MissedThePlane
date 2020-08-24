@@ -47,14 +47,19 @@ class LevelSelectScene extends Phaser.Scene {
         })
 
         // Confirm button
-        this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_select_' + this.mode).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
+        var confirmSprite = "btn_select_" + (this.mode == SELECT_MODES.PLAY ? 'play' : 'edit_1')
+        this.btnConfirm = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), confirmSprite).setOrigin(1, 1).setScale(0.45 * MIN_XY / 600).setInteractive().setDepth(100)
         this.btnConfirm.on('pointerdown', () => scene.handleInput())
 
         if (this.mode == SELECT_MODES.EDIT) {
-            this.btnPublish = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.17), 'btn_publish').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
+            this.btnPublish = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.17), 'btn_publish_0').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnPublish.on('pointerdown', () => {
                 var index = scene.position - scene.MIN_POS
-                if (getAndroid() && Android.getSolvable(index)) Android.publishLevel(index, Android.getLocalLevel(index), "My public level") // TODO fix name input etc
+                if (getAndroid() && Android.getSolvable(index)) {
+                    if (Android.getPublished(index)) return // This level is already published
+                    Android.publishLevel(index, Android.getLocalLevel(index), "My public level")
+                    Android.setPublished(index, true)
+                 } // TODO fix name input, wait for confirmation, etc
                 scene.redraw()
             })
 
@@ -70,6 +75,7 @@ class LevelSelectScene extends Phaser.Scene {
                         if (getAndroid()) {
                             Android.deleteLevel(index)
                             Android.setLocalLevel(index, DEFAULT_LEVEL)
+                            Android.setPublished(index, false)
                         }
                         scene.LEVELS[index] = DEFAULT_LEVEL
                         scene.redraw()
@@ -151,7 +157,7 @@ class LevelSelectScene extends Phaser.Scene {
             this.scene.start('GameScene', { levelIndex: index})
             this.scene.stop()
         }
-        else if (this.mode == SELECT_MODES.EDIT) {
+        else if (this.mode == SELECT_MODES.EDIT && !(getAndroid() && Android.getPublished(index))) {
             this.scene.start('EditorScene', {
                 state: {
                     drawerOpen: false, shiftEnabled: false,
@@ -187,11 +193,16 @@ class LevelSelectScene extends Phaser.Scene {
 
             // Create new world
             this.world = new World(this, this.LEVELS[snappedPos - this.MIN_POS])
+
+            if (this.mode == SELECT_MODES.EDIT && getAndroid()) {
+                var isPublished = Android.getPublished(snappedPos - this.MIN_POS)
+                this.btnConfirm.setTexture('btn_select_edit_' + (isPublished ? 0 : 1))
+                this.btnPublish.setTexture('btn_publish_' + (isPublished ? 1 : 0))
+            } 
         }
 
         // Itterate over all sprites
         for (let i = 0; i < this.LEVELS.length; i++) {
-
             var sprite = this.levelSprites[i]
             var number = this.levelNumbers[i]
 
