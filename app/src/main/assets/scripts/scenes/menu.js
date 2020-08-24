@@ -16,6 +16,20 @@ class MenuScene extends Phaser.Scene {
             this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.mainReturn.on('pointerdown', () => this.resume())
         }
+
+        // Ask name dialog
+        var scene = this
+        var inputDialog = createInputDialog(this,"What's your name?","cancel","continue")
+        inputDialog.on('button.click', function (button, groupName, index) {
+            if (index == 1){
+                var input = scene.userInput
+                if(input && input.length >= 3){
+                    console.log(scene.userInput)
+                }
+                else console.log("too short")
+            }
+            else inputDialog.destroy()
+        }, this)
     }
 
     preload() {
@@ -100,62 +114,14 @@ class MenuScene extends Phaser.Scene {
         }
 
         if (this.dialog) this.dialog.destroy()
-        this.dialog = this.rexUI.add.dialog({
-            x: SIZE_X / 2, y: SIZE_Y / 2,
-            background: this.rexUI.add.roundRectangle(0, 0, 100, 100, 20, 0x1565c0).setInteractive(),
-
-            title: this.rexUI.add.label({
-                background: this.rexUI.add.roundRectangle(0, 0, 100, 40, 20, 0x003c8f).setInteractive(),
-                text: this.add.text(0, 0, 'Unsaved progress', { fontSize: 35 * MIN_XY / 600, fontStyle: 'bold' }),
-                space: {
-                    left: 15,
-                    right: 15,
-                    top: 10,
-                    bottom: 10
-                }
-            }),
-
-            content: this.add.text(0, 0, 'You are about to start a new instance,\nany unsaved progress will be lost', { fontSize: 30 * MIN_XY / 600 }),
-
-            actions: [
-                this.rexUI.add.label({
-                    background: this.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                    text: this.add.text(0, 0, 'Cancel', { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
-                    space: { left: 10, right: 10, top: 10, bottom: 10 }
-                }),
-                this.rexUI.add.label({
-                    background: this.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                    text: this.add.text(0, 0, 'Continue', { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
-                    space: { left: 10, right: 10, top: 10, bottom: 10 }
-                })
-            ],
-
-            space: {
-                title: 25,
-                content: 25,
-                action: 15,
-
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 20,
-            },
-
-            align: { actions: 'right' },
-            expand: { content: false }
-        }).layout().popUp(500).setDepth(500);
-
+        this.dialog = createTextDialog(this, 'Unsaved progress', 'You are about to start a new instance,\nany unsaved progress will be lost', 'Cancel', 'Continue')
         this.dialog.on('button.click', function (button, groupName, index) {
             this.dialog.destroy()
             if (index == 1) {
                 this.scene.stop(this.caller)
                 this.startScene(sceneKey, option)
             }
-        }, this).on('button.over', function (button, groupName, index) {
-            button.getElement('background').setStrokeStyle(1, 0xffffff);
-        }).on('button.out', function (button, groupName, index) {
-            button.getElement('background').setStrokeStyle();
-        });
+        }, this)
     }
 
     // Handles everything related to starting a scene
