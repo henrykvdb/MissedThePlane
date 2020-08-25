@@ -23,8 +23,7 @@ class BrowserScene extends Phaser.Scene {
              // Close button
             scene.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             scene.btnMenu.on('pointerdown', function (pointer) {
-                scene.scene.launch('MenuScene', { caller: scene.scene.key })
-                scene.scene.pause()
+                scene.scene.start('MenuScene', {caller: null})
             })
 
             var loadingText = this.add.text(SIZE_X / 2, SIZE_Y / 2, "Loading levels...", { fill: '#FFFFFF', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(100)
@@ -109,6 +108,13 @@ var createPanel = function (scene) {
 var COLOR_LIGHT = "0xD5C175"
 var COLOR_DARK = "0xBE8E17"
 var createCard = function (scene, levelData) {
+    var startButton = scene.add.sprite(0, 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100)
+    startButton.on('pointerdown', () => {
+        console.log("playing level " + levelData.id)
+        Android.playLevel(levelData.id, false)
+        scene.scene.start('GameScene', {levelIndex: levelData.id, levelString: levelData.levelString, public: true, levelName: levelData.name})
+    })
+
     return scene.rexUI.add.sizer({
         orientation: 'x',
         space: { left: 20, right: 20, top: 20, bottom: 20, item: 10 }
@@ -116,19 +122,19 @@ var createCard = function (scene, levelData) {
     .addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 0, undefined).setStrokeStyle(getXY(0.004), COLOR_LIGHT, 1))
     .add(scene.rexUI.add.roundRectangle(0, 0, getXY(0.2), getXY(0.2), 5, COLOR_LIGHT))
 
-    .add(scene.add.text(0, 0, "\"Very hard map\"\nby Henrykvdb\nETL-LFC",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
+    .add(scene.add.text(0, 0, levelData.name + "\nby " + levelData.authorName,{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .addSpace()
 
-    .add(scene.add.text(0, 0, levelData.levelString,{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
+    .add(scene.add.text(0, 0, levelData.clears + "/" + levelData.plays, { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .add(scene.add.rectangle(0, 0, getXY(0.008), getXY(0.2), COLOR_LIGHT))
 
-    .add(scene.add.text(0, 0, levelData.public.toString(),{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
+    .add(scene.add.text(0, 0, levelData.upvotes + "up\n" + levelData.downvotes + "down",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .add(scene.add.rectangle(0, 0, getXY(0.008), getXY(0.2), COLOR_LIGHT))
 
-    .add(scene.add.text(0, 0, "6 votes\n" + (100 * 5 / 6).toFixed(2) + "%\nupvoted",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
+    .add(scene.add.text(0, 0, levelData.submitDate, { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .addSpace()
 
-    .add(scene.add.sprite(0, 0, 'btn_playtest').setScale(0.3 * MIN_XY / 600).setInteractive()) // TODO add functionality (start game scene and call Android.playLevel)
+    .add(startButton)
 }
 
 function receivePublicLevels(levelData) {

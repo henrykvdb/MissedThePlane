@@ -50,11 +50,10 @@ class UI {
         this.popups.sprites = [complete, failed]
 
         // Add level text
-        if (this.playTesting) this.cornerText = scene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Testing').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
-        else if (scene.levelIndex == 0) this.cornerText = scene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), 'Home').setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
-        else this.cornerText = scene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), "Level " + scene.levelIndex).setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
+        var levelText = (scene.levelName ? scene.levelName : (this.playTesting ? 'Testing' : (scene.levelIndex == 0 ? 'Home' : 'Level ' + scene.levelIndex)))
+        this.cornerText = scene.add.text(getXY(0.04), SIZE_Y - getXY(0.04), levelText).setOrigin(0, 1).setColor("0").setFontSize(50 * MIN_XY / 600).setDepth(100)
 
-        this.showTutorial(scene.levelIndex) // Will show a tutorial if there is one for this level index
+        if (!scene.levelString) this.showTutorial(scene.levelIndex) // Will show a tutorial if there is one for this level index
     }
 
     startPopupAnimation(success) {

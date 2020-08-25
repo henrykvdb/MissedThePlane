@@ -14,24 +14,6 @@ class MenuScene extends Phaser.Scene {
             if (this.caller == 'GameScene') this.scene.get('GameScene').ui.toggleVisibility(true)
             this.scene.resume(this.caller); this.scene.stop()
         })
-
-        return // TODO move name dialog to first publish
-        // Ask name dialog
-        var scene = this
-        var inputDialog = createInputDialog(this,"What's your name?","cancel","continue")
-        inputDialog.on('button.click', function (button, groupName, index) {
-            if (index == 1){
-                var input = scene.userInput
-                if(input && input.length >= 3){
-                    console.log(scene.userInput)
-                }
-                else console.log("too short")
-            }
-            else inputDialog.destroy()
-        }, this)
-    }
-
-    preload() {
     }
 
     create() {
@@ -107,7 +89,7 @@ class MenuScene extends Phaser.Scene {
 
         this.aboutCredits0 = this.add.text(START_X, Y_START + 2.5 * TEXT_SPACING, "Winand Appels (Code/Art)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
         this.aboutCredits1 = this.add.text(START_X, Y_START + 3.5 * TEXT_SPACING, "Henryk Van der Bruggen (Code/Art)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
-        this.aboutCredits2 = this.add.text(START_X, Y_START + 4.5 * TEXT_SPACING, "Markus W00d (Music/SFX)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
+        this.aboutCredits2 = this.add.text(START_X, Y_START + 4.5 * TEXT_SPACING, "Markus Wood (Music/SFX)", { fill: '#000000', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
         this.aboutMenu = [this.aboutHeaderContainer, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane]
@@ -122,31 +104,27 @@ class MenuScene extends Phaser.Scene {
     }
 
     switchToMainMenu() {
-        if (this.caller == null) return // should never happen
+        if (this.caller == null) {console.log("Error: no caller?"); return} // should never happen
         if (!this.ASK_CLOSE.includes(this.caller)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
+            this.caller = null
         } else if (this.caller == "EditorScene" && !this.scene.get('EditorScene').madeChanges) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
+            this.caller = null
         } else if (this.caller == "GameScene" && (this.scene.get('GameScene').levelStatus != LEVEL_STATUS.PLAYING ||
                                                   this.scene.get('GameScene').timePlaying < 4000)) {
                 this.setVisibility(true)
                 this.scene.stop(this.caller)
+                this.caller = null
         } else {
-            if (this.dialog) this.dialog.destroy()
-            var stopInputs = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(499).setOrigin(0, 0).setAlpha(0.01).setInteractive()
-            this.dialog = createTextDialog(this, 'Leaving world', 'Stop without saving?', 'Cancel', 'Continue')
-            this.dialog.on('button.click', function (button, groupName, index) {
-                this.dialog.destroy()
-                stopInputs.destroy()
-                if (index == 1) {
-                    this.scene.stop(this.caller)
-                    this.setVisibility(true)
-                }
-            }, this)
+            var scene = this
+            showDialog(this, 400, 'Leaving world', 'Stop without saving?', 'Cancel', 'Continue', () => {
+                scene.scene.stop(scene.caller)
+                scene.setVisibility(true)
+                scene.caller = null})
         }
-        this.caller = null
     }
 
     // Handles everything related to starting a scene
@@ -157,7 +135,6 @@ class MenuScene extends Phaser.Scene {
 
         // Start new scene
         this.scene.start(sceneKey, { option: option })
-        this.lastOption = option
     }
 
     tweenSideMenu(targetX) {

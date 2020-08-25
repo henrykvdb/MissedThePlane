@@ -2,20 +2,22 @@ class EditorScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'EditorScene' })
+    }
+
+    init(data) {
+        if (data.levelIndex == undefined || data.levelString == undefined || data.isSolvable == undefined)
+            throw "Not enough data provided to create an editor instance"
+
+        this.levelIndex = data.levelIndex
+        this.world = new World(this, data.levelString)
+        console.log(data)
+        this.isSolvable = data.isSolvable // Changes like madeChanges but only gets set to true on playtest completion
         this.madeChanges = false
-        this.isSolvable = false // Changes like madeChanges but only gets set to true on playtest completion
         this.drawerOpen = false
         this.shiftEnabled = false
         this.position = 0
         this.relativePos = 0
         this.levelIndex = 0
-
-    }
-
-    init(data) {
-        if (data.levelIndex == undefined || data.levelString == undefined) throw "Not enough data provided to create an editor instance"
-        this.levelIndex = data.levelIndex
-        this.world = new World(this, data.levelString)
     }
 
     create() {
@@ -121,12 +123,13 @@ class EditorScene extends Phaser.Scene {
 
         // Export/Save current level button
         // TODO: confirmation on save maybe
-        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save_' + (this.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105);
+        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save_' + (this.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105)
         this.btnSave.on('pointerdown', function (pointer) {
             if (!scene.madeChanges) return
             scene.madeChanges = false
             var levelString = scene.world.exportWorldAsString()
             if (getAndroid()) {
+                console.log("saving")
                 Android.setLocalLevel(scene.levelIndex, levelString)
                 Android.updateLevel(scene.levelIndex, levelString)
                 Android.setSolvable(scene.levelIndex, scene.isSolvable)
