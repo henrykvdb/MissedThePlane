@@ -66,7 +66,7 @@ class Plane {
         this.coords[1] += PLANE_MOVE_SPEED * dt * this.dirVector[1]
 
         if (this.dir % 2 == 0 || (this.game.world.collidesWith(this.coords, 0.5, TILES_IMPASSABLE_PLANE) &&  //Check half a tile in advance so plane stays centered
-        TILES_IMPASSABLE_PLANE.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
+            TILES_IMPASSABLE_PLANE.includes(this.game.world.getTile(addArray(this.coords, this.dirVector))))) { // check if next is actually impassable
             this.coords = originalCoords
             this.waitTime -= dt
 
@@ -90,13 +90,13 @@ class Plane {
 
     handleLanding(dt) {
         // Continue landing
-        if (this.height != PLANE_HEIGHT && this.height > 0){
+        if (this.height != PLANE_HEIGHT && this.height > 0) {
             this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
         }
 
         // Check for landing start
-        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, [TILES.RUNWAY_START]) &&
-        [TILES.RUNWAY, TILES.RUNWAY_END].includes(this.game.world.getTile(addArray(this.coords, this.dirVector)))) {  // check if the next tile is a runway as well
+        if (this.height == PLANE_HEIGHT && this.game.world.collidesWith(this.coords, 0, [TILES.RUNWAY])
+            && TILES.RUNWAY == this.game.world.getTile(addArray(this.coords, this.dirVector))) {  // check if the next tile is a runway as well
             console.log("Starting with landing!")
             this.game.setLevelStatus(LEVEL_STATUS.COMPLETED)
             this.height -= 0.001 // uhh, well, i mean

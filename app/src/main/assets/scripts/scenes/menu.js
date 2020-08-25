@@ -126,7 +126,7 @@ class MenuScene extends Phaser.Scene {
         if (!this.ASK_CLOSE.includes(this.caller)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
-        } else if (this.caller == "EditorScene" && !this.scene.get('EditorScene').state.madeChanges) {
+        } else if (this.caller == "EditorScene" && !this.scene.get('EditorScene').madeChanges) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
         } else if (this.caller == "GameScene" && (this.scene.get('GameScene').levelStatus != LEVEL_STATUS.PLAYING ||

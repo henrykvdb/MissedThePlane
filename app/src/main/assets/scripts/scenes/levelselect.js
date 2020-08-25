@@ -153,14 +153,7 @@ class LevelSelectScene extends Phaser.Scene {
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.EDIT) {
-            this.scene.start('EditorScene', {
-                state: {
-                    drawerOpen: false, shiftEnabled: false,
-                    position: 0, relativePos: 0,
-                    levelIndex: index,
-                    levelString: this.LEVELS[index]
-                }
-            });
+            this.scene.start('EditorScene', {levelIndex: index, levelString: this.LEVELS[index]});
             this.scene.stop()
         }
     }

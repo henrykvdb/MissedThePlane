@@ -29,34 +29,19 @@ const TILES = {
         passable_pilot: false,
         passable_plane: false,
         levelEditor: true,
-        z_index: 1
+        z_index: 0.99
     },
-    RUNWAY_START: {
-        id: 4,
-        assets: ['stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
-        passable_pilot: true,
-        passable_plane: true,
-        levelEditor: false,
-        z_index: 0
-    },
+    // id: 4 available
     RUNWAY: {
         id: 5,
-        assets: ['stripmiddle0', 'stripmiddle1'],
+        assets: ['stripmiddle0', 'stripmiddle1','stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
         preferedAssetIndex: 0,
         passable_pilot: true,
         passable_plane: true,
         levelEditor: true,
         z_index: 0
     },
-    RUNWAY_END: {
-        id: 6,
-        assets: ['stripend0', 'stripend1', 'stripend2', 'stripend3'],
-        preferedAssetIndex: 0,
-        passable_pilot: true,
-        passable_plane: true,
-        levelEditor: true,
-        z_index: 0
-    },
+    // id: 6 available
     PLANK: {
         id: 7,
         assets: ['plank'],

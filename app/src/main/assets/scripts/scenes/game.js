@@ -30,15 +30,14 @@ class GameScene extends Phaser.Scene {
     update(_, dt) {
         if (this.input.keyboard.keys[Phaser.Input.Keyboard.KeyCodes.R].isDown) this.scene.restart({ levelIndex: this.levelIndex })
 
-        this.pilot.update(dt)
-        this.plane.update(dt)
+        this.world.pilot.update(dt)
+        this.world.plane.update(dt)
         this.ui.updatePopup(dt)
         this.timePlaying += dt
     }
 
     setLevelStatus(newStatus) {
         if (newStatus == this.levelStatus) return
-        this.levelStatus = newStatus
         if (newStatus == LEVEL_STATUS.COMPLETED) {
             if (getAndroid() && this.levelString == undefined) Android.setHighestLevel(this.levelIndex)
             if (this.public) this.ui.showRatingOptions()
@@ -51,6 +50,7 @@ class GameScene extends Phaser.Scene {
             audio.playPopup(false)
             this.ui.startPopupAnimation(false)
         }
+        this.levelStatus = newStatus
     }
 
     returnToEditor(solved) {

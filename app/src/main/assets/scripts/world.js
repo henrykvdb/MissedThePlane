@@ -13,7 +13,6 @@ class World {
         this.tiles = this.parameters.tiles.map(row => row.map(tileId => idToTile[tileId]))
         if (!this.parameters.seed) this.parameters.seed = Math.random() * 100000
         this.seed = this.parameters.seed
-        this.markRunway()
 
         //Define game drawing constants
         this.game.levelSize = this.tiles.length
@@ -24,41 +23,10 @@ class World {
         this.createSprites()
 
         // Instantiate pilot and plane with given parameters
-        this.game.pilot = new Pilot(this.game, this.parameters.pilot.slice(0, 2), this.parameters.pilot[2])
-        this.game.plane = new Plane(this.game, this.parameters.plane.slice(0, 2), this.parameters.plane[2])
+        this.pilot = new Pilot(this.game, this.parameters.pilot.slice(0, 2), this.parameters.pilot[2])
+        this.plane = new Plane(this.game, this.parameters.plane.slice(0, 2), this.parameters.plane[2])
 
         this.buttonSounds = [this.game.sound.add('buttonDown'), this.game.sound.add('buttonUp'), this.game.sound.add('buttonBlocked')]
-    }
-
-    // Given a list of tiles, convert the runway's E and R to R0, R1, etc
-    markRunway() {
-        var endCoords = this.findCoord(TILES.RUNWAY_END)
-        if (endCoords == undefined) return
-        this.runwayTiles = [endCoords]
-
-        // Find runway direction
-        var neighbourRunway = getNeighbourCoords(endCoords, this.tiles.length)
-            .filter(c => this.tiles[c[0]][c[1]] == TILES.RUNWAY || this.tiles[c[0]][c[1]] == TILES.RUNWAY_START)[0]
-        if (neighbourRunway == undefined) return
-        var dir = endCoords.map((e, i) => e - neighbourRunway[i])
-
-        // Choose asset types
-        var runwayStartAssetIndex = (dir[0] - dir[1] > 0 ? 2 : 0) + (dir[0] == 0)
-        var runwayMiddleAssetIndex = dir[0] == 0 ? 1 : 0
-        var runwayEndAssetIndex = (dir[0] == 0 ? 1 : 0) + (dir[0] - dir[1] > 0 ? 2 : 0)
-        this.runwayIndices = [runwayStartAssetIndex, runwayMiddleAssetIndex, runwayEndAssetIndex]
-
-        // Mark middle
-        var next = this.tiles[endCoords[0] - dir[0]]
-        while (next != undefined && (next[endCoords[1] - dir[1]] == TILES.RUNWAY || next[endCoords[1] - dir[1]] == TILES.RUNWAY_START)) {
-            endCoords = [endCoords[0] - dir[0], endCoords[1] - dir[1]]
-            this.tiles[endCoords[0]][endCoords[1]] = TILES.RUNWAY
-            this.runwayTiles.push(endCoords)
-            next = this.tiles[endCoords[0] - dir[0]]
-        }
-
-        // Mark start
-        this.tiles[endCoords[0]][endCoords[1]] = TILES.RUNWAY_START
     }
 
     createSprites() {
@@ -74,19 +42,23 @@ class World {
         this.sprites = Array.from(Array(this.tiles.length)).map(() => Array.from(Array(this.tiles.length)).map(() => undefined))
         for (var x = 0; x < this.tiles.length; x++) {
             for (var y = 0; y < this.tiles[0].length; y++) {
-                var rng = this.pseudoRandom()
-                this.sprites[x][y] = this.createTileSprite(x, y, this.tiles[x][y], true, rng)
+                this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom())
             }
         }
     }
 
-    createTileSprite(x, y, tileTypeEnum, random, rng) {  // random is bool indicating if it should be a random sprite, rng is either 0-1 value or asset index if not random
+    createTileSprite(x, y, random, rng) {  // random is bool indicating if it should be a random sprite, rng is either 0-1 value or asset index if not random
+        var tileTypeEnum = this.tiles[x][y]
         if (!Object.values(TILES).includes(tileTypeEnum)) console.log(tileTypeEnum, " is not registered in TILES")
+
         // Choose asset from the tile's asset dictionary
         var asset;
-        if (tileTypeEnum == TILES.RUNWAY_START && this.runwayIndices != undefined) asset = tileTypeEnum.assets[this.runwayIndices[0]]
-        else if (tileTypeEnum == TILES.RUNWAY && this.runwayIndices != undefined) asset = tileTypeEnum.assets[this.runwayIndices[1]]
-        else if (tileTypeEnum == TILES.RUNWAY_END && this.runwayIndices != undefined) asset = tileTypeEnum.assets[this.runwayIndices[2]]
+        if (tileTypeEnum == TILES.RUNWAY) {
+            var neighbours = getNeighbourCoords([x, y], this.tiles.length).map((c, i) => [this.getTile(c), i]).filter(t => t[0] == TILES.RUNWAY)
+            if (neighbours.length == 0) asset = tileTypeEnum.assets[2] // default orientation 1 long runway
+            else if (neighbours.length == 1) asset = tileTypeEnum.assets[2 + neighbours[0][1]] // End runway
+            else asset = tileTypeEnum.assets[neighbours[0][1]] // Center runway
+        }
         else if (!random) asset = tileTypeEnum.assets[rng]
         else if (random) asset = tileTypeEnum.assets[Math.floor(rng * tileTypeEnum.assets.length)]
         else asset = Phaser.Utils.Array.GetRandom(tileTypeEnum.assets)
@@ -123,20 +95,13 @@ class World {
         var x = coords[0]; var y = coords[1]
         this.tiles[x][y] = type
         this.sprites[x][y].destroy()
-        this.sprites[x][y] = this.createTileSprite(x, y, this.tiles[x][y], true, 0) //TODO fix seed
+        this.sprites[x][y] = this.createTileSprite(x, y, true, 0) //TODO fix seed
     }
 
     getTile(coords) {
         if (isNaN(coords[0]) || isNaN(coords[1])) return TILES.AIR
         if (coords[0] >= this.tiles.length || coords[0] < 0 || coords[1] >= this.tiles[0].length || coords[1] < 0) return TILES.AIR
         return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])]
-    }
-
-    findCoord(tileType) {
-        for (var x = 0; x < this.tiles.length; x++) {
-            var y = this.tiles[x].indexOf(tileType)
-            if (y > -1) return [x, y]
-        }
     }
 
     triggerButton(coords) {
@@ -147,8 +112,8 @@ class World {
 
         // Check if blocked
         var neighbours = getNeighbourCoords(tilePos, this.tiles.length)
-        var withPlane = neighbours.filter(c => c[0] == Math.floor(this.game.plane.coords[0]) &&
-            c[1] == Math.floor(this.game.plane.coords[1]) &&
+        var withPlane = neighbours.filter(c => c[0] == Math.floor(this.plane.coords[0]) &&
+            c[1] == Math.floor(this.plane.coords[1]) &&
             [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
         if (withPlane.length > 0) { // The plane is flying over an adjacent, blocking tile
             var blockingTile = this.sprites[withPlane[0][0]][withPlane[0][1]]
@@ -175,13 +140,13 @@ class World {
             var sprite = this.sprites[c[0]][c[1]]
 
             // Play switch animation
-            if(sprite.anims.isPlaying) sprite.anims.reverse('grow0')
-            else{
+            if (sprite.anims.isPlaying) sprite.anims.reverse('grow0')
+            else {
                 if (tile == TILES.MOUNTAIN) sprite.anims.playReverse('grow0')
                 else sprite.anims.play('grow0')
                 sprite.on('animationcomplete', function () {
                     sprite.destroy()
-                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], scene.tiles[c[0]][c[1]], true, 0) //TODO fix seed
+                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], true, 0) //TODO fix seed
                 })
             }
 
@@ -193,21 +158,36 @@ class World {
     // The plane is landing and called this function. If the pilot is standing on the runway, he should path to an accessible tile and the
     // runway should be make inaccessible to ensure he doesn't walk on it again
     clearRunway() {
-        var runwayTiles = [TILES.RUNWAY, TILES.RUNWAY_START, TILES.RUNWAY_END]
-        if (runwayTiles.includes(this.getTile(this.game.pilot.coords))) { // The pilot is a snobhead and needs to move out of the way
+        if (TILES.RUNWAY == this.getTile(this.pilot.coords)) { // The pilot is a snobhead and needs to move out of the way
+            // Get runway tiles
+            var runwayTiles = []
+            this.tiles.forEach((row, x) => row.forEach((type, y) => { if (type == TILES.RUNWAY) runwayTiles.push([x, y]) }))
+
+            // Get neighbour tiles of the runways
             var neighbourRunway = []
-            this.runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(n => neighbourRunway.push(n))) // We add all tiles next to each runway tile (has duplicates)
-            neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && !runwayTiles.includes(this.getTile(c))).map(c => {
+            runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(c => neighbourRunway.push(c)))
+            neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && TILES.RUNWAY != this.getTile(c)).map(c => {
                 // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
-                return { coord: c, distance: Math.hypot(c[0] + 0.5 - this.game.pilot.coords[0], c[1] + 0.5 - this.game.pilot.coords[1]) }
+                return { coord: c, distance: Math.hypot(c[0] + 0.5 - this.pilot.coords[0], c[1] + 0.5 - this.pilot.coords[1]) }
             })
             neighbourRunway.sort((c1, c2) => c1.distance - c2.distance)
-            if (neighbourRunway.length != 0) this.updatePilotPath(neighbourRunway[0].coord) // Path to closest accessible tile
-            else // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
-                this.updatePilotPath(this.findCoord(this.runwayTiles.length > PLANE_LANDING_LENGTH + 1 ? TILES.RUNWAY_END : TILES.RUNWAY_START))
+
+            // Path to closest accessible tile
+            if (neighbourRunway.length != 0) this.updatePilotPath(neighbourRunway[0].coord)
+            // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
+            else {
+               var startTile = [Math.floor(this.plane.coords[0]), Math.floor(this.plane.coords[1])]
+                if (runwayTiles.length > PLANE_LANDING_LENGTH + 1) { //Path to end
+                    var endTile = runwayTiles.filter(c => TILES.RUNWAY.assets.indexOf(this.sprites[c[0]][c[1]].texture.key) >= 2)
+                    endTile = endTile.filter(c => c[0] != startTile[0] || c[1] != startTile[1])
+                    this.updatePilotPath(endTile[0])
+                }
+                else { //Path to beginning
+                    this.updatePilotPath(startTile)
+                }
+            }
             // TODO check if PLANE_LANDING_LENGTH is great enough when on a small enclosed runway to kill the pilot
         }
-        //TILES_IMPASSABLE_PILOT = TILES_IMPASSABLE_PILOT.concat(runwayTiles) // Now we have our path, we make the current tiles inaccessible.
     }
 
     // Returns all pilot passable neighbours from a given coordinate, as well as _diagonal_ neighbours on the condition that the two
@@ -230,7 +210,8 @@ class World {
 
         neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
         // If the game is complete, we forbid pathing over runways
-        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) neighbours = neighbours.filter(c => ![TILES.RUNWAY, TILES.RUNWAY_END, TILES.RUNWAY_START].includes(this.getTile(c)))
+        //TODO enable
+        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) neighbours = neighbours.filter(c => this.getTile(c) != TILES.RUNWAY)
         return neighbours
     }
 
@@ -280,24 +261,24 @@ class World {
     }
 
     updatePilotPath(clickedTile) {
-        if (clickedTile[0] == Math.floor(this.game.pilot.coords[0]) && clickedTile[1] == Math.floor(this.game.pilot.coords[1])) { // If we click on the tile below us, we stop
-            if (!this.game.pilot.nextTile) return // The user is clicking on the tile below the pilot while the pilot isn't moving, this function doesn't need to do anything
-            if (clickedTile[0] == this.game.pilot.nextTile[0] && clickedTile[1] == this.game.pilot.nextTile[1]) this.game.pilot.path = [] // We're already going there, we simply need to clear path
-            else if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) this.game.pilot.cancelCurrent() // We come from here, we cancel this plan
+        if (clickedTile[0] == Math.floor(this.pilot.coords[0]) && clickedTile[1] == Math.floor(this.pilot.coords[1])) { // If we click on the tile below us, we stop
+            if (!this.pilot.nextTile) return // The user is clicking on the tile below the pilot while the pilot isn't moving, this function doesn't need to do anything
+            if (clickedTile[0] == this.pilot.nextTile[0] && clickedTile[1] == this.pilot.nextTile[1]) this.pilot.path = [] // We're already going there, we simply need to clear path
+            else if (clickedTile[0] == this.pilot.prevTile[0] && clickedTile[1] == this.pilot.prevTile[1]) this.pilot.cancelCurrent() // We come from here, we cancel this plan
             else console.log("ERROR: Clicked on tile below pilot without it being related to it?")
             return
         }
-        if (!this.game.pilot.nextTile) { this.game.pilot.setPath(this.calculatePath(this.game.pilot.coords, clickedTile)); return } // We are not on a path already, no need for optimization mess
+        if (!this.pilot.nextTile) { this.pilot.setPath(this.calculatePath(this.pilot.coords, clickedTile)); return } // We are not on a path already, no need for optimization mess
 
-        if (clickedTile[0] == this.game.pilot.prevTile[0] && clickedTile[1] == this.game.pilot.prevTile[1]) // We want to go where we just came from, might as well simply cancel our current movement
-            this.game.pilot.cancelCurrent()
+        if (clickedTile[0] == this.pilot.prevTile[0] && clickedTile[1] == this.pilot.prevTile[1]) // We want to go where we just came from, might as well simply cancel our current movement
+            this.pilot.cancelCurrent()
 
         // If we are already on a path, check if it is faster to cancel the current movement to the next tile instead of pathing from there.
-        var pathFromNext = this.calculatePath(this.game.pilot.nextTile, clickedTile)
-        var pathFromPrevious = this.calculatePath(this.game.pilot.prevTile, clickedTile)
-        var lengthNext = pathFromNext.totalLength + Math.hypot(this.game.pilot.coords[0] - (this.game.pilot.nextTile[0] + 0.5), this.game.pilot.coords[1] - (this.game.pilot.nextTile[1] + 0.5))
-        var lengthPrev = pathFromPrevious.totalLength + Math.hypot(this.game.pilot.coords[0] - (this.game.pilot.prevTile[0] + 0.5), this.game.pilot.coords[1] - (this.game.pilot.prevTile[1] + 0.5))
-        this.game.pilot.setPath(lengthNext > lengthPrev ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev)
+        var pathFromNext = this.calculatePath(this.pilot.nextTile, clickedTile)
+        var pathFromPrevious = this.calculatePath(this.pilot.prevTile, clickedTile)
+        var lengthNext = pathFromNext.totalLength + Math.hypot(this.pilot.coords[0] - (this.pilot.nextTile[0] + 0.5), this.pilot.coords[1] - (this.pilot.nextTile[1] + 0.5))
+        var lengthPrev = pathFromPrevious.totalLength + Math.hypot(this.pilot.coords[0] - (this.pilot.prevTile[0] + 0.5), this.pilot.coords[1] - (this.pilot.prevTile[1] + 0.5))
+        this.pilot.setPath(lengthNext > lengthPrev ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev)
     }
 
     handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
@@ -309,11 +290,10 @@ class World {
     exportWorldAsString() {
         var exportObject = { "size": this.tiles.length }
         exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
-        exportObject.pilot = [this.game.pilot.coords[0], this.game.pilot.coords[1], this.game.pilot.dir]
-        exportObject.plane = [this.game.plane.coords[0], this.game.plane.coords[1], this.game.plane.dir]
+        exportObject.pilot = [this.pilot.coords[0], this.pilot.coords[1], this.pilot.dir]
+        exportObject.plane = [this.plane.coords[0], this.plane.coords[1], this.plane.dir]
         exportObject.difficulty = this.parameters.difficulty
         exportObject.seed = this.parameters.seed
-        console.log(this.seed)
         return JSON.stringify(exportObject)
     }
 
@@ -324,8 +304,8 @@ class World {
 
     destroy() {
         this.sprites.forEach(row => row.forEach(sprite => sprite.destroy()))
-        this.game.plane.destroy()
-        this.game.pilot.destroy()
+        this.plane.destroy()
+        this.pilot.destroy()
     }
 }
 
@@ -339,16 +319,15 @@ function getScreenCoords(game, levelX, levelY) {
 function getGridCoords(game, screenX, screenY) {
     var posY = ((screenX - SIZE_X / 2) / game.shiftX + ((screenY - SIZE_Y / 2) / game.shiftY) + 0.5 + game.levelSize) / 2
     var posX = (screenY - SIZE_Y / 2) / game.shiftY + 0.5 + game.levelSize - posY
-    // console.log("["+Math.floor(posX)+","+Math.floor(posY)+"] (actual: ["+posX+","+posY+"])")
     return [Math.floor(posX), Math.floor(posY)]
 }
 
 function getNeighbourCoords(coords, fieldSize) {
     var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
-    var neighbours = []
-    if (tilePos[0] != 0) neighbours.push([tilePos[0] - 1, tilePos[1]])
-    if (tilePos[0] != fieldSize - 1) neighbours.push([tilePos[0] + 1, tilePos[1]])
-    if (tilePos[1] != 0) neighbours.push([tilePos[0], tilePos[1] - 1])
-    if (tilePos[1] != fieldSize - 1) neighbours.push([tilePos[0], tilePos[1] + 1])
+    var neighbours = [] // NE first then clockwise, runways rely on this
+    neighbours.push([tilePos[0] - 1, tilePos[1]])
+    neighbours.push([tilePos[0], tilePos[1] + 1])
+    neighbours.push([tilePos[0] + 1, tilePos[1]])
+    neighbours.push([tilePos[0], tilePos[1] - 1])
     return neighbours
 }
