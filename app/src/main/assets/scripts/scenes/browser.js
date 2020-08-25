@@ -108,9 +108,13 @@ var createPanel = function (scene) {
 var COLOR_LIGHT = "0xD5C175"
 var COLOR_DARK = "0xBE8E17"
 var createCard = function (scene, levelData) {
-    console.log(JSON.stringify(levelData))
-    console.log(levelData.plays)
-    console.log(levelData["plays"])
+    var startButton = scene.add.sprite(0, 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100)
+    startButton.on('pointerdown', () => {
+        console.log("playing level " + levelData.id)
+        Android.playLevel(levelData.id, false)
+        scene.scene.start('GameScene', {levelIndex: levelData.id, levelString: levelData.levelString, public: true, levelName: levelData.name})
+    })
+
     return scene.rexUI.add.sizer({
         orientation: 'x',
         space: { left: 20, right: 20, top: 20, bottom: 20, item: 10 }
@@ -121,7 +125,7 @@ var createCard = function (scene, levelData) {
     .add(scene.add.text(0, 0, levelData.name + "\nby " + levelData.authorName,{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .addSpace()
 
-    .add(scene.add.text(0, 0, levelData.plays + "/" + levelData.clears, { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
+    .add(scene.add.text(0, 0, levelData.clears + "/" + levelData.plays, { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .add(scene.add.rectangle(0, 0, getXY(0.008), getXY(0.2), COLOR_LIGHT))
 
     .add(scene.add.text(0, 0, levelData.upvotes + "up\n" + levelData.downvotes + "down",{ fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
@@ -130,7 +134,7 @@ var createCard = function (scene, levelData) {
     .add(scene.add.text(0, 0, levelData.submitDate, { fill: '#000000', fontSize: 20 * MIN_XY / 600, fontStyle: 'bold' }))
     .addSpace()
 
-    .add(scene.add.sprite(0, 0, 'btn_playtest').setScale(0.3 * MIN_XY / 600).setInteractive()) // TODO add functionality (start game scene and call Android.playLevel)
+    .add(startButton)
 }
 
 function receivePublicLevels(levelData) {

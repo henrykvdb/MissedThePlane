@@ -8,6 +8,7 @@ class GameScene extends Phaser.Scene {
         this.levelIndex = data.levelIndex != undefined ? data.levelIndex : -1 // Is either campaign index or level edit index OR public level id
         this.levelString = data.levelString // If this is passed, we are playtesting a level with this string
         this.public = data.public // If this is true, the levelIndex is the databse levelId of the level we are playing
+        this.levelName = data.levelName // optional parameter to show levelName in the corner
     }
 
     create() {
@@ -15,7 +16,7 @@ class GameScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D,restart:Phaser.Input.Keyboard.KeyCodes.R});
         this.graphics = this.add.graphics();
-        this.ui = new UI(this, this.levelString != undefined)
+        this.ui = new UI(this, this.levelString != undefined && !this.public)
 
         // Create level
         var inputString = this.levelString != undefined ? this.levelString : ALL_LEVELS[this.levelIndex]
@@ -60,7 +61,8 @@ class GameScene extends Phaser.Scene {
     }
 
     returnToBrowser() {
-        if (getAndroid() && this.currentVote != undefined) Android.voteForLevel(this.levelIndex, this.currentVote)
+        if (getAndroid() && this.ui.currentVote != undefined) Android.voteForLevel(this.levelIndex, this.ui.currentVote)
+        if (getAndroid() && this.levelStatus == LEVEL_STATUS.COMPLETED) Android.playLevel(this.levelIndex, true)
         this.scene.stop()
         this.scene.start('BrowserScene')
     }

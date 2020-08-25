@@ -68,7 +68,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
 
     @JavascriptInterface
     fun getAuthorName(): String {
-        return prefs.getString(KEY_AUTHOR, "defaultAuthor")!!
+        return prefs.getString(KEY_AUTHOR, "")!!
     }
 
     @JavascriptInterface
@@ -122,7 +122,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
         GlobalScope.launch {
             var levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
-            if (getAuthorName() == "defaultAuthor") {addError("User $userId tried publishing without having author name!"); return@launch}
+            if (getAuthorName() == "") {addError("User $userId tried publishing without having author name!"); return@launch}
             if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer version from his level than he currently has saved in the db
                 addError("User $userId published a level which doesn't correspond to his saved level $levelId")
                 levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
@@ -241,6 +241,7 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     @JavascriptInterface
     fun voteForLevel(levelId: String, upvote: Boolean) {
         val userId = getUserId()
+        log("received vote: $upvote")
         GlobalScope.launch {
             val actualId = userId + levelId // yeah...
             val playerStatus = getDocument("userPlays", actualId)

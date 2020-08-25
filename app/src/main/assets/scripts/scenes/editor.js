@@ -18,6 +18,7 @@ class EditorScene extends Phaser.Scene {
     }
 
     create() {
+        console.log(this.state.isSolvable)
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.world = new World(this, this.state.levelString)
         const scene = this
@@ -106,13 +107,13 @@ class EditorScene extends Phaser.Scene {
         })
 
         // Export/Save current level button
-        // TODO: confirmation on save maybe
         this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save_' + (this.state.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105);
         this.btnSave.on('pointerdown', function (pointer) {
             if (!scene.state.madeChanges) return
             scene.state.madeChanges = false
             var levelString = scene.world.exportWorldAsString()
             if (getAndroid()) {
+                console.log("saving")
                 Android.setLocalLevel(scene.state.levelIndex, levelString)
                 Android.updateLevel(scene.state.levelIndex, levelString)
                 Android.setSolvable(scene.state.levelIndex, scene.state.isSolvable)
@@ -287,6 +288,7 @@ class EditorScene extends Phaser.Scene {
         this.btnRun.setTexture("btn_playtest_1")
         // The user completed the level, and while we should wait until a save to store this value, there have been no changes since last save
         // Which means it is save to save the solvability immediately
+        console.log(this.state.madeChanges)
         if (getAndroid() && !this.state.madeChanges) Android.setSolvable(this.state.levelIndex, true)
     }
 

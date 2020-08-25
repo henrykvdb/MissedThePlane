@@ -53,34 +53,20 @@ class LevelSelectScene extends Phaser.Scene {
 
         if (this.mode == SELECT_MODES.EDIT) {
             this.btnPublish = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.17), 'btn_publish_0').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
-            this.btnPublish.on('pointerdown', () => {
-                var index = scene.position - scene.MIN_POS
-                if (getAndroid() && Android.getSolvable(index)) {
-                    if (Android.getPublished(index)) return // This level is already published
-                    Android.publishLevel(index, Android.getLocalLevel(index), "My public level")
-                    Android.setPublished(index, true)
-                 } // TODO fix name input, wait for confirmation, etc
-                scene.redraw()
-            })
+            this.btnPublish.on('pointerdown', () => scene.publishLevel(scene.position - scene.MIN_POS))
 
             this.btnDelete = scene.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_delete').setOrigin(0, 1).setScale(0.35 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnDelete.on('pointerdown', () => {
-                var stopInputs = scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(499).setOrigin(0, 0).setAlpha(0.01).setInteractive()
-                scene.dialog = createTextDialog(scene, 'Deleting world', 'Are you sure?', 'Cancel', 'Delete')
-                scene.dialog.on('button.click', function (button, groupName, index) {
-                    this.dialog.destroy()
-                    stopInputs.destroy()
-                    if (index == 1) {
-                        var index = scene.position - scene.MIN_POS
-                        if (getAndroid()) {
-                            Android.deleteLevel(index)
-                            Android.setLocalLevel(index, DEFAULT_LEVEL)
-                            Android.setPublished(index, false)
-                        }
-                        scene.LEVELS[index] = DEFAULT_LEVEL
-                        scene.redraw()
+                showDialog(scene, 400, 'Deleting world', 'Are you sure?', 'Cancel', 'Delete', () => {
+                    var index = scene.position - scene.MIN_POS
+                    if (getAndroid()) {
+                        Android.deleteLevel(index)
+                        Android.setLocalLevel(index, DEFAULT_LEVEL)
+                        Android.setPublished(index, false)
                     }
-                }, this)
+                    scene.LEVELS[index] = DEFAULT_LEVEL
+                    scene.redraw()
+                })
             })
         }
 
@@ -158,12 +144,14 @@ class LevelSelectScene extends Phaser.Scene {
             this.scene.stop()
         }
         else if (this.mode == SELECT_MODES.EDIT && !(getAndroid() && Android.getPublished(index))) {
+            var solvable = (getAndroid() && Android.getSolvable(index) ? true : false)
             this.scene.start('EditorScene', {
                 state: {
                     drawerOpen: false, shiftEnabled: false,
                     position: 0, relativePos: 0,
                     levelIndex: index,
-                    levelString: this.LEVELS[index]
+                    levelString: this.LEVELS[index],
+                    isSolvable: solvable
                 }
             });
             this.scene.stop()
@@ -248,5 +236,43 @@ class LevelSelectScene extends Phaser.Scene {
                 number.visible = false
             }
         }
+    }
+
+    publishLevel(index) {
+        var scene = this
+        if (!getAndroid()) {showDialog(scene, 400, 'Playing web version', 'Play on a phone to\npublish your levels.', undefined, 'Got it'); return}
+        if (Android.getPublished(index)) return // this level is already published
+        if (!Android.getSolvable(index)) {showDialog(scene, 400, 'Level uncleared', 'Please play and solve\nyour level to publish it.', undefined, 'Got it'); return}
+                // // Ask name dialog
+                // var scene = this
+                // var inputDialog = createInputDialog(this,"What's your name?","cancel","continue")
+                // inputDialog.on('button.click', function (button, groupName, index) {
+                //     if (index == 1){
+                //         var input = scene.userInput
+                //         if(input && input.length >= 3){
+                //             console.log(scene.userInput)
+                //         }
+                //         else console.log("too short")
+                //     }
+                //     else inputDialog.destroy()
+                // }, this)
+        else {
+            if (Android.getAuthorName() != "") {
+
+            } else { // The player doesn't have a name yet, we set one
+                var inputDialog = {title: 'Set your author name', negative: 'Cancel', positive: 'Confirm'}
+                var failDialog = {title: 'Invalid name', body: 'Your name must be\nbetween 3-12 characters.', positive: 'Got it'}
+                var confirmDialog = {title: 'Are you sure?', 
+                                    body: "Other players will be able to see\nyour name in the level browser.\nYou won't be able to change it later.\nConfirm you want to use the name: ", 
+                                    negative: 'Go back', positive: 'Confirm'}
+                var inputChecker = function(authorName) {return authorName && authorName.length >= 3 && authorName.length <= 12}
+                showComboDialog(scene, 400, inputDialog, inputChecker, failDialog, confirmDialog, (authorName) => {
+                    Android.setAuthorName(authorName)
+                })
+            }
+            // Android.publishLevel(index, Android.getLocalLevel(index), "My public level")
+            // Android.setPublished(index, true)
+         } // TODO fix name input, wait for confirmation, etc
+        scene.redraw()
     }
 }
