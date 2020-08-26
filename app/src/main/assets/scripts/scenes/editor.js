@@ -356,12 +356,14 @@ class EditorScene extends Phaser.Scene {
                 var pilotCoords = this.world.pilot.coords
                 if (coords[0] == Math.floor(pilotCoords[0]) && coords[1] == Math.floor(pilotCoords[1]) && TILES_IMPASSABLE_PILOT.includes(newTile)) {
                     this.world.pilot.coords = [-10, -10] // He gone
+                    this.world.pilot.updateSprites()
                 }
 
                 // Check plane collision with impassible
                 var planeCoords = this.world.plane.coords
                 if (coords[0] == Math.floor(planeCoords[0]) && coords[1] == Math.floor(planeCoords[1]) && TILES_IMPASSABLE_PLANE.includes(newTile)) {
                     this.world.plane.coords = [this.world.tiles.length, 1.5]
+                    this.world.plane.updateSprites()
                 }
 
                 // If the runway is not part of the previous runway convert the old one to grass
