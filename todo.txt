@@ -16,6 +16,7 @@ Should do
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 - Better level editor tile order
 - Database access mode -> make secure! -> haha, pranked
+- Keep nav bar hidden
 
 Nice to have
 - Smoother UI / animations
