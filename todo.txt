@@ -5,13 +5,12 @@ Should do
     ~ New controls explanation
 - UI
     - Decorate main menu
-    ~ Hide UI of gamescene when in pause
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Level editor
     - Publish name input box (+author name?)
     - Rating system
 - Ads
-    - Admob: Add
+    - GDPR & child protection laws
     - Google billing: Remove ads in-app purchase
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
@@ -19,6 +18,7 @@ Should do
 - Database access mode -> make secure! -> haha, pranked
 
 Nice to have
+- Smoother UI / animations
 - Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
 - Try-catch-send-error around entire program so we can see when games are crashing
@@ -26,8 +26,7 @@ Nice to have
 - Water animations
 - Level spawn animation
 - Scroll bar momentum
-- Better runway support
-- No progress lost popup when no changes
+- No progress lost popup when no changes (=> when same level string)
 - Get an actual font
 
 Marketing

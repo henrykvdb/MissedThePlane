@@ -5,17 +5,23 @@ class EditorScene extends Phaser.Scene {
     }
 
     init(data) {
+        // Constants
+        this.COUNT_DISPLAY = 9 // should be uneven to have a center tile
+        this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // This value works, no idea what kind of units it is?
+        this.TILE_SCALE = 0.35 * MIN_XY / 600 // Scale of the tiles in the drawer
+
+        // Data from init
         if (data.levelIndex == undefined || data.levelString == undefined || data.isSolvable == undefined)
             throw "Not enough data provided to create an editor instance"
-
         this.levelIndex = data.levelIndex
         this.world = new World(this, data.levelString)
-        console.log(data)
         this.isSolvable = data.isSolvable // Changes like madeChanges but only gets set to true on playtest completion
+
+        // Default values
         this.madeChanges = false
         this.drawerOpen = false
         this.shiftEnabled = false
-        this.position = 0
+        this.position = TILES_LEVEL_EDITOR.length + (1 - this.COUNT_DISPLAY) / 2 + 2 // +2 to account for the two entities (pilot & plane)
         this.relativePos = 0
         this.levelIndex = 0
     }
@@ -208,11 +214,6 @@ class EditorScene extends Phaser.Scene {
         })
         this.btnRotate.visible = false
 
-        //MAGIC TIME
-        this.COUNT_DISPLAY = 9 //SHOULD BE UNEVEN TO HAVE PROPER CENTER
-        this.DRAG_WEIGHT = SIZE_X / this.COUNT_DISPLAY // No idea what kind of units this is lol
-        this.TILE_SCALE = 0.35 * MIN_XY / 600
-
         // Make tile sprites
         const SLIDER_SPRITES = []
         const TILE_HEIGHT = SIZE_Y - getY(0.01)
@@ -366,11 +367,8 @@ class EditorScene extends Phaser.Scene {
                 // If the runway is not part of the previous runway convert the old one to grass
                 var removeOldRunway = false
                 if (newTile == TILES.RUNWAY) {
-                    // Find runway tiles
-                    var runwayTiles = []
-                    this.world.tiles.forEach((row, x) => row.forEach((type, y) => { if (type == TILES.RUNWAY) runwayTiles.push([x, y]) }))
-
                     // Check if the new runway tile is in the right line
+                    var runwayTiles = this.world.runwayCoords
                     if (runwayTiles.length > 1) {
                         var index = TILES.RUNWAY.assets.indexOf(this.world.sprites[runwayTiles[0][0]][runwayTiles[0][1]].texture.key)
                         removeOldRunway = (index % 2 == 0 && runwayTiles[0][1] != coords[1]) || (index % 2 == 1 && runwayTiles[0][0] != coords[0])
@@ -394,26 +392,26 @@ class EditorScene extends Phaser.Scene {
     updateDrawerSprites(position, duration) {
         for (let i = 0; i < this.sprites.length; i++) {
             var sprite = this.sprites[i]
-    
+
             var scene = this // Needed for the function below
             function inCirclarBounds(start, length, variable) {
                 if (variable < start) variable += scene.sprites.length
                 return variable <= start + length
             }
-    
+
             if (inCirclarBounds(Math.floor(position), this.COUNT_DISPLAY + 1, i)) {
                 // Set visible and calculate next position
                 sprite.visible = true
                 const STEP = SIZE_X / (this.COUNT_DISPLAY - 1)
                 var localPos = (i + 1 > position) ? (i - position) : (this.sprites.length + i - position)
                 var newPos = localPos * STEP
-    
+
                 // Update sprite size
                 const CENTER = (this.COUNT_DISPLAY - 1) / 2
                 var size = Math.max(1 / (Math.abs(CENTER - localPos) + 1), 0.75)
                 if (sprite.texture.key.includes("pilot")) size /= 1.5
                 sprite.setScale(this.TILE_SCALE * size)
-    
+
                 // Move the sprite to the new position
                 if (duration != 0 && Math.abs(newPos - sprite.x) < STEP * 2.5) {
                     this.tweens.add({

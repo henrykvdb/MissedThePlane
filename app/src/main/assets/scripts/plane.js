@@ -91,7 +91,8 @@ class Plane {
     handleLanding(dt) {
         // Continue landing
         if (this.height != PLANE_HEIGHT && this.height > 0) {
-            this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / PLANE_LANDING_LENGTH
+            var runwayLength = this.game.world.runwayCoords.length
+            this.height -= dt * PLANE_HEIGHT * PLANE_MOVE_SPEED / Math.min(PLANE_LANDING_LENGTH, runwayLength - 0.5)
         }
 
         // Check for landing start

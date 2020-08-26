@@ -20,6 +20,7 @@ class World {
         this.game.shiftX = 1.02 * this.game.tileScale * TILE_SHIFT_X
         this.game.shiftY = 1.02 * this.game.tileScale * TILE_SHIFT_Y
 
+        this.runwayCoords = []
         this.createSprites()
 
         // Instantiate pilot and plane with given parameters
@@ -54,6 +55,7 @@ class World {
         // Choose asset from the tile's asset dictionary
         var asset;
         if (tileTypeEnum == TILES.RUNWAY) {
+            this.runwayCoords.push([x,y])
             var neighbours = getNeighbourCoords([x, y], this.tiles.length).map((c, i) => [this.getTile(c), i]).filter(t => t[0] == TILES.RUNWAY)
             if (neighbours.length == 0) asset = tileTypeEnum.assets[2] // default orientation 1 long runway
             else if (neighbours.length == 1) asset = tileTypeEnum.assets[2 + neighbours[0][1]] // End runway
@@ -159,13 +161,9 @@ class World {
     // runway should be make inaccessible to ensure he doesn't walk on it again
     clearRunway() {
         if (TILES.RUNWAY == this.getTile(this.pilot.coords)) { // The pilot is a snobhead and needs to move out of the way
-            // Get runway tiles
-            var runwayTiles = []
-            this.tiles.forEach((row, x) => row.forEach((type, y) => { if (type == TILES.RUNWAY) runwayTiles.push([x, y]) }))
-
             // Get neighbour tiles of the runways
             var neighbourRunway = []
-            runwayTiles.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(c => neighbourRunway.push(c)))
+            this.runwayCoords.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(c => neighbourRunway.push(c)))
             neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && TILES.RUNWAY != this.getTile(c)).map(c => {
                 // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
                 return { coord: c, distance: Math.hypot(c[0] + 0.5 - this.pilot.coords[0], c[1] + 0.5 - this.pilot.coords[1]) }
@@ -177,8 +175,8 @@ class World {
             // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
             else {
                var startTile = [Math.floor(this.plane.coords[0]), Math.floor(this.plane.coords[1])]
-                if (runwayTiles.length > PLANE_LANDING_LENGTH + 1) { //Path to end
-                    var endTile = runwayTiles.filter(c => TILES.RUNWAY.assets.indexOf(this.sprites[c[0]][c[1]].texture.key) >= 2)
+                if (this.runwayCoords.length > PLANE_LANDING_LENGTH + 1) { //Path to end
+                    var endTile = this.runwayCoords.filter(c => TILES.RUNWAY.assets.indexOf(this.sprites[c[0]][c[1]].texture.key) >= 2)
                     endTile = endTile.filter(c => c[0] != startTile[0] || c[1] != startTile[1])
                     this.updatePilotPath(endTile[0])
                 }

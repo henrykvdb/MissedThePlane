@@ -152,7 +152,7 @@ class MenuScene extends Phaser.Scene {
                 // Fade background
                 if (scene.caller && scene.ASK_CLOSE.includes(scene.caller)) {
                     var progress = (3 * SIZE_X / 2 - tween.getValue()) / SIZE_X
-                    scene.background.setAlpha(0.4 * progress) // Fade alpha from 0.4 -> 0 and back
+                    scene.transBackground.setAlpha(0.4 * progress) // Fade alpha from 0.4 -> 0 and back
                 }
             }
         })
