@@ -235,36 +235,53 @@ class LevelSelectScene extends Phaser.Scene {
         if (!getAndroid()) {showDialog(scene, 400, 'Playing web version', 'Play on a phone to\npublish your levels.', undefined, 'Got it'); return}
         if (Android.getPublished(index)) return // this level is already published
         if (!Android.getSolvable(index)) {showDialog(scene, 400, 'Level uncleared', 'Please play and solve\nyour level to publish it.', undefined, 'Got it'); return}
-                // // Ask name dialog
-                // var scene = this
-                // var inputDialog = createInputDialog(this,"What's your name?","cancel","continue")
-                // inputDialog.on('button.click', function (button, groupName, index) {
-                //     if (index == 1){
-                //         var input = scene.userInput
-                //         if(input && input.length >= 3){
-                //             console.log(scene.userInput)
-                //         }
-                //         else console.log("too short")
-                //     }
-                //     else inputDialog.destroy()
-                // }, this)
         else {
             if (Android.getAuthorName() != "") {
-
+                var inputDialog = {title: 'Choose your level name', negative: 'Cancel', positive: 'Confirm'}
+                var failDialog = {title: 'Invalid name', body: 'Your name must be\nbetween 3-12 characters.', positive: 'Got it'}
+                var confirmDialog = {title: 'Are you sure?', 
+                                    body: "After publishing, you won't\nbe able to edit your level.\nPlease confirm that you want to\npublish using the name:\n", 
+                                    negative: 'Go back', positive: 'Confirm'}
+                var inputChecker = function(levelName) {return levelName && levelName.length >= 3 && levelName.length <= 12}
+                showComboDialog(scene, 400, inputDialog, inputChecker, failDialog, confirmDialog, (levelName) => {
+                    Android.publishLevel(index, Android.getLocalLevel(index), levelName)
+                    waitForPublishResult().then(() => {
+                        if (publishResponse.success) {
+                            Android.setPublished(index, true)
+                            showDialog(scene, 500, 'Success!', 'Your level is now public.', undefined, 'Great!')
+                        }
+                        else showDialog(scene, 500, 'Error', 'An error occured while publishing:\n'+publishResponse.error, undefined, 'Okay...')
+                        publishResponse = {}
+                    })
+                })
             } else { // The player doesn't have a name yet, we set one
                 var inputDialog = {title: 'Set your author name', negative: 'Cancel', positive: 'Confirm'}
                 var failDialog = {title: 'Invalid name', body: 'Your name must be\nbetween 3-12 characters.', positive: 'Got it'}
                 var confirmDialog = {title: 'Are you sure?', 
-                                    body: "Other players will be able to see\nyour name in the level browser.\nYou won't be able to change it later.\nConfirm you want to use the name: ", 
+                                    body: "Other players will be able to see\nyour name in the level browser.\nYou won't be able to change it later.\nConfirm you want to use the name:\n", 
                                     negative: 'Go back', positive: 'Confirm'}
                 var inputChecker = function(authorName) {return authorName && authorName.length >= 3 && authorName.length <= 12}
                 showComboDialog(scene, 400, inputDialog, inputChecker, failDialog, confirmDialog, (authorName) => {
                     Android.setAuthorName(authorName)
+                    showDialog(scene, 500, 'Success!', 'Your author name has been set.\nYou can now publish levels!', undefined, 'Great!')
                 })
             }
-            // Android.publishLevel(index, Android.getLocalLevel(index), "My public level")
-            // Android.setPublished(index, true)
-         } // TODO fix name input, wait for confirmation, etc
+         }
         scene.redraw()
     }
+}
+
+var publishResponse = {}
+function receivePublishResponse(response) {
+    console.log("received publish response:", response)
+    publishResponse = response
+}
+
+function waitForPublishResult() {
+    return new Promise(function (resolve, reject) {
+        (function checkResponse(){
+            if (Object.keys(publishResponse).length !== 0) return resolve();
+            setTimeout(checkResponse, 50);
+        })();
+    });
 }

@@ -284,9 +284,9 @@ function showComboDialog(scene, depth, inputSettings, inputChecker, wrongInputSe
                 confirmDialog.destroy()
                 stopInputs2.destroy()
                 if (index == 0) return
-                confirmCallback(input)
                 inputDialog.destroy()
                 stopInputs.destroy()
+                confirmCallback(input)
             }, scene)
         } else { // We got bad input
             var failDialog = createTextDialog1Option(scene, depth+100, wrongInputSettings.title, wrongInputSettings.body, wrongInputSettings.positive)

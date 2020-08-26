@@ -30,10 +30,10 @@ class BrowserScene extends Phaser.Scene {
             scene.tweens.add({targets: loadingText, alpha: 0, duration: 700, delay: 1000})
             waitForLevels().then(() => scene.createBrowser(scene))
         } else {
-            // todo remove dev lines
-            PUBLIC_LEVELS = [{"deleted":false,"plays":2,"public":true,"upvotes":89,"authorName":"winnie","lastUpdate":1598301498,"levelString":"{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}","clears":1,"name":"Epic level name","submitDate":1598832120,"authorId":"S2VK21LCRgEVy2jhEpT3","downvotes":0,"id":"1KHWkR2T7Tng5senQfWr"},{"deleted":false,"plays":13,"upvotes":4,"public":true,"authorName":"Robert","levelString":"{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}","clears":9,"lastUpdate":1598386551,"submitDate":1597753800,"name":"Private level","downvotes":1,"authorId":"S2VK21LCRgEVy2jhEpT3","id":"W6C5Nj22mB3yGrwxCZv0"}]
-            this.createBrowser(this)
-            //this.add.text(SIZE_X / 2, SIZE_Y / 2, "Get yourself a phone to see this menu ;)", { fill: '#FFFFFF', fontSize: 25 * MIN_XY / 600}).setOrigin(0.5, 0.5).setDepth(100)
+            // 2 lines below for offline ui testing
+            // PUBLIC_LEVELS = [{"deleted":false,"plays":2,"public":true,"upvotes":89,"authorName":"winnie","lastUpdate":1598301498,"levelString":"{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}","clears":1,"name":"Epic level name","submitDate":1598832120,"authorId":"S2VK21LCRgEVy2jhEpT3","downvotes":0,"id":"1KHWkR2T7Tng5senQfWr"},{"deleted":false,"plays":13,"upvotes":4,"public":true,"authorName":"Robert","levelString":"{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}","clears":9,"lastUpdate":1598386551,"submitDate":1597753800,"name":"Private level","downvotes":1,"authorId":"S2VK21LCRgEVy2jhEpT3","id":"W6C5Nj22mB3yGrwxCZv0"}]
+            // this.createBrowser(this)
+            this.add.text(SIZE_X / 2, SIZE_Y / 2, "Get yourself a phone to see this menu ;)", { fill: '#FFFFFF', fontSize: 25 * MIN_XY / 600}).setOrigin(0.5, 0.5).setDepth(100)
 
         }
         
@@ -133,24 +133,26 @@ var createCard = function (scene, levelData) {
     .add(scene.add.text(0, 0, levelData.downvotes,{ fill: '#000000', fontSize: 25 * MIN_XY / 600}, {align: 'right'}))
     .setDepth(100)
 
+    var rateBar = levelData.upvotes+levelData.downvotes <= 0 ? "rating20" : 'rating' + Math.floor(20*levelData.upvotes/(levelData.upvotes+levelData.downvotes))
     var ratingSizer = scene.rexUI.add.sizer({orientation: 'y', space: { left: 20, right: 20, top: 0, bottom: 0, item: 10 }})
     .add(thumbInfo)
-    .add(scene.add.sprite(0, 0, 'rating' + Math.floor(20*levelData.upvotes/(levelData.upvotes+levelData.downvotes))).setScale(20, 40)).setDepth(100)
+    .add(scene.add.sprite(0, 0, rateBar).setScale(20, 40)).setDepth(100)
     console.log('rating' + Math.floor(20*levelData.upvotes/(levelData.upvotes+levelData.downvotes)))
 
     var clearInfo = scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 0, bottom: 0, item: 10 }})
     .add(scene.add.sprite(0, 0, 'trophy').setScale(0.15))
-    .add(scene.add.text(0, 0, 'Solved: ' + Math.round(levelData.clears/levelData.plays*100) + '%',{ fill: '#000000', fontSize: 25 * MIN_XY / 600}))
+    .add(scene.add.text(0, 0, 'Solved: ' + (levelData.plays <= 0 ? 0 : Math.round(levelData.clears/levelData.plays*100)) + '%',{ fill: '#000000', fontSize: 25 * MIN_XY / 600}))
     .setDepth(100)
 
+    var clearBar = levelData.plays <= 0 ? 'clear0' : 'clear' + Math.floor(20*levelData.clears/levelData.plays)
     var clearSizer = scene.rexUI.add.sizer({orientation: 'y', space: { left: 20, right: 20, top: 0, bottom: 0, item: 10 }})
     .add(clearInfo)
-    .add(scene.add.sprite(0, 0,  'clear' + Math.floor(20*levelData.clears/levelData.plays)).setScale(20, 40)).setDepth(100)
+    .add(scene.add.sprite(0, 0,  clearBar).setScale(20, 40)).setDepth(100)
 
-    var toprowSizer = scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 0, bottom: 0, item: 40 }})
-    .add(scene.add.text(0, 0, levelData.name,{ fill: '#000000', fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }))
-    .add(scene.add.text(0, 0, "by " + levelData.authorName, { fill: '#000000', fontSize: 20 * MIN_XY / 600}))
-    .add(scene.add.text(0, 0, date, { fill: '#000000', fontSize: 20 * MIN_XY / 600}))
+    var toprowSizer = scene.rexUI.add.sizer({orientation: 'x', space: { left: 0, right: 0, top: 0, bottom: 0, item: 20 }})
+    .add(scene.add.text(0, 0, levelData.name,{ fill: '#000000', fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }, {align:'left'}))
+    .addSpace()
+    .add(scene.add.text(0, 0, "by " + levelData.authorName + " " + date, { fill: '#000000', fontSize: 20 * MIN_XY / 600}, {align:'right'}))
     .setDepth(100)
 
     var botrowSizer = scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 20, bottom: 0, item: 40 }})
@@ -168,7 +170,7 @@ var createCard = function (scene, levelData) {
     return scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 20, bottom: 20, item: 10 }})
     .addBackground(scene.rexUI.add.roundRectangle(0, 0, 0, 0, 0, COLOR_LIGHT).setStrokeStyle(getXY(0.01), COLOR_DARK, 1))
     .add(scene.rexUI.add.roundRectangle(0, 0, getXY(0.2), getXY(0.2), 5, COLOR_DARK))
-    .add(middleSizer, {align: 'bot'})
+    .add(middleSizer)
     .addSpace()
     .add(startButton, {align: 'right'})
 }

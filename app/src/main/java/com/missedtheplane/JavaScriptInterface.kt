@@ -118,13 +118,14 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
     @JavascriptInterface
     fun publishLevel(levelSlot: String, levelString: String, levelName: String): Boolean {
         // TODO: check if the user doesn't have more than x published levels total?
+        // TODO send errors to js as well as soon as it works
         val userId = getUserId()
         GlobalScope.launch {
             var levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
             if (getAuthorName() == "") {addError("User $userId tried publishing without having author name!"); return@launch}
-            if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer version from his level than he currently has saved in the db
-                addError("User $userId published a level which doesn't correspond to his saved level $levelId")
+            if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer (?) version from his level than he currently has saved in the db
+                addError("User $userId published a level which doesn't correspond to his saved level $levelId!!")
                 levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
             }
             updateDocument("levels", levelId, hashMapOf(
@@ -134,8 +135,9 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
                     "authorName" to getAuthorName()
                 )
             )
+            sendToJs("receivePublishResponse", "{\"success\": true}")
         }
-        return true // TODO - in case publishing can fail (max levels reached or whatever), find a way to notify js
+        return true
     }
 
     /** Updates a given level in a certain user slot, and if it doesn't exist yet, create it */
@@ -260,6 +262,15 @@ class JavaScriptInterface internal constructor(private val context: Context, pri
                 updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1),"downvotes" to FieldValue.increment(-1)))
             }
         }
+    }
+
+    // todo make this work pls
+    fun sendToJs(function: String, parameter: String) {
+        webView.post(Runnable() {
+            fun run() {
+                webView.loadUrl("javascript:$function($parameter)");
+            }
+        });
     }
 
     /** Adds an error to the database, so we can see if something is broken */
