@@ -56,7 +56,7 @@ class MenuScene extends Phaser.Scene {
         this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings
 
-        this.pauseText = this.add.text(SIZE_X / 2,  SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'Game paused', { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(100).setOrigin(0.5, 0.5)
+        this.pauseText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'voxel_font', 'Game paused', 50 * MIN_XY / 600).setDepth(100).setOrigin(0.5, 0.5)
         this.solidBackground = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x59AACA")
         this.transBackground = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.4)
 
@@ -73,7 +73,7 @@ class MenuScene extends Phaser.Scene {
         // SETTINGS MENU
 
         const Y_START = 200 * MIN_XY / 600 / 3
-        this.settingsText = this.add.text(SIZE_X + SIZE_X / 2, Y_START, "Settings", { fill: '#000000', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(100)
+        this.settingsText = this.add.bitmapText(SIZE_X + SIZE_X / 2, Y_START, 'voxel_font', "Settings", 40 * MIN_XY / 600).setDepth(100).setTint("0").setOrigin(0.5, 0)
         this.settingsPilot = this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(100).setScale(MIN_XY / 600).setOrigin(1, 1)
 
         this.settingsMenu = [this.settingsText, this.settingsPilot]

@@ -52,10 +52,11 @@
                 }]
             },
             fps: {
-                target: 60,
+                target: 60, // todo: do we want 60fps max?
                 forceSetTimeOut: true
             },
-            scene: [PreLoadingScene, GameScene, LevelSelectScene, EditorScene, BrowserScene, MenuScene, LoadingScene]
+            scene: [PreLoadingScene, GameScene, LevelSelectScene, EditorScene, BrowserScene, MenuScene, LoadingScene],
+            antialias: false
         }
 
         var game = new Phaser.Game(config)

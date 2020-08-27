@@ -12,6 +12,7 @@ class LoadingScene extends Phaser.Scene {
 
         if (getAndroid()) Android.getNewUserIdIfNeeded() // Every time we launch, we check if we have no id so we can create one if this is first time launch
 
+        this.load.bitmapFont('voxel_font', 'assets/voxel_font.png', 'assets/voxel_font.fnt')
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png')
         this.load.image('btn_restart', 'assets/menu/button_restart.png')

@@ -157,7 +157,7 @@ class LevelSelectScene extends Phaser.Scene {
 
         // Create tile text
         var text = (index == 0 && this.mode == SELECT_MODES.PLAY) ? "" : index
-        this.levelNumbers[index] = this.add.text(posX, this.LEVEL_BOX_HEIGHT, text, { fill: '#FFFFFF', fontSize: 50 * MIN_XY / 600, fontStyle: 'bold' }).setDepth(101).setOrigin(0.5, 0.5)
+        this.levelNumbers[index] = this.add.bitmapText(posX,  this.LEVEL_BOX_HEIGHT, 'voxel_font',text, 50 * MIN_XY / 600).setDepth(101).setOrigin(0.5, 0.5)
     }
 
     updateSprites(position, duration, forceReload) {
