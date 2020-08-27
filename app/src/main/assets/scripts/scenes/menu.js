@@ -14,6 +14,10 @@ class MenuScene extends Phaser.Scene {
             if (this.caller == 'GameScene') this.scene.get('GameScene').ui.toggleVisibility(true)
             this.scene.resume(this.caller); this.scene.stop()
         })
+
+        // Create quiet button click sound
+        this.buttonSound = this.game.sound.add('buttonDown')
+        this.buttonSound.volume = 0.1
     }
 
     create() {
@@ -21,16 +25,18 @@ class MenuScene extends Phaser.Scene {
         const TEXT_SPACING = getXY(0.09)
         var scene = this
 
-        // MAIN MENU
+        // [MAIN MENU]
 
         this.upvote = this.add.sprite(SIZE_X / 2 - getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'btn_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
         this.upvote.on('pointerdown', () => {
+            scene.buttonSound.play()
             scene.scene.get('GameScene').ui.setVote(true)
             scene.upvote.setTint("0xffffff"); scene.downvote.setTint("0x777777")
         })
 
         this.downvote = this.add.sprite(SIZE_X / 2 + getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'btn_downvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
         this.downvote.on('pointerdown', () => {
+            scene.buttonSound.play()
             scene.scene.get('GameScene').ui.setVote(false)
             scene.downvote.setTint("0xffffff"); scene.upvote.setTint("0x777777")
         })
@@ -62,23 +68,34 @@ class MenuScene extends Phaser.Scene {
 
         this.mainMenuSprites = [this.mainCampaign, this.mainUserLevels, this.mainLevelEdit, this.mainAbout, this.solidBackground]
         this.pauseMenuSprites = [this.mainMenu, this.mainReturn, this.pauseText, this.transBackground]
-        if (this.caller == 'GameScene' && this.scene.get('GameScene').public) 
-            {this.pauseMenuSprites.push(this.upvote); this.pauseMenuSprites.push(this.downvote)}
+        if (this.caller == 'GameScene' && this.scene.get('GameScene').public) { this.pauseMenuSprites.push(this.upvote); this.pauseMenuSprites.push(this.downvote) }
 
-        // SHARED - side menu return button
+        // [SHARED] - side menu return button
 
         this.sideReturn = this.add.sprite(SIZE_X + getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.sideReturn.on('pointerdown', () => scene.tweenSideMenu(SIZE_X / 2))
 
-        // SETTINGS MENU
+        // [SETTINGS MENU]
 
+        this.settingsMenu = []
         const Y_START = 200 * MIN_XY / 600 / 3
-        this.settingsText = this.add.bitmapText(SIZE_X + SIZE_X / 2, Y_START, 'voxel_font', "Settings", 40 * MIN_XY / 600).setDepth(100).setTint("0").setOrigin(0.5, 0)
-        this.settingsPilot = this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(100).setScale(MIN_XY / 600).setOrigin(1, 1)
 
-        this.settingsMenu = [this.settingsText, this.settingsPilot]
+        // Sound change button
+        for (var i = 0; i < 4; i++) {
+            var button = this.add.sprite(SIZE_X + getX(0.4), getY(0.4), 'btn_volume_' + i).setScale(0.3 * MIN_XY / 600).setOrigin(0, 0.5).setInteractive().setDepth(100)
+            this.settingsMenu.push(button)
+            button.on('pointerdown', function (pointer) {
+                scene.buttonSound.play()
+                scene.settingsMenu[audio.volumeIndex].visible = false
+                audio.toggleVolume()
+                scene.settingsMenu[audio.volumeIndex].visible = true
+            })
+        }
 
-        // ABOUT MENU
+        this.settingsMenu.push(this.add.bitmapText(SIZE_X + SIZE_X / 2, Y_START, 'voxel_font', "Settings", 40 * MIN_XY / 600).setDepth(100).setTint("0").setOrigin(0.5, 0))
+        this.settingsMenu.push(this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(100).setScale(MIN_XY / 600).setOrigin(1, 1))
+
+        // [ABOUT MENU]
 
         this.aboutHeaderContainer = scene.add.container(0, 0).setDepth(100)
         const version = getAndroid() ? "Version: " + Android.getVersion() : "version: 0.0.0"
@@ -104,7 +121,8 @@ class MenuScene extends Phaser.Scene {
     }
 
     switchToMainMenu() {
-        if (this.caller == null) {console.log("Error: no caller?"); return} // should never happen
+        this.buttonSound.play()
+        if (this.caller == null) { console.log("Error: no caller?"); return } // should never happen
         if (!this.ASK_CLOSE.includes(this.caller)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
@@ -114,21 +132,26 @@ class MenuScene extends Phaser.Scene {
             this.scene.stop(this.caller)
             this.caller = null
         } else if (this.caller == "GameScene" && (this.scene.get('GameScene').levelStatus != LEVEL_STATUS.PLAYING ||
-                                                  this.scene.get('GameScene').timePlaying < 4000)) {
-                this.setVisibility(true)
-                this.scene.stop(this.caller)
-                this.caller = null
+            this.scene.get('GameScene').timePlaying < 4000)) {
+            this.setVisibility(true)
+            this.scene.stop(this.caller)
+            this.caller = null
         } else {
             var scene = this
             showDialog(this, 400, 'Leaving world', 'Stop without saving?', 'Cancel', 'Continue', () => {
                 scene.scene.stop(scene.caller)
                 scene.setVisibility(true)
-                scene.caller = null})
+                scene.caller = null
+            })
         }
     }
 
     // Handles everything related to starting a scene
     startScene(sceneKey, option) {
+        // Start music
+        this.buttonSound.play()
+        audio.start()
+
         // Reset camera
         this.cameras.main.centerOnX(SIZE_X / 2)
         this.scene.get(this.caller ? this.caller : 'MenuScene').cameras.main.centerOnX(SIZE_X / 2)
@@ -159,7 +182,15 @@ class MenuScene extends Phaser.Scene {
     }
 
     openSideMenu(isAbout) {
-        this.settingsMenu.forEach(sprite => sprite.visible = !isAbout)
+        // Start music
+        this.buttonSound.play()
+        audio.start()
+
+        this.settingsMenu.forEach(sprite => {
+            var key = sprite.texture.key
+            if (key.includes('btn_volume_')) sprite.visible = (!isAbout && key.slice(-1) == audio.volumeIndex.toString())
+            else sprite.visible = !isAbout
+        })
         this.aboutMenu.forEach(sprite => sprite.visible = isAbout)
         this.tweenSideMenu(3 * SIZE_X / 2)
     }

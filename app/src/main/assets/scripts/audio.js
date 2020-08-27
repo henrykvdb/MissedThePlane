@@ -1,4 +1,4 @@
-const VOLUME_STEP = 0.3
+const VOLUME_STEP = 0.35
 
 class Audio{
     constructor(game) {
@@ -26,7 +26,7 @@ class Audio{
 
     toggleVolume() {
         this.volumeIndex = ++this.volumeIndex%4
-        this.game.sound.volume = VOLUME_STEP * this.volumeIndex
+        this.music.volume = VOLUME_STEP * this.volumeIndex
     }
 
     start() {
@@ -35,7 +35,6 @@ class Audio{
         
         this.music = this.game.sound.add('music', { loop: true })
         this.music.play()
-        this.game.sound.setVolume(this.volumeIndex * VOLUME_STEP)
-        this.game.sound.pauseOnBlur = false
+        this.music.setVolume(this.volumeIndex * VOLUME_STEP)
     }
 }
