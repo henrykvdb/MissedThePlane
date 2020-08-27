@@ -24,7 +24,7 @@ class UI {
         // Press button
         this.btnInteract = scene.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_interact').setOrigin(1, 1).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnInteract.on('pointerdown', function (pointer) {
-            scene.world.pilot.interact()
+            scene.world.triggerButton()
         })
 
         // Back/menu button

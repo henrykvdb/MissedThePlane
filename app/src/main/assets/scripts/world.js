@@ -115,7 +115,8 @@ class World {
         return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])]
     }
 
-    triggerButton(coords) {
+    triggerButton() {
+        var coords = this.pilot.coords
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
             coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
