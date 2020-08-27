@@ -232,12 +232,17 @@ class EditorScene extends Phaser.Scene {
 
         // Make scrollbar
         const SCROLLBAR_HEIGHT = TILE_HEIGHT - this.TILE_SCALE * 200
-        var clickCatcher = this.add.rectangle(0, 0, SIZE_X, SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.01).setDepth(50).setInteractive({ draggable: true })
+        var clickCatcher = this.add.rectangle(0, 0, SIZE_X, SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.001).setDepth(50).setInteractive({ draggable: true })
         var scrollbar = this.add.rectangle(0, SCROLLBAR_HEIGHT, SIZE_X, SIZE_Y - SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.5).setDepth(50).setInteractive({ draggable: true })
 
         // Draw slider
         this.sprites = SLIDER_SPRITES // Seperate for if we ever want to implement categories
         this.updateDrawerSprites(this.position, 0)
+
+        // User starts dragging - handle editor
+        this.input.on('dragstart', function (pointer, gameObject) {
+            if (gameObject == clickCatcher) scene.handleInput()
+        })
 
         // User is dragging - update positions
         this.input.on('drag', function (pointer, gameObject, dragX) {
@@ -255,7 +260,7 @@ class EditorScene extends Phaser.Scene {
 
         // User stops dragging - snap to discrete position
         this.input.on('dragend', function (pointer, gameObject) {
-            if (gameObject == clickCatcher) return
+            if (gameObject == clickCatcher) { scene.handleInput(); return }
 
             var distance = (pointer.downX - pointer.upX) / scene.DRAG_WEIGHT
             var time = pointer.upTime - pointer.downTime
