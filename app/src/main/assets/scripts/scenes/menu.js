@@ -48,7 +48,7 @@ class MenuScene extends Phaser.Scene {
         this.mainCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.PLAY))
 
         this.mainUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_browser').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainUserLevels.on('pointerdown', () => scene.startScene('BrowserScene'))
+        this.mainUserLevels.on('pointerdown', () => scene.startScene('BrowserScene', {noRefresh: false}))
 
         this.mainLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_main_editor').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainLevelEdit.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.EDIT))
