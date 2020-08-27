@@ -2,12 +2,11 @@ const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
 
 class Pilot {
-    constructor(game, coords, dir, speedMod) {
+    constructor(game, coords, dir) {
         // Init code of pilot
         this.coords = coords
         this.dirVector = [0, 0]
         this.game = game
-        this.speedMod = (speedMod ? speedMod : 1)
         this.dir = dir
         this.foundDoor = false // Bool just for home level, but eh
         this.path = [] // Array of coordinates, in order of which to go to next

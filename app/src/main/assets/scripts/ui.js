@@ -82,7 +82,7 @@ class UI {
 
     showRatingOptions() {
         var rateText = this.scene.add.text(SIZE_X / 2, getXY(0.24), "How did you like this level?", { fill: '#FFFFFF', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(150).setAlpha(0)
-        var background = this.scene.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(120).setOrigin(0, 0).setTint("0x000000").setAlpha(0).setInteractive()
+        var background = this.scene.add.rectangle(0, 0, 2*SIZE_X, SIZE_Y, 0x000000).setAlpha(0).setDepth(120).setOrigin(0).setInteractive()
 
         this.upvote = this.scene.add.sprite(SIZE_X / 2 - getXY(0.25), SIZE_Y / 2, 'btn_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0).setTint("0x777777")
         this.upvote.on('pointerdown', () => this.setVote(true))
@@ -116,7 +116,7 @@ class UI {
         if (!LEVELS_WITH_TUTORIAL.includes(index)) return // Add all levels with tutorials here
         var tutorialElements = []
         // TODO: stop inputs during tutorial?
-        tutorialElements.push(this.scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(150).setOrigin(0).setTint(0, 0, 0).setAlpha(0.6).setInteractive())
+        tutorialElements.push(this.scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.6).setDepth(150).setOrigin(0).setInteractive())
         if (index == 1) {
             var title = this.scene.add.text(SIZE_X / 2, getXY(0.14), "Plane turns RIGHT before a mountain", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' })
             title.setDepth(150).setOrigin(0.5, 0)

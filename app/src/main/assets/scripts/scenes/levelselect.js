@@ -38,7 +38,7 @@ class LevelSelectScene extends Phaser.Scene {
 
     create() {
         const scene = this;
-        this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
+        this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
 
         // Close button
         this.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
@@ -82,6 +82,7 @@ class LevelSelectScene extends Phaser.Scene {
         const CENTER_OFFSET = 400 * this.LEVEL_BOX_SCALE
         this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT - CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 1).setScale(this.LEVEL_BOX_SCALE).setDepth(100)
         this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 0).setScale(this.LEVEL_BOX_SCALE).setDepth(100).flipY = true
+        var scrollbar = this.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setOrigin(0).setAlpha(0.2).setDepth(50).setInteractive({ draggable: true })
 
         // Init default state
         // TODO: if the user is saving, maybe it makes sense to let the select start on the current save slot
@@ -93,10 +94,6 @@ class LevelSelectScene extends Phaser.Scene {
         this.levelSprites = Array(this.LEVELS.length)
         this.levelNumbers = Array(this.LEVELS.length)
         this.redraw()
-
-        // Make scrollbar
-        var scrollbar = this.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setInteractive({ draggable: true })
-        scrollbar.setScale(SIZE_X).setOrigin(0).setTint(0, 0, 0).setAlpha(0.2)
 
         // User is dragging - update positions
         this.input.on('drag', function (pointer, gameObject, dragX) {
