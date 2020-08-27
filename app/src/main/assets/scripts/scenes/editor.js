@@ -23,7 +23,6 @@ class EditorScene extends Phaser.Scene {
         this.shiftEnabled = false
         this.position = TILES_LEVEL_EDITOR.length + (1 - this.COUNT_DISPLAY) / 2 + 2 // +2 to account for the two entities (pilot & plane)
         this.relativePos = 0
-        this.levelIndex = 0
     }
 
     create() {

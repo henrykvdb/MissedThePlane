@@ -6,6 +6,7 @@
 .DS_Store
 /build
 /captures
+/extra/signing
 .externalNativeBuild
 .cxx
 app/release
