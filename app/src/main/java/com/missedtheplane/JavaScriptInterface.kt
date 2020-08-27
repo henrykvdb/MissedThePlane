@@ -136,13 +136,13 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
     /** Publishes one of the levels the user currently has saved locally */
     @JavascriptInterface
     fun publishLevel(levelSlot: String, levelString: String, levelName: String): Boolean {
-        // TODO: check if the user doesn't have more than x published levels total?
-        // TODO send errors to js as well as soon as it works
         val userId = getUserId()
         GlobalScope.launch {
             var levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
-            if (getAuthorName() == "") {addError("User $userId tried publishing without having author name!"); return@launch}
+            if (getAuthorName() == "") {
+                sendToJs("receivePublishResponse", "{\"success\": true, \"error\": \"No author name is set, try again?\"}")
+                addError("User $userId tried publishing without having author name!"); return@launch}
             if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer (?) version from his level than he currently has saved in the db
                 addError("User $userId published a level which doesn't correspond to his saved level $levelId!!")
                 levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on

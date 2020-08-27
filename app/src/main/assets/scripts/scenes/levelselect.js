@@ -245,6 +245,7 @@ class LevelSelectScene extends Phaser.Scene {
                     waitForPublishResult().then(() => {
                         if (publishResponse.success) {
                             Android.setPublished(index, true)
+                            scene.redraw()
                             showDialog(scene, 500, 'Success!', 'Your level is now public.', undefined, 'Great!')
                         }
                         else showDialog(scene, 500, 'Error', 'An error occured while publishing:\n'+publishResponse.error, undefined, 'Okay...')

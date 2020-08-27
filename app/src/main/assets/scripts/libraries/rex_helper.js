@@ -7,7 +7,7 @@ function createTextDialog1Option(scene, depth, title, body, positive) {
 
         title: scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x003c8f).setInteractive(),
-            text: scene.add.text(0, 0, title, { fontSize: 35 * MIN_XY / 600, fontStyle: 'bold' }),
+            text: scene.add.bitmapText(0,  0, 'voxel_font', title, 35 * MIN_XY / 600),
             space: {
                 left: getXY(0.015),
                 right: getXY(0.015),
@@ -16,12 +16,12 @@ function createTextDialog1Option(scene, depth, title, body, positive) {
             }
         }),
 
-        content: scene.add.text(0, 0, body, { fontSize: 30 * MIN_XY / 600 }),
+        content: scene.add.bitmapText(0,  0, 'voxel_font', body, 30 * MIN_XY / 600),
 
         actions: [
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                text: scene.add.text(0, 0, positive, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                text: scene.add.bitmapText(0,  0, 'voxel_font', positive, 30 * MIN_XY / 600),
                 space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
                 align: 'center'
             }),
@@ -57,7 +57,7 @@ function createTextDialog2Options(scene, depth, title, body, negative, positive)
 
         title: scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x003c8f).setInteractive(),
-            text: scene.add.text(0, 0, title, { fontSize: 35 * MIN_XY / 600, fontStyle: 'bold' }),
+            text: scene.add.bitmapText(0,  0, 'voxel_font', title, 35 * MIN_XY / 600),
             space: {
                 left: getXY(0.015),
                 right: getXY(0.015),
@@ -66,18 +66,18 @@ function createTextDialog2Options(scene, depth, title, body, negative, positive)
             }
         }),
 
-        content: scene.add.text(0, 0, body, { fontSize: 30 * MIN_XY / 600 }),
+        content: scene.add.bitmapText(0,  0, 'voxel_font', body, 30 * MIN_XY / 600),
 
         actions: [
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                text: scene.add.text(0, 0, negative, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                text: scene.add.bitmapText(0,  0, 'voxel_font', negative, 30 * MIN_XY / 600),
                 space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
                 align: 'left'
             }),
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                text: scene.add.text(0, 0, positive, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                text: scene.add.bitmapText(0,  0, 'voxel_font', positive, 30 * MIN_XY / 600),
                 space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
                 align: 'right'
             })
@@ -116,7 +116,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
         key = reference[i]
         keys[key] = scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.01)).setStrokeStyle(getXY(0.005), COLOR_LIGHT),
-            text: scene.add.text(0, 0, key, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+            text: scene.add.bitmapText(0,  0, 'voxel_font',key, 30 * MIN_XY / 600),
             align: 'center',
         })
     }
@@ -149,7 +149,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
             width: getXY(0.7), // Minimum width of round-rectangle
             height: getXY(0.1), // Minimum height of round-rectangle
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-            text: scene.add.text(0, 0, text, { fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }),
+            text: scene.add.bitmapText(0,  0, 'voxel_font',text, 25 * MIN_XY / 600).setOrigin(0,0.5),
             space: { left: 10, right: 10, top: 10, bottom: 10 }
         })
         return field
@@ -182,7 +182,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
 
         title: scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x003c8f).setInteractive(),
-            text: scene.add.text(0, 0, title, { fontSize: 35 * MIN_XY / 600, fontStyle: 'bold' }),
+            text: scene.add.bitmapText(0,  0, 'voxel_font', title, 35 * MIN_XY / 600),
             space: {
                 left: getXY(0.015),
                 right: getXY(0.015),
@@ -198,13 +198,13 @@ function createInputDialog(scene, depth, title, negative, positive) {
         actions: [
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                text: scene.add.text(0, 0, negative, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                text: scene.add.bitmapText(0,  0, 'voxel_font',negative, 30 * MIN_XY / 600),
                 space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
                 align: 'left'
             }),
             scene.rexUI.add.label({
                 background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, 0x5e92f3),
-                text: scene.add.text(0, 0, positive, { fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }),
+                text: scene.add.bitmapText(0,  0, 'voxel_font', positive, 30 * MIN_XY / 600),
                 space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
                 align: 'right'
             })
@@ -243,7 +243,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
 
 // Easy wrapper handling input blocking, dialog destroying etc
 function showDialog(scene, depth, title, body, negative, positive, callback) {
-    var stopInputs = scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(depth-1).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+    var stopInputs = scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(depth-1).setOrigin(0).setInteractive()
     if (negative != undefined && negative != "") var textDialog = createTextDialog2Options(scene, depth, title, body, negative, positive)
     else var textDialog = createTextDialog1Option(scene, depth, title, body, positive)
     textDialog.on('button.click', function (button, groupName, index) {
@@ -255,7 +255,7 @@ function showDialog(scene, depth, title, body, negative, positive, callback) {
 
 // Wrapper for input handling
 function showInputDialog(scene, depth, title, negative, positive, callback) {
-    var stopInputs = scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(depth-1).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+    var stopInputs = scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(depth-1).setOrigin(0).setInteractive()
     var inputDialog = createInputDialog(scene, depth, title, negative, positive)
     inputDialog.on('button.click', function (button, groupName, index) {
         inputDialog.destroy()
@@ -271,25 +271,25 @@ function showInputDialog(scene, depth, title, negative, positive, callback) {
 // confirmation dialog, both which will return to the input dialog when closed. If the confirm dialog is accepted it will run the
 // confirm callback.
 function showComboDialog(scene, depth, inputSettings, inputChecker, wrongInputSettings, confirmSettings, confirmCallback) {
-    var stopInputs = scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(depth).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+    var stopInputs = scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(depth-1).setOrigin(0).setInteractive()
     var inputDialog = createInputDialog(scene, depth, inputSettings.title, inputSettings.negative, inputSettings.positive)
     inputDialog.on('button.click', function (button, groupName, index) {
         if (index == 0) {inputDialog.destroy(); stopInputs.destroy(); return}
-        var stopInputs2 = scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(depth+99).setOrigin(0, 0).setAlpha(0.01).setInteractive()
+        var stopInputs2 = scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(depth+99).setOrigin(0).setInteractive()
         var input = scene.userInput
         if (inputChecker(input)) { // We got good input
             var confirmDialog = createTextDialog2Options(scene, depth+100, confirmSettings.title, confirmSettings.body+input, confirmSettings.negative, confirmSettings.positive)
-            confirmDialog.on('button.click', function (button, groupName, index) {
+            confirmDialog.on('button.click', function (button, groupName, index2) {
                 confirmDialog.destroy()
                 stopInputs2.destroy()
-                if (index == 0) return
+                if (index2 == 0) return
                 inputDialog.destroy()
                 stopInputs.destroy()
                 confirmCallback(input)
             }, scene)
         } else { // We got bad input
             var failDialog = createTextDialog1Option(scene, depth+100, wrongInputSettings.title, wrongInputSettings.body, wrongInputSettings.positive)
-            failDialog.on('button.click', function (button, groupName, index) {
+            failDialog.on('button.click', function (button, groupName, index2) {
                 failDialog.destroy()
                 stopInputs2.destroy()
             }, scene)
