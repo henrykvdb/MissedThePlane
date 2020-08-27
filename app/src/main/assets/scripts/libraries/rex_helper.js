@@ -108,7 +108,6 @@ function createTextDialog2Options(scene, depth, title, body, negative, positive)
 function createInputDialog(scene, depth, title, negative, positive) {
     // Create input field
     scene.userInput = ""
-    var field = createLabel(scene, 'Content')
 
     // Create keys
     var keys = []

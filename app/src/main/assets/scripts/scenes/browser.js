@@ -16,16 +16,14 @@ class BrowserScene extends Phaser.Scene {
     }
 
     create() {
+        var scene = this
+        scene.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        scene.btnMenu.on('pointerdown', function (pointer) {
+            scene.scene.start('MenuScene', {caller: null})
+        })
         if (this.noRefresh && PUBLIC_LEVELS.length > 0) this.createBrowser(this) // We already have levels saved, we simply display them
         else if (getAndroid()) { // We don't have levels or want to refresh, we fetch from server
-            var scene = this
             Android.getPublishedLevels()
-
-             // Close button
-            scene.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-            scene.btnMenu.on('pointerdown', function (pointer) {
-                scene.scene.start('MenuScene', {caller: null})
-            })
 
             var loadingText = this.add.text(SIZE_X / 2, SIZE_Y / 2, "Loading levels...", { fill: '#FFFFFF', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(100)
             scene.tweens.add({targets: loadingText, alpha: 0, duration: 700, delay: 1000})
@@ -40,9 +38,7 @@ class BrowserScene extends Phaser.Scene {
         
     }
 
-    createBrowser(scene) {
-        scene.add.tileSprite(0, 0, SIZE_X, SIZE_Y, 'menu_invisible').setDepth(0).setOrigin(0, 0).setTint("0xD0EEFF")
-    
+    createBrowser(scene) {   
         const BUTTON_SPACING = getXY(0.3)
         scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortVotes.on('pointerdown', function (pointer) { 
@@ -145,10 +141,10 @@ var createCard = function (scene, levelData) {
 
     var thumbInfo = scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 0, bottom: 0, item: 10 }})
     .add(scene.add.sprite(0, 0, 'upvote').setScale(0.15), {align: 'left'})
-    .add(scene.add.bitmapText(0, 0, 'voxel_font', levelData.upvotes, 25 * MIN_XY / 600).setTint("0"), {align: 'left'})
+    .add(scene.add.text(0, 0, levelData.upvotes,{ fill: '#000000', fontSize: 25 * MIN_XY / 600}, {align: 'left'}))
     .addSpace()
     .add(scene.add.sprite(0, 0, 'downvote').setScale(0.15), {align: 'right'})
-    .add(scene.add.bitmapText(0, 0, 'voxel_font', levelData.downvotes, 25 * MIN_XY / 600).setTint("0"), {align: 'right'})
+    .add(scene.add.text(0, 0, levelData.downvotes,{ fill: '#000000', fontSize: 25 * MIN_XY / 600}, {align: 'right'}))
     .setDepth(100)
 
     var rateBar = levelData.upvotes+levelData.downvotes <= 0 ? "rating20" : 'rating' + Math.floor(20*levelData.upvotes/(levelData.upvotes+levelData.downvotes))
@@ -158,7 +154,7 @@ var createCard = function (scene, levelData) {
 
     var clearInfo = scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 0, bottom: 0, item: 10 }})
     .add(scene.add.sprite(0, 0, 'trophy').setScale(0.15))
-    .add(scene.add.bitmapText(0, 0, 'voxel_font', 'Solved: ' + (levelData.plays <= 0 ? 0 : Math.round(levelData.clears/levelData.plays*100)) + '%', 25 * MIN_XY / 600).setTint("0"))
+    .add(scene.add.text(0, 0, 'Solved: ' + (levelData.plays <= 0 ? 0 : Math.round(levelData.clears/levelData.plays*100)) + '%',{ fill: '#000000', fontSize: 25 * MIN_XY / 600}))
     .setDepth(100)
 
     var clearBar = levelData.plays <= 0 ? 'clear0' : 'clear' + Math.floor(20*levelData.clears/levelData.plays)
@@ -167,9 +163,9 @@ var createCard = function (scene, levelData) {
     .add(scene.add.sprite(0, 0,  clearBar).setScale(20, 40)).setDepth(100)
 
     var toprowSizer = scene.rexUI.add.sizer({orientation: 'x', space: { left: 0, right: 0, top: 0, bottom: 0, item: 20 }})
-    .add(scene.add.bitmapText(0, 0, 'voxel_font', levelData.name, 30 * MIN_XY / 600).setTint("0"), {align: 'left'})
+    .add(scene.add.text(0, 0, levelData.name,{ fill: '#000000', fontSize: 30 * MIN_XY / 600, fontStyle: 'bold' }, {align:'left'}))
     .addSpace()
-    .add(scene.add.bitmapText(0, 0, 'voxel_font', "by " + levelData.authorName + " " + date, 20 * MIN_XY / 600).setTint("0"), {align: 'right'})
+    .add(scene.add.text(0, 0, "by " + levelData.authorName + " " + date, { fill: '#000000', fontSize: 20 * MIN_XY / 600}, {align:'right'}))
     .setDepth(100)
 
     var botrowSizer = scene.rexUI.add.sizer({orientation: 'x', space: { left: 20, right: 20, top: 20, bottom: 0, item: 40 }})
