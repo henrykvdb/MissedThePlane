@@ -12,7 +12,9 @@ class LoadingScene extends Phaser.Scene {
 
         if (getAndroid()) Android.getNewUserIdIfNeeded() // Every time we launch, we check if we have no id so we can create one if this is first time launch
 
+        // Load fonts
         this.load.bitmapFont('voxel_font', 'assets/voxel_font.png', 'assets/voxel_font.fnt')
+
         // Load menu assets
         this.load.image('btn_next', 'assets/menu/button_next.png')
         this.load.image('btn_restart', 'assets/menu/button_restart.png')
@@ -43,6 +45,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('testbar', 'assets/menu/testBar.png')
         this.load.image('trophy', 'assets/menu/trophy.png')
         this.load.image('arrow_down', 'assets/tutorial/arrow_down.png')
+        for (var i = 0; i < 4; i++) this.load.image('btn_volume_' + i, 'assets/menu/button_volume_' + i + '.png')
         this.load.image('sort_upvote', 'assets/menu/button_sort_upvote.png')
         this.load.image('sort_clear', 'assets/menu/button_sort_trophy.png')
         this.load.image('sort_date', 'assets/menu/button_sort_date.png')
@@ -84,8 +87,7 @@ class LoadingScene extends Phaser.Scene {
 
         this.load.image('plank', 'assets/tiles/plank.png')
         this.load.image('water', 'assets/tiles/water.png')
-        this.load.image('button0', 'assets/tiles/button0.png')
-        this.load.image('button1', 'assets/tiles/button1.png')
+        for (var i = 0; i < 2; i++)  ['r','b'].forEach(suffix => {this.load.image('button' + i + suffix, 'assets/tiles/button'+ i + suffix + '.png')});
 
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');

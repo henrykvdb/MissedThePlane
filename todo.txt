@@ -7,7 +7,6 @@ Should do
     ~ New controls explanation
 - UI
     - Decorate main menu
-    - Create settings menu
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
 - Ads
     - GDPR & child protection laws
@@ -16,13 +15,17 @@ Should do
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 - Better level editor tile order
 - Keep nav bar hidden
+- Space level name
+- Reviews
+    - Settings menu button
+    - Review prompt every n levels?
 
 Nice to have
 - Smoother UI / animations
 - Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
 - Try-catch-send-error around entire program so we can see when games are crashing
-- Write us anything box
+- Settings menu: Write us anything box
 - Water animations
 - Level spawn animation
 - Scroll bar momentum

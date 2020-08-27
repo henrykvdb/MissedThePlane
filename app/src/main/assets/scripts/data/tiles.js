@@ -60,18 +60,18 @@ const TILES = {
     },
     BUTTON: {
         id: 9,
-        assets: ['button0'],
+        assets: ['button0r','button1r'],
         passable_pilot: true,
         passable_plane: true,
         levelEditor: true,
         z_index: 0
     },
-    BUTTON_PRESSED: {
+    BUTTON_OTHER: {
         id: 10,
-        assets: ['button1'],
+        assets: ['button0b','button1b'],
         passable_pilot: true,
         passable_plane: true,
-        levelEditor: false,
+        levelEditor: true,
         z_index: 0
     },
     MISC_0: {

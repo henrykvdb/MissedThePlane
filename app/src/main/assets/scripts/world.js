@@ -55,11 +55,15 @@ class World {
         // Choose asset from the tile's asset dictionary
         var asset;
         if (tileTypeEnum == TILES.RUNWAY) {
-            this.runwayCoords.push([x,y])
-            var neighbours = getNeighbourCoords([x, y], this.tiles.length).map((c, i) => [this.getTile(c), i]).filter(t => t[0] == TILES.RUNWAY)
+            this.runwayCoords.push([x, y])
+            var neighbours = getNeighbourCoords([x, y]).map((c, i) => [this.getTile(c), i]).filter(t => t[0] == TILES.RUNWAY)
             if (neighbours.length == 0) asset = tileTypeEnum.assets[2] // default orientation 1 long runway
             else if (neighbours.length == 1) asset = tileTypeEnum.assets[2 + neighbours[0][1]] // End runway
             else asset = tileTypeEnum.assets[neighbours[0][1]] // Center runway
+        }
+        else if (tileTypeEnum == TILES.BUTTON || tileTypeEnum == TILES.BUTTON_OTHER){
+            if(random) asset = tileTypeEnum.assets[0]
+            else asset = tileTypeEnum.assets[rng]
         }
         else if (!random) asset = tileTypeEnum.assets[rng]
         else if (random) asset = tileTypeEnum.assets[Math.floor(rng * tileTypeEnum.assets.length)]
@@ -88,9 +92,14 @@ class World {
         return collisionTiles.some(v => collisionList.includes(v))
     }
 
-    toggleTile(coords, typeA, typeB) {
-        if (this.getTile(coords) == typeA) this.setTile(coords, typeB)
-        else this.setTile(coords, typeA)
+    nextAsset(coords) {
+        var x = Math.floor(coords[0]); var y = Math.floor(coords[1])
+        var tile = this.tiles[x][y]
+        var sprite = this.sprites[x][y]
+
+        this.sprites[x][y].destroy()
+        var nextAsset = (tile.assets.indexOf(sprite.texture.key) + 1) % tile.assets.length
+        this.sprites[x][y] = this.createTileSprite(x, y, false, nextAsset)
     }
 
     setTile(coords, type) {
@@ -106,14 +115,15 @@ class World {
         return this.tiles[Math.floor(coords[0])][Math.floor(coords[1])]
     }
 
-    triggerButton(coords) {
+    triggerButton() {
+        var coords = this.pilot.coords
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
             coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
-        if (this.getTile(tilePos) != TILES.BUTTON && this.getTile(tilePos) != TILES.BUTTON_PRESSED) return // todo maybe throw error here or something
+        if (this.getTile(tilePos) != TILES.BUTTON && this.getTile(tilePos) != TILES.BUTTON_OTHER) return // todo maybe throw error here or something
 
         // Check if blocked
-        var neighbours = getNeighbourCoords(tilePos, this.tiles.length)
+        var neighbours = this.getTile(tilePos) == TILES.BUTTON ?getNeighbourCoords(tilePos):getNeighbourDiagonalCoords(tilePos)
         var withPlane = neighbours.filter(c => c[0] == Math.floor(this.plane.coords[0]) &&
             c[1] == Math.floor(this.plane.coords[1]) &&
             [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
@@ -132,8 +142,11 @@ class World {
             return
         }
 
-        this.buttonSounds[this.getTile(tilePos) == TILES.BUTTON ? 0 : 1].play()
-        this.toggleTile(tilePos, TILES.BUTTON, TILES.BUTTON_PRESSED)
+        // Play button sound, swap texture and cancel route
+        var x = Math.floor(coords[0]); var y = Math.floor(coords[1])
+        this.buttonSounds[this.tiles[x][y].assets.indexOf(this.sprites[x][y].texture.key)].play()
+        this.nextAsset(tilePos)
+        this.updatePilotPath(tilePos)
 
         // We switch neighbouring tiles from grass to mountain and vice versa
         neighbours.filter(c => [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c))).forEach(c => {
@@ -163,7 +176,7 @@ class World {
         if (TILES.RUNWAY == this.getTile(this.pilot.coords)) { // The pilot is a snobhead and needs to move out of the way
             // Get neighbour tiles of the runways
             var neighbourRunway = []
-            this.runwayCoords.forEach(c => getNeighbourCoords(c, this.tiles.length).forEach(c => neighbourRunway.push(c)))
+            this.runwayCoords.forEach(c => getNeighbourCoords(c).forEach(c => neighbourRunway.push(c)))
             neighbourRunway = neighbourRunway.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c)) && TILES.RUNWAY != this.getTile(c)).map(c => {
                 // We have filtered out all inaccessible neighbours, now we need to find the closest one to the pilot (using eucledian distance as runway is a straight line anyway)
                 return { coord: c, distance: Math.hypot(c[0] + 0.5 - this.pilot.coords[0], c[1] + 0.5 - this.pilot.coords[1]) }
@@ -174,7 +187,7 @@ class World {
             if (neighbourRunway.length != 0) this.updatePilotPath(neighbourRunway[0].coord)
             // If there are no free tiles anywhere next to the runway, we move to the back or the front depending on how long the runway is
             else {
-               var startTile = [Math.floor(this.plane.coords[0]), Math.floor(this.plane.coords[1])]
+                var startTile = [Math.floor(this.plane.coords[0]), Math.floor(this.plane.coords[1])]
                 if (this.runwayCoords.length > PLANE_LANDING_LENGTH + 1) { //Path to end
                     var endTile = this.runwayCoords.filter(c => TILES.RUNWAY.assets.indexOf(this.sprites[c[0]][c[1]].texture.key) >= 2)
                     endTile = endTile.filter(c => c[0] != startTile[0] || c[1] != startTile[1])
@@ -320,12 +333,22 @@ function getGridCoords(game, screenX, screenY) {
     return [Math.floor(posX), Math.floor(posY)]
 }
 
-function getNeighbourCoords(coords, fieldSize) {
+function getNeighbourCoords(coords) {
     var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
     var neighbours = [] // NE first then clockwise, runways rely on this
     neighbours.push([tilePos[0] - 1, tilePos[1]])
     neighbours.push([tilePos[0], tilePos[1] + 1])
     neighbours.push([tilePos[0] + 1, tilePos[1]])
     neighbours.push([tilePos[0], tilePos[1] - 1])
+    return neighbours
+}
+
+function getNeighbourDiagonalCoords(coords) {
+    var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
+    var neighbours = [] // NE first then clockwise, runways rely on this
+    neighbours.push([tilePos[0] - 1, tilePos[1] - 1])
+    neighbours.push([tilePos[0] - 1, tilePos[1] + 1])
+    neighbours.push([tilePos[0] + 1, tilePos[1] + 1])
+    neighbours.push([tilePos[0] + 1, tilePos[1] - 1])
     return neighbours
 }

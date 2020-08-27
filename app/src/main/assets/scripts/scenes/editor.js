@@ -232,10 +232,8 @@ class EditorScene extends Phaser.Scene {
 
         // Make scrollbar
         const SCROLLBAR_HEIGHT = TILE_HEIGHT - this.TILE_SCALE * 200
-        var scrollbar = this.add.tileSprite(0, SCROLLBAR_HEIGHT, 1, SIZE_Y - SCROLLBAR_HEIGHT, 'menu_invisible').setDepth(150)
-        scrollbar.setScale(SIZE_X).setOrigin(0)
-        scrollbar.setInteractive({ draggable: true })
-        scrollbar.setTint(0, 0, 0).setAlpha(0.5)
+        var clickCatcher = this.add.rectangle(0, 0, SIZE_X, SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.01).setDepth(50).setInteractive({ draggable: true })
+        var scrollbar = this.add.rectangle(0, SCROLLBAR_HEIGHT, SIZE_X, SIZE_Y - SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.5).setDepth(50).setInteractive({ draggable: true })
 
         // Draw slider
         this.sprites = SLIDER_SPRITES // Seperate for if we ever want to implement categories
@@ -243,6 +241,8 @@ class EditorScene extends Phaser.Scene {
 
         // User is dragging - update positions
         this.input.on('drag', function (pointer, gameObject, dragX) {
+            if (gameObject == clickCatcher) { scene.handleInput(); return }
+
             // Calculate the relative drag position
             if (gameObject == scrollbar) scene.relativePos = -dragX / scene.DRAG_WEIGHT
             else scene.relativePos = (pointer.downX - dragX) / scene.DRAG_WEIGHT
@@ -255,6 +255,8 @@ class EditorScene extends Phaser.Scene {
 
         // User stops dragging - snap to discrete position
         this.input.on('dragend', function (pointer, gameObject) {
+            if (gameObject == clickCatcher) return
+
             var distance = (pointer.downX - pointer.upX) / scene.DRAG_WEIGHT
             var time = pointer.upTime - pointer.downTime
             scene.relativePos = 0
@@ -317,6 +319,75 @@ class EditorScene extends Phaser.Scene {
         if (getAndroid() && !this.madeChanges) Android.setSolvable(this.levelIndex, true)
     }
 
+    handleInput() {
+        // Get the sprite index and texture asset
+        var index = Math.round(this.position + this.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
+        while (index < 0) index += this.sprites.length
+        var texture = this.sprites[index].texture.key
+
+        // Get the input event
+        var pointer = this.input.activePointer
+        var coords = getGridCoords(this, pointer.x, pointer.y)
+
+        // Handle the input
+        if (texture.includes('plane')) {
+            if (!this.inPlaneBounds(coords)) return
+            if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.getTile(coords))) return
+            if (this.world.plane.coords[0] == coords[0] + 0.5 && this.world.plane.coords[1] == coords[1] + 0.5) return
+            this.world.plane.coords = [coords[0] + 0.5, coords[1] + 0.5]
+            this.world.plane.updateSprites()
+            this.makeChanges(false)
+        }
+        else if (texture.includes('pilot')) {
+            if (!this.inWorldBounds(coords)) return
+            if (TILES_IMPASSABLE_PILOT.includes(this.world.tiles[coords[0]][coords[1]])) return
+            if (this.world.pilot.coords[0] == coords[0] + 0.5 && this.world.pilot.coords[1] == coords[1] + 0.5) return
+            this.world.pilot.coords = [coords[0] + 0.5, coords[1] + 0.5]
+            this.world.pilot.updateSprites()
+            this.makeChanges(false)
+        }
+        else if (this.inWorldBounds(coords)) {
+            var oldTile = this.world.getTile(coords)
+            var newTile = TILES_LEVEL_EDITOR[index]
+            if (oldTile == newTile) return // No need to edit anything if this tile is already the selected tile
+
+            // Check pilot collision with impassible
+            var pilotCoords = this.world.pilot.coords
+            if (coords[0] == Math.floor(pilotCoords[0]) && coords[1] == Math.floor(pilotCoords[1]) && TILES_IMPASSABLE_PILOT.includes(newTile)) {
+                this.world.pilot.coords = [-10, -10] // He gone
+                this.world.pilot.updateSprites()
+            }
+
+            // Check plane collision with impassible
+            var planeCoords = this.world.plane.coords
+            if (coords[0] == Math.floor(planeCoords[0]) && coords[1] == Math.floor(planeCoords[1]) && TILES_IMPASSABLE_PLANE.includes(newTile)) {
+                this.world.plane.coords = [this.world.tiles.length + 0.5, 1.5]
+                this.world.plane.updateSprites()
+            }
+
+            // If the runway is not part of the previous runway convert the old one to grass
+            var removeOldRunway = false
+            if (newTile == TILES.RUNWAY) {
+                // Check if the new runway tile is in the right line
+                var runwayTiles = this.world.runwayCoords
+                if (runwayTiles.length > 1) {
+                    var index = TILES.RUNWAY.assets.indexOf(this.world.sprites[runwayTiles[0][0]][runwayTiles[0][1]].texture.key)
+                    removeOldRunway = (index % 2 == 0 && runwayTiles[0][1] != coords[1]) || (index % 2 == 1 && runwayTiles[0][0] != coords[0])
+                }
+
+                // Check if it is touching any of the previous runway tiles
+                if (runwayTiles.length > 0 && !getNeighbourCoords(coords, this.world.tiles.length).map(c => this.world.getTile(c)).includes(TILES.RUNWAY)) {
+                    removeOldRunway = true
+                }
+            }
+
+            // Remove runway
+            if (removeOldRunway) this.world.tiles.forEach((row, x) => row.forEach((type, y) => { if (type == TILES.RUNWAY) this.world.setTile([x, y], TILES.GRASS) }))
+
+            this.world.setTile(coords, newTile)
+            this.makeChanges(oldTile == TILES.RUNWAY || newTile == TILES.RUNWAY)
+        }
+    }
 
     update(_, dt) {
         // Get the sprite index and texture asset
@@ -325,69 +396,6 @@ class EditorScene extends Phaser.Scene {
         var texture = this.sprites[index].texture.key
 
         this.btnRotate.visible = (texture.includes('plane') || texture.includes('pilot'))
-
-        var pointer = this.input.activePointer;
-        if (pointer.isDown) {
-            var coords = getGridCoords(this, pointer.x, pointer.y)
-
-            if (texture.includes('plane')) {
-                if (!this.inPlaneBounds(coords)) return
-                if (this.inWorldBounds(coords) && TILES_IMPASSABLE_PLANE.includes(this.world.getTile(coords))) return
-                if (this.world.plane.coords[0] == coords[0] + 0.5 && this.world.plane.coords[1] == coords[1] + 0.5) return
-                this.world.plane.coords = [coords[0] + 0.5, coords[1] + 0.5]
-                this.world.plane.updateSprites()
-                this.makeChanges(false)
-            }
-            else if (texture.includes('pilot')) {
-                if (!this.inWorldBounds(coords)) return
-                if (TILES_IMPASSABLE_PILOT.includes(this.world.tiles[coords[0]][coords[1]])) return
-                if (this.world.pilot.coords[0] == coords[0] + 0.5 && this.world.pilot.coords[1] == coords[1] + 0.5) return
-                this.world.pilot.coords = [coords[0] + 0.5, coords[1] + 0.5]
-                this.world.pilot.updateSprites()
-                this.makeChanges(false)
-            }
-            else if (this.inWorldBounds(coords)) {
-                var oldTile = this.world.getTile(coords)
-                var newTile = TILES_LEVEL_EDITOR[index]
-                if (oldTile == newTile) return // No need to edit anything if this tile is already the selected tile
-
-                // Check pilot collision with impassible
-                var pilotCoords = this.world.pilot.coords
-                if (coords[0] == Math.floor(pilotCoords[0]) && coords[1] == Math.floor(pilotCoords[1]) && TILES_IMPASSABLE_PILOT.includes(newTile)) {
-                    this.world.pilot.coords = [-10, -10] // He gone
-                    this.world.pilot.updateSprites()
-                }
-
-                // Check plane collision with impassible
-                var planeCoords = this.world.plane.coords
-                if (coords[0] == Math.floor(planeCoords[0]) && coords[1] == Math.floor(planeCoords[1]) && TILES_IMPASSABLE_PLANE.includes(newTile)) {
-                    this.world.plane.coords = [this.world.tiles.length, 1.5]
-                    this.world.plane.updateSprites()
-                }
-
-                // If the runway is not part of the previous runway convert the old one to grass
-                var removeOldRunway = false
-                if (newTile == TILES.RUNWAY) {
-                    // Check if the new runway tile is in the right line
-                    var runwayTiles = this.world.runwayCoords
-                    if (runwayTiles.length > 1) {
-                        var index = TILES.RUNWAY.assets.indexOf(this.world.sprites[runwayTiles[0][0]][runwayTiles[0][1]].texture.key)
-                        removeOldRunway = (index % 2 == 0 && runwayTiles[0][1] != coords[1]) || (index % 2 == 1 && runwayTiles[0][0] != coords[0])
-                    }
-
-                    // Check if it is touching any of the previous runway tiles
-                    if (runwayTiles.length > 0 && !getNeighbourCoords(coords, this.world.tiles.length).map(c => this.world.getTile(c)).includes(TILES.RUNWAY)) {
-                        removeOldRunway = true
-                    }
-                }
-
-                // Remove runway
-                if (removeOldRunway) this.world.tiles.forEach((row, x) => row.forEach((type, y) => { if (type == TILES.RUNWAY) this.world.setTile([x, y], TILES.GRASS) }))
-
-                this.world.setTile(coords, newTile)
-                this.makeChanges(oldTile == TILES.RUNWAY || newTile == TILES.RUNWAY)
-            }
-        }
     }
 
     updateDrawerSprites(position, duration) {

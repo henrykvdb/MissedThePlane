@@ -2,12 +2,11 @@ const TILE_EDGE = 0.15
 const PILOT_MOVE_SPEED = 0.0018 // [tiles/ms]
 
 class Pilot {
-    constructor(game, coords, dir, speedMod) {
+    constructor(game, coords, dir) {
         // Init code of pilot
         this.coords = coords
         this.dirVector = [0, 0]
         this.game = game
-        this.speedMod = (speedMod ? speedMod : 1)
         this.dir = dir
         this.foundDoor = false // Bool just for home level, but eh
         this.path = [] // Array of coordinates, in order of which to go to next
@@ -101,12 +100,6 @@ class Pilot {
         if (this.foundDoor || this.game.world.getTile(this.coords) != TILES.MISC_3) return
         this.foundDoor = true
         this.game.setLevelStatus(LEVEL_STATUS.COMPLETED)
-    }
-
-    interact() {
-        this.game.world.triggerButton(this.coords)
-        // If we are currently moving (nextTile != undefined) and it is not to the tile we have currently interacted with, we cancel our movement to stay on the button.
-        if (this.nextTile && (Math.floor(this.coords[0]) != this.nextTile[0] || Math.floor(this.coords[1]) != this.nextTile[1])) this.cancelCurrent()
     }
 
     // Sets a given path for this pilot to follow

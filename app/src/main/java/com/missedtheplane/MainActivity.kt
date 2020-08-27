@@ -2,12 +2,14 @@ package com.missedtheplane
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
+import com.google.android.play.core.review.ReviewManagerFactory
 
 fun log(msg: String) {
     Log.d("MTP", msg)
@@ -28,6 +30,9 @@ class MainActivity : AppCompatActivity() {
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         webView.addJavascriptInterface(JavaScriptInterface(this, webView), "Android")
         webView.loadUrl("file:///android_asset/index.html")
+
+        Handler().postDelayed( {
+        },5000)
     }
 
     var consent = false

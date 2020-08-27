@@ -5,6 +5,7 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -30,6 +31,24 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
     fun setUserId(id: String) {
         editor.putString(KEY_USER_ID, id)
         editor.apply()
+    }
+
+    @JavascriptInterface
+    fun showRate(){
+        val manager = ReviewManagerFactory.create(context)
+        manager.requestReviewFlow().addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                // We got the ReviewInfo object
+                val flow = manager.launchReviewFlow(context, request.result)
+                flow.addOnCompleteListener { _ ->
+                    // The flow has finished. The API does not indicate whether the user
+                    // reviewed or not, or even whether the review dialog was shown. Thus, no
+                    // matter the result, we continue our app flow.
+                }
+            } else {
+                // There was some problem, continue regardless of the result.
+            }
+        }
     }
 
     /** Show a toast from the web page  */
