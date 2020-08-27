@@ -63,11 +63,9 @@ class MenuScene extends Phaser.Scene {
         this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings
 
         this.pauseText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'voxel_font', 'Game paused', 50 * MIN_XY / 600).setDepth(100).setOrigin(0.5, 0.5)
-        this.solidBackground = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x59AACA")
-        this.transBackground = this.add.tileSprite(0, 0, 2 * SIZE_X, SIZE_Y, 'menu_invisible').setDepth(50).setOrigin(0, 0).setTint("0x000000").setAlpha(0.4)
 
-        this.mainMenuSprites = [this.mainCampaign, this.mainUserLevels, this.mainLevelEdit, this.mainAbout, this.solidBackground]
-        this.pauseMenuSprites = [this.mainMenu, this.mainReturn, this.pauseText, this.transBackground]
+        this.mainMenuSprites = [this.mainCampaign, this.mainUserLevels, this.mainLevelEdit, this.mainAbout]
+        this.pauseMenuSprites = [this.mainMenu, this.mainReturn, this.pauseText]
         if (this.caller == 'GameScene' && this.scene.get('GameScene').public) { this.pauseMenuSprites.push(this.upvote); this.pauseMenuSprites.push(this.downvote) }
 
         // [SHARED] - side menu return button
@@ -118,6 +116,7 @@ class MenuScene extends Phaser.Scene {
     setVisibility(isMainMenu) {
         this.mainMenuSprites.forEach(s => s.visible = isMainMenu)
         this.pauseMenuSprites.forEach(s => s.visible = !isMainMenu)
+        this.cameras.main.setBackgroundColor(isMainMenu ? 'rgba(89,170,202, 1)' : 'rgba(0, 0, 0, 0.4)')
     }
 
     switchToMainMenu() {
