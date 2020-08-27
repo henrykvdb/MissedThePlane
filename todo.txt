@@ -1,21 +1,20 @@
 Should do
+- Performance fix: text -> change everything
+- Performance fix: sprite overlay -> background alpha cam + ...?
 - Maybe some story? explain why plane is flying
-- Seed fix
+~ Seed fix
 - Tutorial
     ~ New controls explanation
 - UI
     - Decorate main menu
+    - Create settings menu
     ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
-- Level editor
-    - Publish name input box (+author name?)
-    - Rating system
 - Ads
     - GDPR & child protection laws
     - Google billing: Remove ads in-app purchase
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 - Better level editor tile order
-- Database access mode -> make secure! -> haha, pranked
 - Keep nav bar hidden
 
 Nice to have
@@ -28,7 +27,6 @@ Nice to have
 - Level spawn animation
 - Scroll bar momentum
 - No progress lost popup when no changes (=> when same level string)
-- Get an actual font
 
 Marketing
 - Epic trailer
