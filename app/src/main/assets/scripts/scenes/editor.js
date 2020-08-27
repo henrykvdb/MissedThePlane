@@ -361,7 +361,7 @@ class EditorScene extends Phaser.Scene {
                 // Check plane collision with impassible
                 var planeCoords = this.world.plane.coords
                 if (coords[0] == Math.floor(planeCoords[0]) && coords[1] == Math.floor(planeCoords[1]) && TILES_IMPASSABLE_PLANE.includes(newTile)) {
-                    this.world.plane.coords = [this.world.tiles.length, 1.5]
+                    this.world.plane.coords = [this.world.tiles.length+0.5, 1.5]
                     this.world.plane.updateSprites()
                 }
 

@@ -87,8 +87,7 @@ class LoadingScene extends Phaser.Scene {
 
         this.load.image('plank', 'assets/tiles/plank.png')
         this.load.image('water', 'assets/tiles/water.png')
-        this.load.image('button0', 'assets/tiles/button0.png')
-        this.load.image('button1', 'assets/tiles/button1.png')
+        for (var i = 0; i < 2; i++)  ['r','b'].forEach(suffix => {this.load.image('button' + i + suffix, 'assets/tiles/button'+ i + suffix + '.png')});
 
         // Load entitiy assets
         this.load.multiatlas('pilot', 'assets/entities/pilot.json', 'assets/entities/');
