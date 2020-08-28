@@ -286,6 +286,10 @@ class CustomCard {
         this.children.forEach(sprite => sprite.on(event, fn, context))
     }
 
+    off(event, fn, context) {
+        this.children.forEach(sprite => sprite.off(event, fn, context))
+    }
+
     destroy() {
         this.children.forEach(sprite => sprite.destroy())
     }
