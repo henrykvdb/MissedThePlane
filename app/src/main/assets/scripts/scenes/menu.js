@@ -106,7 +106,7 @@ class MenuScene extends Phaser.Scene {
         this.versionText = this.add.bitmapText(SIZE_X*2-10, SIZE_Y-10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
-        this.aboutMenu = [this.aboutTitle, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane]
+        this.aboutMenu = [this.aboutTitle, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane, this.versionText]
 
         // If menu was launched from a scene without pause, we show main menu, otherwise we show pause menu
         this.setVisibility(!this.caller || !this.ASK_CLOSE.includes(this.caller))
@@ -173,7 +173,7 @@ class MenuScene extends Phaser.Scene {
                 // Fade background
                 if (scene.caller && scene.ASK_CLOSE.includes(scene.caller)) {
                     var progress = (3 * SIZE_X / 2 - tween.getValue()) / SIZE_X
-                    scene.transBackground.setAlpha(0.4 * progress) // Fade alpha from 0.4 -> 0 and back
+                    scene.cameras.main.setBackgroundColor('rgba(0, 0, 0, ' + 0.4 * progress + ')') // Fade alpha from 0.4 -> 0 and back
                 }
             }
         })

@@ -79,9 +79,9 @@ class LevelSelectScene extends Phaser.Scene {
         this.LEVEL_BOX_HEIGHT = SIZE_Y / 2 // Height of the center of the level select boxes
 
         // Draw pointer arrows
-        const CENTER_OFFSET = 400 * this.LEVEL_BOX_SCALE
-        this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT - CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 1).setScale(this.LEVEL_BOX_SCALE).setDepth(100)
-        this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 0).setScale(this.LEVEL_BOX_SCALE).setDepth(100).flipY = true
+        const CENTER_OFFSET = 500 * this.LEVEL_BOX_SCALE
+        this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT - CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 1).setScale(this.LEVEL_BOX_SCALE*2).setDepth(100)
+        this.add.sprite(SIZE_X / 2, this.LEVEL_BOX_HEIGHT + CENTER_OFFSET, 'select_arrow').setOrigin(0.5, 0).setScale(this.LEVEL_BOX_SCALE*2).setDepth(100).flipY = true
         var scrollbar = this.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setOrigin(0).setAlpha(0.2).setDepth(50).setInteractive({ draggable: true })
 
         // Init default state
@@ -114,14 +114,12 @@ class LevelSelectScene extends Phaser.Scene {
 
             // User tapped a tile
             if (gameObject != scrollbar && Math.abs(distance) < scene.LEVEL_BOX_SCALE * 400) {
-                console.log("tap")
                 scene.position = scene.levelSprites.indexOf(gameObject) + scene.MIN_POS
                 scene.updateSprites(scene.position, 50)
             }
 
             // User swiped to a tile
             else {
-                console.log("swipe")
                 scene.position += distance / scene.DRAG_WEIGHT
                 scene.position = Math.min(Math.max(Math.round(scene.position), scene.MIN_POS), scene.MAX_POS)
                 scene.updateSprites(scene.position, 50)

@@ -43,7 +43,7 @@ class World {
         this.sprites = Array.from(Array(this.tiles.length)).map(() => Array.from(Array(this.tiles.length)).map(() => undefined))
         for (var x = 0; x < this.tiles.length; x++) {
             for (var y = 0; y < this.tiles[0].length; y++) {
-                this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom())
+                this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom(x*this.tiles.length+y))
             }
         }
     }
@@ -106,7 +106,7 @@ class World {
         var x = coords[0]; var y = coords[1]
         this.tiles[x][y] = type
         this.sprites[x][y].destroy()
-        this.sprites[x][y] = this.createTileSprite(x, y, true, 0) //TODO fix seed
+        this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom(x*this.tiles.length+y))
     }
 
     getTile(coords) {
@@ -197,7 +197,6 @@ class World {
                     this.updatePilotPath(startTile)
                 }
             }
-            // TODO check if PLANE_LANDING_LENGTH is great enough when on a small enclosed runway to kill the pilot
         }
     }
 
@@ -230,7 +229,7 @@ class World {
     // TODO - what if end coord is impassable? do we take a tile next to it or just ignore it altogether?
     calculatePath(startCoord, endCoord) {
         startCoord = [Math.floor(startCoord[0]), Math.floor(startCoord[1])]
-        console.log("Going from ", startCoord + " to " + endCoord)
+        // console.log("Going from ", startCoord + " to " + endCoord)
         var queue = new PriorityQueue({ comparator: function (a, b) { return a.priority - b.priority; } });
         queue.queue({ priority: 0, coord: startCoord })
         var size = this.tiles.length
@@ -297,7 +296,7 @@ class World {
         this.updatePilotPath(endCoord)
     }
 
-    // Save it in a string of format {"size": size, "tiles": [1,1,1,2,1,1,1,etc], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
+    // Save it in a string of format {"size": size, "tiles": [[1,1,1,2],[1,1,1,etc]], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
     exportWorldAsString() {
         var exportObject = { "size": this.tiles.length }
         exportObject.tiles = this.tiles.map(row => row.map(tile => tile.id))
@@ -308,8 +307,8 @@ class World {
         return JSON.stringify(exportObject)
     }
 
-    pseudoRandom() {
-        var x = Math.sin(this.seed++) * 10000;
+    pseudoRandom(posNumber) {
+        var x = Math.sin(this.seed + posNumber) * 10000;
         return x - Math.floor(x);
     }
 
