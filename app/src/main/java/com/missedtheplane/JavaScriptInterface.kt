@@ -139,23 +139,35 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
     fun publishLevel(levelSlot: String, levelString: String, levelName: String): Boolean {
         val userId = getUserId()
         GlobalScope.launch {
-            var levelId = getLevelId(levelSlot)
-            val levelData = getLevelData(levelId)
-            if (getAuthorName() == "") {
-                sendToJs("receivePublishResponse", "{\"success\": true, \"error\": \"No author name is set, try again?\"}")
-                addError("User $userId tried publishing without having author name!"); return@launch}
-            if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer (?) version from his level than he currently has saved in the db
-                addError("User $userId published a level which doesn't correspond to his saved level $levelId!!")
-                levelId = createLevel(levelSlot, levelString) // We create a new level and overwrite it on the slot the user published it on
-            }
-            updateDocument("levels", levelId, hashMapOf(
-                    "public" to true,
-                    "submitDate" to FieldValue.serverTimestamp(),
-                    "name" to levelName,
-                    "authorName" to getAuthorName()
+            try {
+                var levelId = getLevelId(levelSlot)
+                val levelData = getLevelData(levelId)
+                if (getAuthorName() == "") {
+                    sendToJs(
+                        "receivePublishResponse",
+                        "{\"success\": false, \"error\": \"No author name is set, try again?\"}"
+                    )
+                    addError("User $userId tried publishing without having author name!"); return@launch
+                }
+                if (levelId == null || levelData == null || levelData["levelString"] != levelString) { // A user is publishing a newer (?) version from his level than he currently has saved in the db
+                    addError("User $userId published a level which doesn't correspond to his saved level $levelId!!")
+                    levelId = createLevel(
+                        levelSlot,
+                        levelString
+                    ) // We create a new level and overwrite it on the slot the user published it on
+                }
+                updateDocument(
+                    "levels", levelId, hashMapOf(
+                        "public" to true,
+                        "submitDate" to FieldValue.serverTimestamp(),
+                        "name" to levelName,
+                        "authorName" to getAuthorName()
+                    )
                 )
-            )
-            sendToJs("receivePublishResponse", "{\"success\": true}")
+                sendToJs("receivePublishResponse", "{\"success\": true}")
+            } catch (ex: Exception) {
+                sendToJs("receivePublishResponse", "{\"success\": false, \"error\": $ex}")
+            }
         }
         return true
     }
@@ -209,6 +221,8 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
             val urlData = "\'" + onlyData.toString() + "\'"
             log(urlData)
             webView.loadUrl("javascript:receivePublicLevels($urlData)");
+        }.addOnFailureListener { exception ->
+            webView.loadUrl("javascript:receivePublicLevels($exception)");
         }
     }
 

@@ -249,7 +249,8 @@ function showDialog(scene, depth, title, body, negative, positive, callback) {
     textDialog.on('button.click', function (button, groupName, index) {
         textDialog.destroy()
         stopInputs.destroy()
-        if (callback && index == 1) callback()
+        console.log("index was ", index)
+        if (callback && (index == 1 || negative == undefined || negative == "")) callback()
     }, scene)
 }
 
