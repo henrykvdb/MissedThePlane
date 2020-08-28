@@ -32,33 +32,8 @@ class BrowserScene extends Phaser.Scene {
             waitForLevels().then(() => scene.createBrowser(scene))
             .catch((errorMessage) => showDialog(scene, 400, "An error occured", errorMessage+"\nPlease try again.", undefined, "Okay...", () => scene.scene.start('MenuScene', {caller: null})))
         } else {
-            PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
-            { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
             // TODO remove pc dev lines
-            //PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" }, { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
+            PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" }, { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
             this.createBrowser(this)
         }
 
@@ -69,25 +44,22 @@ class BrowserScene extends Phaser.Scene {
         const BUTTON_SPACING = getXY(0.3)
         scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortVotes.on('pointerdown', () => {if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({sortOn: 'upvoteRatio'})})
-        if (scene.sortOn == "upvoteRatio" || !scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
+        if (scene.sortOn != "upvoteRatio" || !scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
 
         scene.sortDate = scene.add.sprite(SIZE_X / 2, getXY(0.04), 'sort_date').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortDate.on('pointerdown', () => {if (scene.sortOn == "submitDate") return; scene.scene.restart({sortOn: 'submitDate'})})
-        if (scene.sortOn == "submitDate") scene.sortDate.setTint("0xaaaaaa")
+        if (scene.sortOn != "submitDate") scene.sortDate.setTint("0xaaaaaa")
 
         scene.sortHard = scene.add.sprite(SIZE_X / 2 + BUTTON_SPACING, getXY(0.04), 'sort_clear').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortHard.on('pointerdown', () => {if (scene.sortOn == "clearRatio") return; scene.scene.restart({sortOn: 'clearRatio'})})
-        if (scene.sortOn == "clearRatio") scene.sortHard.setTint("0xaaaaaa")
+        if (scene.sortOn != "clearRatio") scene.sortHard.setTint("0xaaaaaa")
 
         // Create panel
         var panel = scene.rexUI.add.scrollablePanel({
-            x: SIZE_X / 2,
-            y: SIZE_Y / 2 + getXY(0.1),
+            x: SIZE_X/2,
+            y: SIZE_Y/2 + getXY(0.4)/2,
             width: SIZE_X,
-            height: SIZE_Y - getXY(0.24),
-
-            scrollMode: 0,
-            //background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, COLOR_LIGHT),
+            height: SIZE_Y - getXY(0.4),
 
             panel: {
                 child: createPanel(scene),
@@ -98,16 +70,7 @@ class BrowserScene extends Phaser.Scene {
                 track: scene.rexUI.add.roundRectangle(0, 0, getXY(0.04), getXY(0.02), getXY(0.02), COLOR_DARK),
                 thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.03), COLOR_LIGHT),
             },
-
-            space: {
-                left: getXY(0.2),
-                right: getXY(0.2),
-                top: getXY(0.02),
-                bottom: 0,
-                panel: getXY(0.02),
-            }
         }).layout()
-        console.log(panel)
 
         // Improve default scrollbar
         var hideScrollTween
@@ -135,6 +98,17 @@ var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
     PUBLIC_LEVELS.forEach(level => sizer.add(createCard(scene, level)))
     return sizer
+}
+
+function getTimeLetter(oldDate) {
+    var seconds = (new Date().getTime() - oldDate.getTime()) / 1000
+    if (seconds > 60*60*24*30.5*12) return Math.floor(seconds/(60*60*24*30.5*12)) + "y"
+    else if (seconds > 60*60*24*30.5) return Math.floor(seconds/(60*60*24*30.5)) + "m"
+    else if (seconds > 60*60*24*7) return Math.floor(seconds/(60*60*24*7)) + "w"
+    else if (seconds > 60*60*24) return Math.floor(seconds/(60*60*24)) + "d"
+    else if (seconds > 60*60) return Math.floor(seconds/(60*60)) + "h"
+    else if (seconds > 60) return Math.floor(seconds/(60)) + "m"
+    else return seconds + "s"
 }
 
 class CustomCard {
@@ -173,11 +147,9 @@ class CustomCard {
         remainingWidth -= startButton.width * startButton.scaleX + getXY(0.04)
 
         // Details
-        var date = new Date(1970, 0, 1); // Epoch
-        date.setSeconds(levelData.submitDate);
-        date = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() // eventually add hours?
+        var date = new Date(1970, 0, 1); date.setSeconds(levelData.submitDate)
         const START_DETAILS = START_FIRST + title.width * title.scaleX + getXY(0.06)
-        const DETAILS_TEXT = "by " + levelData.authorName + ", " + date //TODO "20d" format
+        const DETAILS_TEXT = "by " + levelData.authorName + ", " + getTimeLetter(date)
         var detailsText = scene.add.bitmapText(START_DETAILS, -HEIGHT / 2 + getXY(0.08), 'voxel_font', DETAILS_TEXT, 28 * MIN_XY / 600).setOrigin(0, 1).setTint(0)
         this.children.push(detailsText)
         if (shouldCheck) { scene.cardOverflow = detailsText.width + getXY(0.06) > remainingWidth; return }
