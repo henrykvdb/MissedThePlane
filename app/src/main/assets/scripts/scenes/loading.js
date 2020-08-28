@@ -49,6 +49,8 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('sort_upvote', 'assets/menu/button_sort_upvote.png')
         this.load.image('sort_clear', 'assets/menu/button_sort_trophy.png')
         this.load.image('sort_date', 'assets/menu/button_sort_date.png')
+        this.load.image('star', 'assets/menu/star.png')
+        this.load.image('rate_balloon', 'assets/menu/rate_balloon.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_publish_' + i, 'assets/menu/button_publish_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_select_edit_' + i, 'assets/menu/button_select_edit_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_playtest_' + i, 'assets/menu/button_playtest_' + i + '.png')
