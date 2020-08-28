@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
@@ -186,11 +187,17 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
         }
     }
 
-    /** Returns a list of dictionaries, each representing a level object (attributes like levelString, plays, rating, etc) */
+    /** Returns a list of (max 50) dictionaries, each representing a level object (attributes like levelString, plays, rating, etc)
+     *  A sort can be passed to sort the levels, as well as a start index (this index is the value from which we should continue based
+     *  on the sort, e.g. if we fetched first 50 levels based on clearRatio and last was 0.7, we need to pass 0.7 to get the next
+     *  50 levels with a clear ratio of 0.7 or lower. Thanks Firestore. */
     @JavascriptInterface
-    fun getPublishedLevels() {
-        val citiesRef = Firebase.firestore.collection("levels")
-        val query = citiesRef.whereEqualTo("public", true)
+    fun getPublishedLevels(sortOn: String?, startAt: Double?) {
+        val levelsRef = Firebase.firestore.collection("levels")
+        var query = levelsRef.whereEqualTo("public", true)
+                             .orderBy(sortOn ?: "upvoteRatio", Query.Direction.DESCENDING)
+                             .limit(50)
+        if (startAt != null) query = query.startAt(startAt)
         query.get().addOnSuccessListener { documents ->
             val onlyData: MutableList<String> = ArrayList()
             for (document in documents) {
@@ -231,25 +238,33 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
         GlobalScope.launch {
             val actualId = userId + levelId // yeah...
             val playerStatus = getDocument("userPlays", actualId)
+            val levelData = getLevelData(levelId)
+            if (levelData == null || levelData["clears"] == null || levelData["plays"] == null)
+                {addError("User $userId played $levelId, but it doesn't exist in the database!"); return@launch}
+            val curClears = levelData["clears"] as Long; val curPlays = levelData["plays"] as Long
             if (playerStatus == null) { // The player never played this before
                 val newRelation = hashMapOf("cleared" to cleared, "upvote" to null)
                 addNewDocument("userPlays", newRelation, actualId)
                 if (!cleared) {
-                    updateDocument("levels", levelId, hashMapOf("plays" to FieldValue.increment(1)))
+                    updateDocument("levels", levelId, hashMapOf(
+                        "plays" to FieldValue.increment(1),
+                        "clearRatio" to curClears.toDouble() / (curPlays+1)
+                    ))
                 } else { // The player never played this level before, but cleared it now...
                     addError("User $userId cleared level $levelId without ever playing it!")
                     updateDocument("levels", levelId, hashMapOf(
                             "plays" to FieldValue.increment(1),
-                            "clears" to FieldValue.increment(1)
+                            "clears" to FieldValue.increment(1),
+                            "clearRatio" to (curClears+1).toDouble() / (curPlays+1)
                         )
                     )
                 }
             } else if (cleared) { // The player has played before, and now finished the level
                 if (!(playerStatus["cleared"] as Boolean)) { // He didn't clear it before, we update clear counter
-                    updateDocument(
-                        "levels",
-                        levelId,
-                        hashMapOf("clears" to FieldValue.increment(1))
+                    if (levelData["plays"] == 0) {addError("User $userId cleared a level with 0 plays total!");return@launch}
+                    updateDocument("levels", levelId, hashMapOf(
+                            "clears" to FieldValue.increment(1),
+                            "clearRatio" to (curClears+1).toDouble() / curPlays)
                     )
                     updateDocument("userPlays", actualId, hashMapOf("cleared" to true))
                 } // If the user did clear it already, we don't need to change anything
@@ -269,21 +284,33 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
             if (playerStatus == null) {
                 addError("User $userId tried to vote on $levelId without ever playing it!"); return@launch
             }
+            val levelData = getLevelData(levelId)
+            if (levelData == null || levelData["upvotes"] == null || levelData["downvotes"] == null)
+                {addError("User $userId voted for $levelId, but it doesn't exist in the database!"); return@launch}
+            val curUp = levelData["upvotes"] as Long; val curDown = levelData["downvotes"] as Long;
             if (playerStatus["upvote"] == null) { // The user didn't vote before on this level
                 updateDocument("userPlays", actualId, hashMapOf("upvote" to upvote))
-                if (upvote) updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1)))
-                else updateDocument("levels", levelId, hashMapOf("downvotes" to FieldValue.increment(1)))
+                if (upvote) updateDocument("levels", levelId, hashMapOf(
+                    "upvotes" to FieldValue.increment(1),
+                    "upvoteRatio" to (curUp+1).toDouble() / (curUp+1+curDown)
+                ))
+                else updateDocument("levels", levelId, hashMapOf("downvotes" to FieldValue.increment(1), "upvoteRatio" to (curUp).toDouble() / (curUp+1+curDown)))
             } else if (playerStatus["upvote"] as Boolean && !upvote) { // The user wants to change upvote to downvote
                 updateDocument("userPlays", actualId, hashMapOf("upvote" to false))
-                updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(-1),"downvotes" to FieldValue.increment(1)))
+                updateDocument("levels", levelId, hashMapOf(
+                    "upvotes" to FieldValue.increment(-1),
+                    "downvotes" to FieldValue.increment(1),
+                    "upvoteRatio" to (curUp-1).toDouble() / (curUp+curDown)))
             } else if (!(playerStatus["upvote"] as Boolean) && upvote) { // The user wants to change downvote to upvote
                 updateDocument("userPlays", actualId, hashMapOf("upvote" to true))
-                updateDocument("levels", levelId, hashMapOf("upvotes" to FieldValue.increment(1),"downvotes" to FieldValue.increment(-1)))
+                updateDocument("levels", levelId, hashMapOf(
+                    "upvotes" to FieldValue.increment(1),
+                    "downvotes" to FieldValue.increment(-1),
+                    "upvoteRatio" to (curUp+1).toDouble() / (curUp+curDown)))
             }
         }
     }
 
-    // todo make this work pls
     fun sendToJs(function: String, parameter: String) {
         context.runOnUiThread {webView.post {webView.loadUrl("javascript:$function($parameter)")}}
     }
@@ -325,8 +352,10 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
             "deleted" to false,
             "plays" to 0,
             "clears" to 0,
+            "clearRatio" to 0,
             "upvotes" to 0,
             "downvotes" to 0,
+            "upvoteRatio" to 1,
             "name" to "Private level"
         )
         val levelId = addNewDocument("levels", newLevel)
