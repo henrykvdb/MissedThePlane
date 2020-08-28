@@ -1,6 +1,4 @@
 Should do
-- Performance fix: text -> change everything
-- Performance fix: sprite overlay -> background alpha cam + ...?
 - Maybe some story? explain why plane is flying
 ~ Seed fix
 - Tutorial

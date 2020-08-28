@@ -127,12 +127,12 @@ class EditorScene extends Phaser.Scene {
         })
 
         // Export/Save current level button
-        // TODO: confirmation on save maybe
         this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save_' + (this.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105)
         this.btnSave.on('pointerdown', function (pointer) {
             if (!scene.madeChanges) return
             scene.madeChanges = false
             var levelString = scene.world.exportWorldAsString()
+            console.log(levelString)
             if (getAndroid()) {
                 console.log("saving")
                 Android.setLocalLevel(scene.levelIndex, levelString)
@@ -268,8 +268,6 @@ class EditorScene extends Phaser.Scene {
 
             // User tapped a tile
             if (gameObject != scrollbar && distance <= 0.2 && time < 250) {
-                console.log("tap")
-                var oldPos = scene.position
                 scene.position = scene.sprites.indexOf(gameObject) - (scene.COUNT_DISPLAY - 1) / 2
                 scene.position = (scene.position + scene.sprites.length) % scene.sprites.length
                 scene.updateDrawerSprites(scene.position, 100)
@@ -277,7 +275,6 @@ class EditorScene extends Phaser.Scene {
 
             // User swiped to a tile
             else {
-                console.log("swipe")
                 scene.position += distance
                 scene.position = Math.round(scene.position + scene.sprites.length) % scene.sprites.length
                 scene.updateDrawerSprites(scene.position, 100)
@@ -297,9 +294,10 @@ class EditorScene extends Phaser.Scene {
 
     makeChanges(restart) {
         this.isSolvable = false
+        this.btnRun.setTexture("btn_playtest_0")
         if (!this.madeChanges) {
             this.madeChanges = true
-            this.btnSave.setTexture('btn_save_' + (this.madeChanges ? 1 : 0))
+            this.btnSave.setTexture('btn_save_1')
             if (getAndroid()) Android.setSolvable(this.levelIndex, false)
         }
 
@@ -310,7 +308,6 @@ class EditorScene extends Phaser.Scene {
     }
 
     // The user returned from playtesting, we update the solvability of this field
-    // TODO on complete, set state.solvable on true, unless no changes, then immediately android prefs
     setSolvable(solved) {
         if (this.isSolvable || !solved) return // The user didn't finish it, it doesn't give new information
         this.isSolvable = true

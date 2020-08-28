@@ -64,7 +64,7 @@ class GameScene extends Phaser.Scene {
         if (getAndroid() && this.ui.currentVote != undefined) Android.voteForLevel(this.levelIndex, this.ui.currentVote)
         if (getAndroid() && this.levelStatus == LEVEL_STATUS.COMPLETED) Android.playLevel(this.levelIndex, true)
         this.scene.stop()
-        this.scene.start('BrowserScene', {noRefresh: false})
+        this.scene.start('BrowserScene')
     }
 }
 

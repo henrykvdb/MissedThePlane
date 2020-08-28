@@ -1,7 +1,7 @@
-
-
 var COLOR_LIGHT = "0xd5c175"
 var COLOR_DARK = "0xbe8f17"
+TIMEOUT_TRESHOLD = 7000 // ms after which to show timed out message
+
 PUBLIC_LEVELS = [] // This list will be filled with level objects as soon as the levels have been fetched from the database.
 // A level object has all fields which are present in the database (deleted, levelString, author, submitdate, etc)
 
@@ -12,7 +12,8 @@ class BrowserScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.noRefresh = (data.noRefresh ? data.noRefresh : false) // No idea if optimisation would break here
+        this.sortOn = data.sortOn
+        this.startAt = data.startAt
     }
 
     create() {
@@ -25,13 +26,11 @@ class BrowserScene extends Phaser.Scene {
             scene.scene.start('MenuScene', { caller: null })
         })
 
-        if (this.noRefresh && PUBLIC_LEVELS.length > 0) this.createBrowser(this) // We already have levels saved, we simply display them
-        else if (getAndroid()) { // We don't have levels or want to refresh, we fetch from server
-            Android.getPublishedLevels()
-
-            var loadingText = this.add.text(SIZE_X / 2, SIZE_Y / 2, "Loading levels...", { fill: '#FFFFFF', fontSize: 25 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0.5).setDepth(100)
-            scene.tweens.add({ targets: loadingText, alpha: 0, duration: 700, delay: 1000 })
+        if (getAndroid()) { // We don't have levels or want to refresh, we fetch from server
+            Android.getPublishedLevels(this.sortOn ? this.sortOn : null, this.startAt ? this.startAt : null) 
+            this.loadingText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2, 'voxel_font', "Loading levels...",  40 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(0.5, 0.5)
             waitForLevels().then(() => scene.createBrowser(scene))
+            .catch((errorMessage) => showDialog(scene, 400, "An error occured", errorMessage+"\nPlease try again.", undefined, "Okay...", () => scene.scene.start('MenuScene', {caller: null})))
         } else {
             PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" },
             { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
@@ -58,42 +57,27 @@ class BrowserScene extends Phaser.Scene {
             { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
             { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" },
             { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
+            // TODO remove pc dev lines
+            //PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" }, { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
             this.createBrowser(this)
-
         }
 
     }
 
     createBrowser(scene) {
+        if (this.loadingText) this.loadingText.destroy()
         const BUTTON_SPACING = getXY(0.3)
         scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.sortVotes.on('pointerdown', function (pointer) {
-            if (PUBLIC_LEVELS.length <= 0) return
-            PUBLIC_LEVELS.sort((a, b) => {
-                var aVotes = a.upvotes / Math.max(1, a.upvotes + a.downvotes)
-                var bVotes = b.upvotes / Math.max(1, b.upvotes + b.downvotes)
-                return bVotes - aVotes
-            })
-            scene.scene.restart({ noRefresh: true })
-        })
+        scene.sortVotes.on('pointerdown', () => {if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({sortOn: 'upvoteRatio'})})
+        if (scene.sortOn == "upvoteRatio" || !scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
 
         scene.sortDate = scene.add.sprite(SIZE_X / 2, getXY(0.04), 'sort_date').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.sortDate.on('pointerdown', function (pointer) {
-            if (PUBLIC_LEVELS.length <= 0) return
-            PUBLIC_LEVELS.sort((a, b) => b.submitDate - a.submitDate)
-            scene.scene.restart({ noRefresh: true })
-        })
+        scene.sortDate.on('pointerdown', () => {if (scene.sortOn == "submitDate") return; scene.scene.restart({sortOn: 'submitDate'})})
+        if (scene.sortOn == "submitDate") scene.sortDate.setTint("0xaaaaaa")
 
         scene.sortHard = scene.add.sprite(SIZE_X / 2 + BUTTON_SPACING, getXY(0.04), 'sort_clear').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.sortHard.on('pointerdown', function (pointer) {
-            if (PUBLIC_LEVELS.length <= 0) return
-            PUBLIC_LEVELS.sort((a, b) => {
-                var aClear = a.clears / Math.max(1, a.plays)
-                var bClear = b.clears / Math.max(1, b.plays)
-                return bClear - aClear
-            })
-            scene.scene.restart({ noRefresh: true })
-        })
+        scene.sortHard.on('pointerdown', () => {if (scene.sortOn == "clearRatio") return; scene.scene.restart({sortOn: 'clearRatio'})})
+        if (scene.sortOn == "clearRatio") scene.sortHard.setTint("0xaaaaaa")
 
         // Create panel
         var panel = scene.rexUI.add.scrollablePanel({
@@ -304,13 +288,20 @@ function receivePublicLevels(levelData) {
     PUBLIC_LEVELS = JSON.parse(levelData)
 }
 
-// TODO: check every loop if we have left the browser before we could receive any levels, so we don't waste performance on this
 function waitForLevels() {
     PUBLIC_LEVELS = []
     return new Promise(function (resolve, reject) {
-        (function checkLevels() {
-            if (PUBLIC_LEVELS.length > 0) return resolve();
-            setTimeout(checkLevels, 50);
-        })();
+        (function checkLevels(timeSpentWaiting) {
+            if (timeSpentWaiting > TIMEOUT_TRESHOLD) return reject("Connection timed out.")
+            if (PUBLIC_LEVELS.length > 0) { // We received an answer
+                if (Array.isArray(PUBLIC_LEVELS))  return resolve();
+                else { // PUBLIC_LEVELS was accepted but it is not an array, meaning we assume it is an error string
+                    var errorMessage = PUBLIC_LEVELS
+                    PUBLIC_LEVELS = []
+                    return reject(errorMessage)
+                }
+            }
+            setTimeout(checkLevels, 50, timeSpentWaiting+50);
+        })(0);
     });
 }
