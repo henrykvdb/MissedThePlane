@@ -153,15 +153,16 @@ class World {
             var scene = this
             var tile = this.tiles[c[0]][c[1]]
             var sprite = this.sprites[c[0]][c[1]]
+            var animationIndex = Math.floor(this.pseudoRandom(c[0]*this.tiles.length+c[1])*4)
 
             // Play switch animation
-            if (sprite.anims.isPlaying) sprite.anims.reverse('grow0')
+            if (sprite.anims.isPlaying) sprite.anims.reverse('grow'+animationIndex)
             else {
-                if (tile == TILES.MOUNTAIN) sprite.anims.playReverse('grow0')
-                else sprite.anims.play('grow0')
+                if (tile == TILES.MOUNTAIN) sprite.anims.playReverse('grow'+animationIndex)
+                else sprite.anims.play('grow'+animationIndex)
                 sprite.on('animationcomplete', function () {
                     sprite.destroy()
-                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], true, 0) //TODO fix seed
+                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], true, scene.pseudoRandom(c[0]*scene.tiles.length+c[1]))
                 })
             }
 
@@ -220,7 +221,6 @@ class World {
 
         neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
         // If the game is complete, we forbid pathing over runways
-        //TODO enable
         if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) neighbours = neighbours.filter(c => this.getTile(c) != TILES.RUNWAY)
         return neighbours
     }
@@ -291,7 +291,7 @@ class World {
         this.pilot.setPath(lengthNext > lengthPrev ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev)
     }
 
-    handleMouseInput(mouseX, mouseY) { // TODO: mouse input doesn't really belong in world but the contents don't belong in game scene either really
+    handleMouseInput(mouseX, mouseY) {
         var endCoord = getGridCoords(this.game, mouseX, mouseY)
         this.updatePilotPath(endCoord)
     }

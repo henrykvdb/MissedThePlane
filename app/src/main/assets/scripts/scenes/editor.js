@@ -213,6 +213,9 @@ class EditorScene extends Phaser.Scene {
         })
         this.btnRotate.visible = false
 
+        // Cover sprites out of screen
+        this.add.rectangle(SIZE_X, 0, SIZE_X, SIZE_Y, 0xD0EEFF).setDepth(290).setOrigin(0)
+
         // Make tile sprites
         const SLIDER_SPRITES = []
         const TILE_HEIGHT = SIZE_Y - getY(0.01)

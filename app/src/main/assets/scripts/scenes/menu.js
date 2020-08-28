@@ -42,7 +42,7 @@ class MenuScene extends Phaser.Scene {
         })
 
         this.mainMenu = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_menu').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainMenu.on('pointerdown', () => scene.switchToMainMenu()) // todo reset this menu?
+        this.mainMenu.on('pointerdown', () => scene.switchToMainMenu())
 
         this.mainCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_main_campaign').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.PLAY))
@@ -92,7 +92,6 @@ class MenuScene extends Phaser.Scene {
 
         this.settingsMenu.push(this.add.bitmapText(SIZE_X + SIZE_X / 2, Y_START, 'voxel_font', "Settings", 40 * MIN_XY / 600).setDepth(300).setTint("0").setOrigin(0.5, 0))
         this.settingsMenu.push(this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(300).setScale(MIN_XY / 600).setOrigin(1, 1))
-        // this.settingsMenu.push(this.add.rectangle(SIZE_X, 0, SIZE_X, SIZE_Y, 0xD0EEFF).setDepth(290).setOrigin(0))
 
         // [ABOUT MENU]
 
@@ -171,7 +170,7 @@ class MenuScene extends Phaser.Scene {
             onUpdate: function (tween) {
                 // Move cameras
                 scene.cameras.main.centerOnX(tween.getValue())
-                scene.scene.get(scene.caller ? scene.caller : 'MenuScene').cameras.main.centerOnX(tween.getValue()) //TODO level editor tiles in background bug
+                scene.scene.get(scene.caller ? scene.caller : 'MenuScene').cameras.main.centerOnX(tween.getValue())
 
                 // Fade background
                 if (scene.caller && scene.ASK_CLOSE.includes(scene.caller)) {

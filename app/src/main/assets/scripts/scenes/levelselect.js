@@ -85,7 +85,6 @@ class LevelSelectScene extends Phaser.Scene {
         var scrollbar = this.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setOrigin(0).setAlpha(0.2).setDepth(50).setInteractive({ draggable: true })
 
         // Init default state
-        // TODO: if the user is saving, maybe it makes sense to let the select start on the current save slot
         this.position = this.MIN_POS
         this.lastPos = this.MIN_POS
         this.world = new World(this, this.LEVELS[0])

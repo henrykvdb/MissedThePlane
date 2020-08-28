@@ -1,4 +1,6 @@
 const ALL_LEVELS = [ // TODO: add this to browser after db reset: {"size":7,"tiles":[[1,2,8,8,8,8,8],[1,9,2,8,8,8,3],[8,7,8,8,8,2,8],[8,7,8,8,8,9,1],[1,9,2,8,8,5,1],[1,1,1,7,7,5,1],[8,8,8,8,8,5,1]],"pilot":[1.5,0.5,3],"plane":[-0.5,5.5,5],"difficulty":"0","seed":74300.04368402112}
+        // and this {"size":7,"tiles":[[1,5,9,1,1,1,1],[2,5,1,8,8,3,1],[1,5,1,8,1,8,2],[2,8,9,1,9,8,1],[1,8,1,8,1,8,1],[1,8,8,8,1,3,1],[1,1,1,2,1,8,1]],"pilot":[3.5,3.5,3],"plane":[2.5,-0.5,3],"difficulty":"0","seed":67212.87405334346}    
+
     // Level 0 - home!
     "{\"size\":4,\"tiles\":[[1001,1002,1003,1002],[1000,7,7,7],[1004,7,7,7],[1005,1006,7,7]],\"pilot\":[2.5,1.5,1],\"plane\":[3.5,5.5,1],\"difficulty\":\"home\",\"seed\":5619}",
 
@@ -50,6 +52,5 @@ const ALL_LEVELS = [ // TODO: add this to browser after db reset: {"size":7,"til
 
 const DEFAULT_LEVEL = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
-// Todo maybe change this to have undefineds as well, which then render/initialize as the default level, so we know when a new level has been created (for our database)
 const USER_LEVELS = [DEFAULT_LEVEL, DEFAULT_LEVEL, DEFAULT_LEVEL, DEFAULT_LEVEL]
 
