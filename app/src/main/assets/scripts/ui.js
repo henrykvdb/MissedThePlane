@@ -115,7 +115,6 @@ class UI {
         var SHOW_TIMES = {1: 6000, 2: 8000}
         if (!LEVELS_WITH_TUTORIAL.includes(index)) return // Add all levels with tutorials here
         var tutorialElements = []
-        // TODO: stop inputs during tutorial?
         tutorialElements.push(this.scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.6).setDepth(150).setOrigin(0).setInteractive())
         if (index == 1) {
             var title = this.scene.add.text(SIZE_X / 2, getXY(0.14), "Plane turns RIGHT before a mountain", { fill: '#ffffff', fontSize: 32 * MIN_XY / 600, fontStyle: 'bold' })

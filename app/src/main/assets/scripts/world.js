@@ -120,7 +120,7 @@ class World {
         var tilePos = [Math.floor(coords[0]), Math.floor(coords[1])]
         if (coords[0] < tilePos[0] + TILE_EDGE || coords[1] < tilePos[1] + TILE_EDGE ||
             coords[0] > tilePos[0] + 1 - TILE_EDGE || coords[1] > tilePos[1] + 1 - TILE_EDGE) return
-        if (this.getTile(tilePos) != TILES.BUTTON && this.getTile(tilePos) != TILES.BUTTON_OTHER) return // todo maybe throw error here or something
+        if (this.getTile(tilePos) != TILES.BUTTON && this.getTile(tilePos) != TILES.BUTTON_OTHER) return
 
         // Check if blocked
         var neighbours = this.getTile(tilePos) == TILES.BUTTON ?getNeighbourCoords(tilePos):getNeighbourDiagonalCoords(tilePos)

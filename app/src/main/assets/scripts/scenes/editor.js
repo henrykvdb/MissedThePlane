@@ -294,8 +294,8 @@ class EditorScene extends Phaser.Scene {
 
     makeChanges(restart) {
         this.isSolvable = false
+        this.btnRun.setTexture("btn_playtest_0")
         if (!this.madeChanges) {
-            this.btnRun.setTexture("btn_playtest_0")
             this.madeChanges = true
             this.btnSave.setTexture('btn_save_1')
             if (getAndroid()) Android.setSolvable(this.levelIndex, false)
