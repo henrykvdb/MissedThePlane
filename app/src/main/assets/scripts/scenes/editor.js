@@ -82,7 +82,7 @@ class EditorScene extends Phaser.Scene {
         var shiftArrows = []
         for (let i = 0; i < 4; i++) {
             var coords = getScreenCoords(this, positions[i][0], positions[i][1])
-            var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i)
+            var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i).setDepth(50)
             btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true }).setDepth(positions[i][0] + positions[i][1])
             btnMove.setTint("0xFFAA00").visible = this.shiftEnabled
             btnMove.on('pointerdown', function (pointer) {
@@ -232,7 +232,7 @@ class EditorScene extends Phaser.Scene {
 
         // Make scrollbar
         const SCROLLBAR_HEIGHT = TILE_HEIGHT - this.TILE_SCALE * 200
-        var clickCatcher = this.add.rectangle(0, 0, SIZE_X, SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.001).setDepth(50).setInteractive({ draggable: true })
+        var clickCatcher = this.add.rectangle(0, 0, SIZE_X, SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.001).setDepth(0).setInteractive({ draggable: true })
         var scrollbar = this.add.rectangle(0, SCROLLBAR_HEIGHT, SIZE_X, SIZE_Y - SCROLLBAR_HEIGHT, 0x000000).setOrigin(0).setAlpha(0.5).setDepth(50).setInteractive({ draggable: true })
 
         // Draw slider
@@ -307,10 +307,6 @@ class EditorScene extends Phaser.Scene {
             this.world.destroy()
             this.world = new World(this, this.world.exportWorldAsString())
         }
-    }
-
-    makeChangesOldRemove() {
-        this.makeChanges(true) //TODO REMOVE
     }
 
     // The user returned from playtesting, we update the solvability of this field

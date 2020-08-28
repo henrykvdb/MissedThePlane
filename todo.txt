@@ -22,6 +22,7 @@ Should do
 
 Nice to have
 - Smoother UI / animations
+- Level editor plane/pilot position = closest valid position if touch position is not valid
 - Show selected tile when walking (highlight/arrow model on target tile?)
 - Improved cutscenes/story
 - Try-catch-send-error around entire program so we can see when games are crashing
