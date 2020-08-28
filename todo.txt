@@ -1,22 +1,24 @@
 Should do
-- Maybe some story? explain why plane is flying
-~ Seed fix
-- Tutorial
-    ~ New controls explanation
++ Android
+    + Keep nav bar hidden
+    + Stop music/game on screen off
+    + Ads
+        + GDPR & child protection laws
+        + Google billing: Remove ads in-app purchase
+    + Reviews
+        + Settings menu button
+        + Review prompt every n levels?
++ Fix mountain seed animation
 - UI
+    + NEUTRAL AGE SCREEN
+    + Fix editor settings bug (tiles visible)
+    - Space level name
     - Decorate main menu
-    ~ Hide UI of levelEdit when in pause (at least tile drawer so it doesn't overlap with settings/about)
-- Ads
-    - GDPR & child protection laws
-    - Google billing: Remove ads in-app purchase
+    ~ Tutorial: New controls explanation
+    ~ Better level editor tile order
+    ~ Maybe some story? explain why plane is flying
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
-- Better level editor tile order
-- Keep nav bar hidden
-- Space level name
-- Reviews
-    - Settings menu button
-    - Review prompt every n levels?
 
 Nice to have
 - Smoother UI / animations
