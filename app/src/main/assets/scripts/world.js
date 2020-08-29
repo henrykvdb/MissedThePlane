@@ -313,6 +313,7 @@ class World {
     handleMouseInput(mouseX, mouseY) {
         var endCoord = getGridCoords(this.game, mouseX, mouseY)
         this.updatePilotPath(endCoord)
+        this.showHighlight(endCoord) // Will only show if pilot is moving there now, not if it is invalid
     }
 
     rotateOneways() {
@@ -322,6 +323,24 @@ class World {
                 this.setTile([x, y], eval("TILES.ONEWAY_" + ((parseInt(this.sprites[x][y].texture.key.substr(-1)) + 1) % 4)))
             }
         }
+    }
+
+    showHighlight(endCoord) {
+        if (this.pilot.path.length > 0) var coords = this.pilot.path[0]
+        else if (this.pilot.nextTile) var coords = this.pilot.nextTile
+        else return
+        if (coords[0] != endCoord[0] || coords[1] != endCoord[1]) return // User clicked somewhere random, where pilot is not moving to
+        if (!this.highlight) {
+            this.highlight = this.game.add.sprite(coords[0], coords[1], 'highlight')
+            this.highlight.setScale(this.game.tileScale)
+            this.highlight.setOrigin(0.5, (800 - 284 - 85 * 2) / 800) // Magic numbers for our specific 400x800 tile resolution
+            this.highlight.setTint("0xf7eb45")
+        }
+        if (this.highlightTween) this.highlightTween.stop()
+        var screenCoords = getScreenCoords(this.game, coords[0], coords[1])
+        this.highlight.x = screenCoords[0]; this.highlight.y = screenCoords[1]
+        this.highlight.setDepth(coords[0] + coords[1] + 0.01).setAlpha(1)
+        this.highlightTween = this.game.tweens.add({delay: 0, targets: this.highlight, alpha: 0, duration: 600 })
     }
 
     // Save it in a string of format {"size": size, "tiles": [[1,1,1,2],[1,1,1,etc]], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}

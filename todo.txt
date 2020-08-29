@@ -10,7 +10,6 @@ Should do
         + Review prompt every n levels?
 - UI
     + NEUTRAL AGE SCREEN
-    - Space level name
     - Decorate main menu
     ~ Tutorial: New controls explanation
     ~ Better level editor tile order

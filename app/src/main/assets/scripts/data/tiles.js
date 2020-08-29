@@ -23,6 +23,14 @@ const TILES = {
         levelEditor: true,
         z_index: 0.99
     },
+    WATER: {
+        id: 8,
+        assets: ['water'],
+        passable_pilot: false,
+        passable_plane: true,
+        levelEditor: true,
+        z_index: 0
+    },
     MOUNTAIN_WATER: {
         id: 3,
         assets: ['mountainwater0', 'mountainwater1', 'mountainwater2', 'mountainwater3'],
@@ -31,7 +39,6 @@ const TILES = {
         levelEditor: true,
         z_index: 0.99
     },
-    // id: 4 available
     RUNWAY: {
         id: 5,
         assets: ['stripmiddle0', 'stripmiddle1','stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
@@ -41,34 +48,9 @@ const TILES = {
         levelEditor: true,
         z_index: 0
     },
-    // id: 6 available
     PLANK: {
         id: 7,
         assets: ['plank'],
-        passable_pilot: true,
-        passable_plane: true,
-        levelEditor: true,
-        z_index: 0
-    },
-    WATER: {
-        id: 8,
-        assets: ['water'],
-        passable_pilot: false,
-        passable_plane: true,
-        levelEditor: true,
-        z_index: 0
-    },
-    BUTTON: {
-        id: 9,
-        assets: ['button0r','button1r'],
-        passable_pilot: true,
-        passable_plane: true,
-        levelEditor: true,
-        z_index: 0
-    },
-    BUTTON_OTHER: {
-        id: 10,
-        assets: ['button0b','button1b'],
         passable_pilot: true,
         passable_plane: true,
         levelEditor: true,
@@ -104,6 +86,22 @@ const TILES = {
         passable_pilot: true,
         passable_plane: true,
         levelEditor: false,
+        z_index: 0
+    },
+    BUTTON_OTHER: {
+        id: 10,
+        assets: ['button0b','button1b'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: false,
+        z_index: 0
+    },
+    BUTTON: {
+        id: 9,
+        assets: ['button0r','button1r'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: true,
         z_index: 0
     },
     MISC_0: {

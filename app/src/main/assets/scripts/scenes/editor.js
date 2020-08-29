@@ -242,7 +242,7 @@ class EditorScene extends Phaser.Scene {
         tileSprite.setOrigin(0.5, (800 - 178) / 800).setDepth(200).setInteractive({ draggable: true})
         SLIDER_SPRITES.push(tileSprite)
         tileSprite = this.add.sprite(0, TILE_HEIGHT, 'plane' + this.world.plane.dir)
-        tileSprite.setOrigin(0.5, (800 - 249) / 800).setDepth(200).setInteractive({ draggable: true})
+        tileSprite.setOrigin(0.5, (800 - 249) / 800).setDepth(200).setInteractive({ draggable: true, pixelPerfect: true})
         SLIDER_SPRITES.push(tileSprite)
 
         // Make scrollbar
