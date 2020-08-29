@@ -74,6 +74,38 @@ const TILES = {
         levelEditor: true,
         z_index: 0
     },
+    ONEWAY_0: {
+        id: 11,
+        assets: ['oneway0'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: true,
+        z_index: 0
+    },
+    ONEWAY_1: {
+        id: 12,
+        assets: ['oneway1'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: false,
+        z_index: 0
+    },
+    ONEWAY_2: {
+        id: 13,
+        assets: ['oneway2'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: false,
+        z_index: 0
+    },
+    ONEWAY_3: {
+        id: 14,
+        assets: ['oneway3'],
+        passable_pilot: true,
+        passable_plane: true,
+        levelEditor: false,
+        z_index: 0
+    },
     MISC_0: {
         id: 1000, // I'm not going to waste good ids on misc tiles
         assets: ['misc0'],

@@ -75,6 +75,7 @@ class LoadingScene extends Phaser.Scene {
         for (var i = 0; i < 7; i++) this.load.image('grass' + i, 'assets/tiles/grass' + i + '.png')
         for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) this.load.image('mountain' + i + j, 'assets/tiles/mountain' + i + j + '.png')
         for (var i = 0; i < 4; i++) this.load.image('mountainwater' + i, 'assets/tiles/mountainwater' + i + '.png')
+        for (var i = 0; i < 4; i++) this.load.image('oneway' + i, 'assets/tiles/oneway' + i + '.png')
 
         // Load runway
         for (var i = 0; i < 4; i++) this.load.image('stripend' + i, 'assets/tiles/stripend' + i + '.png')

@@ -115,9 +115,10 @@ class EditorScene extends Phaser.Scene {
             else scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         })
 
-        // Rotate button
+        // Rotate button // todo oneways
         this.btnRotateWorld = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate_world').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
         this.btnRotateWorld.on('pointerdown', function (pointer) {
+            scene.world.rotateOneways()
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
             scene.world.pilot.coords = [scene.world.pilot.coords[1], scene.world.tiles.length - scene.world.pilot.coords[0]]
             scene.world.pilot.dir = (scene.world.pilot.dir + 2) % 8
@@ -189,7 +190,7 @@ class EditorScene extends Phaser.Scene {
             scene.scene.sleep()
         })
 
-        // Rotate button for plane and pilot (default hidden)
+        // Rotate button for plane, pilot and oneways (default hidden)
         this.btnRotate = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.20), 'btn_rotate_1').setOrigin(0, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRotate.on('pointerdown', () => {
             // Get the sprite index and texture asset
@@ -208,6 +209,9 @@ class EditorScene extends Phaser.Scene {
                 scene.sprites[index].setTexture('pilot', 'pilot' + scene.world.pilot.dir)
                 scene.world.pilot.updateSprites()
                 scene.makeChanges(false)
+            } else if (texture.includes('oneway')) {
+                var newRotation = (parseInt(texture.substr(-1)) + 1) % 4
+                scene.sprites[index].setTexture('oneway' + newRotation)
             }
             else console.log("Tried to rotate current entity but neither pilot or plane is selected!")
         })
@@ -350,6 +354,7 @@ class EditorScene extends Phaser.Scene {
         else if (this.inWorldBounds(coords)) {
             var oldTile = this.world.getTile(coords)
             var newTile = TILES_LEVEL_EDITOR[index]
+            if (newTile == TILES.ONEWAY_0) newTile = eval("TILES.ONEWAY_" + this.sprites[index].texture.key.substr(-1))
             if (oldTile == newTile) return // No need to edit anything if this tile is already the selected tile
 
             // Check pilot collision with impassible
@@ -396,7 +401,7 @@ class EditorScene extends Phaser.Scene {
         while (index < 0) index += this.sprites.length
         var texture = this.sprites[index].texture.key
 
-        this.btnRotate.visible = (texture.includes('plane') || texture.includes('pilot'))
+        this.btnRotate.visible = (texture.includes('plane') || texture.includes('pilot') || texture.includes('oneway'))
     }
 
     updateDrawerSprites(position, duration) {

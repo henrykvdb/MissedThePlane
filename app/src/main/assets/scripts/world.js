@@ -201,6 +201,27 @@ class World {
         }
     }
 
+    // Filters out tiles based on multiple conditions
+    isValidNeighbour(pos1, nextPos) {
+        var nextTile = this.getTile(nextPos)
+        if (TILES_IMPASSABLE_PILOT.includes(nextTile)) return false
+
+        var diff = nextPos.map((e, i) => e - pos1[i])
+        if (Math.abs(diff[0]) > 1 || Math.abs(diff[1]) > 1) return false
+        if (diff[0] == 1 && diff[1] == 0  && nextTile == TILES.ONEWAY_0) return false
+        if (diff[0] == -1 && diff[1] == 0 && nextTile == TILES.ONEWAY_2) return false
+        if (diff[0] == 0 && diff[1] == 1  && nextTile == TILES.ONEWAY_3) return false
+        if (diff[0] == 0 && diff[1] == -1 && nextTile == TILES.ONEWAY_1) return false
+
+        if (diff[0] == 1 && diff[1] == 1 && [TILES.ONEWAY_0, TILES.ONEWAY_3].includes(nextTile)) return false
+        if (diff[0] == -1 && diff[1] == 1 && [TILES.ONEWAY_2, TILES.ONEWAY_3].includes(nextTile)) return false
+        if (diff[0] == 1 && diff[1] == -1 && [TILES.ONEWAY_0, TILES.ONEWAY_1].includes(nextTile)) return false
+        if (diff[0] == -1 && diff[1] == -1 && [TILES.ONEWAY_1, TILES.ONEWAY_2].includes(nextTile)) return false
+
+        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) return false // If the game is complete, we forbid pathing over runways
+        return true
+    }
+
     // Returns all pilot passable neighbours from a given coordinate, as well as _diagonal_ neighbours on the condition that the two
     // adjacent tiles next to the diagonal are passable as well.
     getPathNeighbours(coords) {
@@ -214,14 +235,12 @@ class World {
 
         // Add diagonally adjacent if possible
         // I wanted to do this in a cool way but no built-in array equivalence check made it hard, you're free to try yourself
-        if ([[pos[0] - 1, pos[1]], [pos[0], pos[1] - 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] - 1, pos[1] - 1])
-        if ([[pos[0] - 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] - 1, pos[1] + 1])
-        if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] - 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] + 1, pos[1] - 1])
-        if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))).length == 2) neighbours.push([pos[0] + 1, pos[1] + 1])
+        if ([[pos[0] - 1, pos[1]], [pos[0], pos[1] - 1]].filter(c => this.isValidNeighbour(pos, c)).length == 2) neighbours.push([pos[0] - 1, pos[1] - 1])
+        if ([[pos[0] - 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => this.isValidNeighbour(pos, c)).length == 2) neighbours.push([pos[0] - 1, pos[1] + 1])
+        if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] - 1]].filter(c => this.isValidNeighbour(pos, c)).length == 2) neighbours.push([pos[0] + 1, pos[1] - 1])
+        if ([[pos[0] + 1, pos[1]], [pos[0], pos[1] + 1]].filter(c => this.isValidNeighbour(pos, c)).length == 2) neighbours.push([pos[0] + 1, pos[1] + 1])
 
-        neighbours = neighbours.filter(c => !TILES_IMPASSABLE_PILOT.includes(this.getTile(c))) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
-        // If the game is complete, we forbid pathing over runways
-        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) neighbours = neighbours.filter(c => this.getTile(c) != TILES.RUNWAY)
+        neighbours = neighbours.filter(c => this.isValidNeighbour(pos, c)) // filters out impassable neighbours as well as out-of-borders tiles (since air is impassable)
         return neighbours
     }
 
@@ -280,20 +299,30 @@ class World {
         }
         if (!this.pilot.nextTile) { this.pilot.setPath(this.calculatePath(this.pilot.coords, clickedTile)); return } // We are not on a path already, no need for optimization mess
 
-        if (clickedTile[0] == this.pilot.prevTile[0] && clickedTile[1] == this.pilot.prevTile[1]) // We want to go where we just came from, might as well simply cancel our current movement
-            this.pilot.cancelCurrent()
+        var canGoBack = this.isValidNeighbour([Math.floor(this.pilot.coords[0]), Math.floor(this.pilot.coords[1])], clickedTile)
+        if (clickedTile[0] == this.pilot.prevTile[0] && clickedTile[1] == this.pilot.prevTile[1] && canGoBack) // We want to go where we just came from, might as well simply cancel our current movement
+                this.pilot.cancelCurrent()
 
         // If we are already on a path, check if it is faster to cancel the current movement to the next tile instead of pathing from there.
         var pathFromNext = this.calculatePath(this.pilot.nextTile, clickedTile)
         var pathFromPrevious = this.calculatePath(this.pilot.prevTile, clickedTile)
         var lengthNext = pathFromNext.totalLength + Math.hypot(this.pilot.coords[0] - (this.pilot.nextTile[0] + 0.5), this.pilot.coords[1] - (this.pilot.nextTile[1] + 0.5))
         var lengthPrev = pathFromPrevious.totalLength + Math.hypot(this.pilot.coords[0] - (this.pilot.prevTile[0] + 0.5), this.pilot.coords[1] - (this.pilot.prevTile[1] + 0.5))
-        this.pilot.setPath(lengthNext > lengthPrev ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev)
+        this.pilot.setPath(lengthNext > lengthPrev && canGoBack ? pathFromPrevious : pathFromNext, lengthNext > lengthPrev && canGoBack)
     }
 
     handleMouseInput(mouseX, mouseY) {
         var endCoord = getGridCoords(this.game, mouseX, mouseY)
         this.updatePilotPath(endCoord)
+    }
+
+    rotateOneways() {
+        for (var x = 0; x < this.tiles.length; x++) {
+            for (var y = 0; y < this.tiles[0].length; y++) {
+                if (![TILES.ONEWAY_0, TILES.ONEWAY_1, TILES.ONEWAY_2, TILES.ONEWAY_3].includes(this.getTile([x, y]))) continue;
+                this.setTile([x, y], eval("TILES.ONEWAY_" + ((parseInt(this.sprites[x][y].texture.key.substr(-1)) + 1) % 4)))
+            }
+        }
     }
 
     // Save it in a string of format {"size": size, "tiles": [[1,1,1,2],[1,1,1,etc]], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
