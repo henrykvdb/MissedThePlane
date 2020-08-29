@@ -44,7 +44,7 @@ class BrowserScene extends Phaser.Scene {
         const BUTTON_SPACING = getXY(0.3)
         scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortVotes.on('pointerdown', () => {if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({sortOn: 'upvoteRatio'})})
-        if (scene.sortOn != "upvoteRatio" || !scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
+        if (scene.sortOn != "upvoteRatio" && scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
 
         scene.sortDate = scene.add.sprite(SIZE_X / 2, getXY(0.04), 'sort_date').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortDate.on('pointerdown', () => {if (scene.sortOn == "submitDate") return; scene.scene.restart({sortOn: 'submitDate'})})
@@ -102,6 +102,7 @@ var createPanel = function (scene) {
 
 function getTimeLetter(oldDate) {
     var seconds = (new Date().getTime() - oldDate.getTime()) / 1000
+    if (seconds < 0) seconds = -seconds
     if (seconds > 60*60*24*30.5*12) return Math.floor(seconds/(60*60*24*30.5*12)) + "y"
     else if (seconds > 60*60*24*30.5) return Math.floor(seconds/(60*60*24*30.5)) + "m"
     else if (seconds > 60*60*24*7) return Math.floor(seconds/(60*60*24*7)) + "w"

@@ -25,8 +25,6 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('btn_info', 'assets/menu/button_info.png')
         this.load.image('btn_rotate_world', 'assets/menu/button_rotate_world.png')
         this.load.image('btn_open', 'assets/menu/button_open.png')
-        this.load.image('btn_plus', 'assets/menu/button_plus.png')
-        this.load.image('btn_minus', 'assets/menu/button_minus.png')
         this.load.image('btn_wrench', 'assets/menu/button_wrench.png')
         this.load.image('btn_menu', 'assets/menu/button_menu.png')
         this.load.image('btn_back', 'assets/menu/button_back.png')
@@ -55,6 +53,8 @@ class LoadingScene extends Phaser.Scene {
         for (var i = 0; i < 2; i++) this.load.image('btn_select_edit_' + i, 'assets/menu/button_select_edit_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_playtest_' + i, 'assets/menu/button_playtest_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_save_' + i, 'assets/menu/button_save_' + i + '.png')
+        for (var i = 0; i < 2; i++) this.load.image('btn_plus_' + i, 'assets/menu/button_plus_' + i + '.png')
+        for (var i = 0; i < 2; i++) this.load.image('btn_minus_' + i, 'assets/menu/button_minus_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_shift_toggle_' + i, 'assets/menu/button_shift_toggle_' + i + '.png')
         for (var i = 0; i < 2; i++) this.load.image('btn_rotate_' + i, 'assets/menu/button_rotate_' + i + '.png')
         for (var i = 0; i < 5; i++) this.load.image('btn_level_' + i, 'assets/menu/button_level_' + i + '.png')
@@ -90,6 +90,7 @@ class LoadingScene extends Phaser.Scene {
 
         this.load.image('plank', 'assets/tiles/plank.png')
         this.load.image('water', 'assets/tiles/water.png')
+        this.load.image('highlight', 'assets/tiles/highlight.png')
         for (var i = 0; i < 2; i++)  ['r','b'].forEach(suffix => {this.load.image('button' + i + suffix, 'assets/tiles/button'+ i + suffix + '.png')});
 
         // Load entitiy assets

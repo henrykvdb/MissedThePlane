@@ -8,10 +8,8 @@ Should do
     + Reviews
         + Settings menu button
         + Review prompt every n levels?
-+ Fix mountain seed animation
 - UI
     + NEUTRAL AGE SCREEN
-    + Fix editor settings bug (tiles visible)
     - Space level name
     - Decorate main menu
     ~ Tutorial: New controls explanation
@@ -30,7 +28,6 @@ Nice to have
 - Water animations
 - Level spawn animation
 - Scroll bar momentum
-- No progress lost popup when no changes (=> when same level string)
 
 Marketing
 - Epic trailer

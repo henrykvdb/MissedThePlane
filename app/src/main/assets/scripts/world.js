@@ -218,7 +218,7 @@ class World {
         if (diff[0] == 1 && diff[1] == -1 && [TILES.ONEWAY_0, TILES.ONEWAY_1].includes(nextTile)) return false
         if (diff[0] == -1 && diff[1] == -1 && [TILES.ONEWAY_1, TILES.ONEWAY_2].includes(nextTile)) return false
 
-        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED) return false // If the game is complete, we forbid pathing over runways
+        if (this.game.levelStatus == LEVEL_STATUS.COMPLETED && nextTile == TILES.RUNWAY) return false // If the game is complete, we forbid pathing over runways
         return true
     }
 
@@ -245,7 +245,6 @@ class World {
     }
 
     // Returns a list of coordinates which present a pilot passable path from start to finish, startCoord excluded
-    // TODO - what if end coord is impassable? do we take a tile next to it or just ignore it altogether?
     calculatePath(startCoord, endCoord) {
         startCoord = [Math.floor(startCoord[0]), Math.floor(startCoord[1])]
         // console.log("Going from ", startCoord + " to " + endCoord)
@@ -264,7 +263,7 @@ class World {
             this.getPathNeighbours(current.coord).forEach(c => {
                 var oldCost = costSoFar[current.coord[0] * size + current.coord[1]]
                 var newCost = oldCost + Math.hypot(c[0] - current.coord[0], c[1] - current.coord[1]) // If some tiles slow down/speed up, it's here you should add that
-                if (!(costSoFar[c[0] * size + c[1]] == undefined || newCost < oldCost)) return // "continue" in the foreach
+                if (!(costSoFar[c[0] * size + c[1]] == undefined || newCost < costSoFar[c[0]*size+c[1]])) return // "continue" in the foreach
                 costSoFar[c[0] * size + c[1]] = newCost
                 var priority = newCost + Math.hypot(c[0] - endCoord[0], c[1] - endCoord[1]) // We use distance to end coord as heuristic
                 queue.queue({ priority: priority, coord: c })
@@ -299,7 +298,7 @@ class World {
         }
         if (!this.pilot.nextTile) { this.pilot.setPath(this.calculatePath(this.pilot.coords, clickedTile)); return } // We are not on a path already, no need for optimization mess
 
-        var canGoBack = this.isValidNeighbour([Math.floor(this.pilot.coords[0]), Math.floor(this.pilot.coords[1])], clickedTile)
+        var canGoBack = this.isValidNeighbour([Math.floor(this.pilot.coords[0]), Math.floor(this.pilot.coords[1])], this.pilot.prevTile)
         if (clickedTile[0] == this.pilot.prevTile[0] && clickedTile[1] == this.pilot.prevTile[1] && canGoBack) // We want to go where we just came from, might as well simply cancel our current movement
                 this.pilot.cancelCurrent()
 

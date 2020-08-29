@@ -39,21 +39,27 @@ class EditorScene extends Phaser.Scene {
         })
 
         // Increase size button
-        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), 'btn_plus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
+        var MAX_SIZE = 10
+        var plusTexture = 'btn_plus_' + (scene.world.tiles.length >= MAX_SIZE ? 0 : 1)
+        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), plusTexture).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
         this.btnSizeUp.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
-            if (tiles.length >= 10) return // Above 10x10 is pretty smol
+            if (tiles.length >= MAX_SIZE) return // Above 10x10 is pretty smol
             tiles.forEach(col => col.push(TILES.GRASS))
             tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
             scene.world.tiles = tiles
             scene.makeChanges(true)
+            if (scene.world.tiles.length > MIN_SIZE) scene.btnSizeDown.setTexture('btn_minus_1')
+            if (scene.world.tiles.length >= MAX_SIZE) scene.btnSizeUp.setTexture('btn_plus_0')
         })
 
         // Decrease size button
-        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), 'btn_minus').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
+        var MIN_SIZE = 4
+        var minusTexture = 'btn_minus_' + (scene.world.tiles.length <= MIN_SIZE ? 0 : 1)
+        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), minusTexture).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
         this.btnSizeDown.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
-            if (tiles.length <= 4) return // Below 4x4 is not useful and pretty ugly
+            if (tiles.length <= MIN_SIZE) return // Below 4x4 is not useful and pretty ugly
             scene.world.tiles = tiles.slice(0, tiles.length - 1).map(col => col.slice(0, tiles.length - 1))
             if (scene.world.getTile(scene.world.pilot.coords) == TILES.AIR) { // Pilot has gotten out of the map
                 // He was on the edge, we move him 1 x and 1 y up
@@ -74,6 +80,8 @@ class EditorScene extends Phaser.Scene {
                 else if (planePos[0] < planePos[1]) scene.world.plane.coords = [planePos[0], planePos[1] - 1]
             }
             scene.makeChanges(true)
+            if (scene.world.tiles.length <= MIN_SIZE) scene.btnSizeDown.setTexture('btn_minus_0')
+            if (scene.world.tiles.length < MAX_SIZE) scene.btnSizeUp.setTexture('btn_plus_1')
         })
 
         // Shift arrows
@@ -231,10 +239,10 @@ class EditorScene extends Phaser.Scene {
 
         // Make entitiy sprites
         var tileSprite = this.add.sprite(0, TILE_HEIGHT, 'pilot', 'pilot' + this.world.pilot.dir)
-        tileSprite.setOrigin(0.5, (800 - 178) / 800).setDepth(200).setInteractive({ draggable: true, pixelPerfect: true })
+        tileSprite.setOrigin(0.5, (800 - 178) / 800).setDepth(200).setInteractive({ draggable: true})
         SLIDER_SPRITES.push(tileSprite)
         tileSprite = this.add.sprite(0, TILE_HEIGHT, 'plane' + this.world.plane.dir)
-        tileSprite.setOrigin(0.5, (800 - 249) / 800).setDepth(200).setInteractive({ draggable: true, pixelPerfect: true })
+        tileSprite.setOrigin(0.5, (800 - 249) / 800).setDepth(200).setInteractive({ draggable: true})
         SLIDER_SPRITES.push(tileSprite)
 
         // Make scrollbar
