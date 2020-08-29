@@ -95,8 +95,8 @@ class EditorScene extends Phaser.Scene {
             btnMove.setTint("0xFFAA00").visible = this.shiftEnabled
             btnMove.on('pointerdown', function (pointer) {
                 var tiles = scene.world.tiles
-                if (i % 2 == 0) scene.world.tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : size - 1)) //shift X
-                else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : size - 1))) //shift Y
+                if (i % 2 == 0) scene.world.tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : scene.world.tiles.length - 1)) //shift X
+                else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : scene.world.tiles.length - 1))) //shift Y
 
                 // Shift pilot
                 scene.world.pilot.coords = [(scene.world.pilot.coords[0] + scene.world.tiles.length + (i % 2 == 0 ? (i == 0 ? -1 : 1) : 0)) % scene.world.tiles.length,
