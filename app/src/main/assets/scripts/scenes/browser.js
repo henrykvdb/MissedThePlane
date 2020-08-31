@@ -170,7 +170,7 @@ class CustomCard {
         const BAR_WIDTH = rateBar.width * rateBar.scaleX
         const CENTER_FIRST = START_FIRST + BAR_WIDTH / 2
         var rateUpIcon = scene.add.sprite(0, HEIGHT * 0.15, 'upvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
-        var rateUpText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', 9999/*levelData.upvotes*/, 30 * MIN_XY / 600).setOrigin(0, 0.5).setTint(0)
+        var rateUpText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.upvotes, 30 * MIN_XY / 600).setOrigin(0, 0.5).setTint(0)
         var rateDownIcon = scene.add.sprite(0, HEIGHT * 0.15, 'downvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
         var rateDownText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.downvotes, 30 * MIN_XY / 600).setOrigin(1, 0.5).setTint(0)
         const RATE_INFO_WIDTH = 2 * rateUpIcon.width * rateUpIcon.scaleX + rateUpText.width + rateDownText.width + 3 * getXY(0.02)
