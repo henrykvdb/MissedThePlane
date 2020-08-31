@@ -7,8 +7,11 @@ import android.view.View
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.*
+import com.android.billingclient.api.BillingClient.SkuType
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
+import kotlinx.android.synthetic.main.activity_test.*
+
 
 fun log(msg: String) {
     Log.d("MTP", msg)
@@ -18,12 +21,12 @@ fun log(msg: String) {
 class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     private lateinit var webView: WebView
     private lateinit var billingClient: BillingClient
-    private val skuList = listOf("remove_ads")
-    private val purchaseUpdateListener =
+    private var premium = false
+    /*private val purchaseUpdateListener =
         PurchasesUpdatedListener { billingResult, purchases ->
             // To be implemented in a later section.
             log("purchaseUpdateListener")
-        }
+        }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,12 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         //Handler().postDelayed( {},5000)
         //setupBillingClient()
         //createAd() //TODO add actual ad id when we release
+
+        /*if (purchasesResult.purchasesList != null) {
+            for (purchase in purchasesResult.purchasesList!!) {
+                if (purchase.sku == "your_product_id") handlePurchase(purchase)
+            }
+        }*/
     }
 
     override fun onPause() {
@@ -112,14 +121,17 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
     private fun setupBillingClient() {
         billingClient = BillingClient.newBuilder(this)
-            .enablePendingPurchases()
-            .setListener(purchaseUpdateListener)
-            .build()
+            .enablePendingPurchases().setListener(this).build()
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // The BillingClient is ready. You can query purchases here.
                     log("Setup Billing Done")
+
+                    val purchasesResult = billingClient.queryPurchases(SkuType.INAPP)
+                    log("HEY THIS IS THE LIST; ${purchasesResult.purchasesList}")
+
+                    log("loading sku's")
                     loadAllSKUs()
                 }
             }
@@ -128,70 +140,51 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 // Try to restart the connection on the next request to
                 // Google Play by calling the startConnection() method.
                 log("Failed")
-
             }
         })
     }
 
+    private val skuList = listOf("remove_ads")
     private fun loadAllSKUs() = if (billingClient.isReady) {
-        val params = SkuDetailsParams.newBuilder().setSkusList(skuList)
-            .setType(BillingClient.SkuType.INAPP).build()
+        val params = SkuDetailsParams.newBuilder().setSkusList(skuList).setType(SkuType.INAPP).build()
         billingClient.querySkuDetailsAsync(params) { billingResult, skuDetailsList ->
-            // Process the result.
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList?.isNotEmpty() == true) {
                 for (skuDetails in skuDetailsList) {
-                    log("hey loading $skuDetails")
-                    if (skuDetails.sku == "test_product_one") {
-                        /*buttonBuyProduct.setOnClickListener { //TODO handle buy somewhere
-                            log("pressed button")
-                            val billingFlowParams = BillingFlowParams
-                                .newBuilder()
-                                .setSkuDetails(skuDetails)
-                                .build()
+                    if (skuDetails.sku == "remove_ads") {
+                        buttonBuyProduct.setOnClickListener {
+                            val billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
                             billingClient.launchBillingFlow(this, billingFlowParams)
-                        }*/
+                        }
                     }
                 }
             }
-            if (skuDetailsList?.size ?: 0 > 0) skuDetailsList?.get(0)?.description?.let { log(it) }
 
         }
-
     } else {
-        println("Billing Client not ready")
+        log("Billing Client not ready")
     }
 
-    override fun onPurchasesUpdated(
-        billingResult: BillingResult,
-        purchases: MutableList<Purchase>?
-    ) {
+    override fun onPurchasesUpdated(billingResult: BillingResult, purchases: MutableList<Purchase>?) {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
-            for (purchase in purchases) {
-                acknowledgePurchase(purchase.purchaseToken)
-
-            }
+            for (purchase in purchases) acknowledgePurchase(purchase)
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-            // Handle an error caused by a user cancelling the purchase flow.
-            log("User Cancelled")
-            log(billingResult.debugMessage.toString())
-
-
-        } else {
-            log(billingResult.debugMessage.toString())
-            // Handle any other error codes.
-        }
+            log("User Cancelled: (${billingResult.debugMessage})")
+        } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+            log("Product already owned")
+        } else log("Billing error: (${billingResult.debugMessage})")
     }
 
-
-    private fun acknowledgePurchase(purchaseToken: String) {
-        val params = AcknowledgePurchaseParams.newBuilder()
-            .setPurchaseToken(purchaseToken)
-            .build()
-        billingClient.acknowledgePurchase(params) { billingResult ->
-            val responseCode = billingResult.responseCode
-            val debugMessage = billingResult.debugMessage
-            log(debugMessage)
-            log(responseCode.toString())
+    private fun acknowledgePurchase(purchase: Purchase) {
+        if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
+            premium = true
+            if (!purchase.isAcknowledged) {
+                val params = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
+                billingClient.acknowledgePurchase(params) { billingResult ->
+                    log(billingResult.debugMessage)
+                    log(billingResult.responseCode.toString())
+                    premium = true
+                }
+            }
         }
     }
 }
