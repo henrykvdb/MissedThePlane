@@ -1,14 +1,13 @@
 Should do
 + Android
-    + Keep nav bar hidden
     + Ads
         + GDPR & child protection laws
     + Reviews
-        + Settings menu button
         + Review prompt every n levels?
 - UI
     + NEUTRAL AGE SCREEN
     - Decorate main menu
+    + Rate button in settings menu too
     ~ Tutorial: New controls explanation
     ~ Better level editor tile order
     ~ Maybe some story? explain why plane is flying

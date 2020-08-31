@@ -61,6 +61,10 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
     override fun onStart() {
         super.onStart()
+        hideUi()
+    }
+
+    fun hideUi(){
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LOW_PROFILE or
                     View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -121,6 +125,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     // Buy the ad unlock
                     if(buy) purchaseAdUnlock()
                 }
+                else Toast.makeText(this@MainActivity, "Purchase failed", Toast.LENGTH_SHORT).show()
             }
 
             override fun onBillingServiceDisconnected() {

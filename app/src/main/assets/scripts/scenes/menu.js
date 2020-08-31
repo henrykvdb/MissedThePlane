@@ -104,9 +104,11 @@ class MenuScene extends Phaser.Scene {
         const version = getAndroid() ? "v" + Android.getVersion() : "version 0.0.0"
         this.versionText = this.add.bitmapText(SIZE_X*2-10, SIZE_Y-10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
-        // TODO add rate functionality
+
         this.aboutStar = this.add.sprite(START_X+400, Y_START + 6 * TEXT_SPACING, 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutStar.setInteractive().on('pointerdown', () => Android.showRate())
         this.aboutBalloon = this.add.sprite(START_X+650, Y_START + 5 * TEXT_SPACING, 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutBalloon.setInteractive().on('pointerdown', () => Android.showRate())
 
         this.aboutMenu = [this.aboutTitle, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane, this.versionText, this.aboutStar, this.aboutBalloon]
 

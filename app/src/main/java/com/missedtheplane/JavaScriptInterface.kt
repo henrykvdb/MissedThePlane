@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.tasks.OnCompleteListener
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
@@ -40,14 +41,10 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
             if (request.isSuccessful) {
                 // We got the ReviewInfo object
                 val flow = manager.launchReviewFlow(context, request.result)
-                flow.addOnCompleteListener { _ ->
-                    // The flow has finished. The API does not indicate whether the user
-                    // reviewed or not, or even whether the review dialog was shown. Thus, no
-                    // matter the result, we continue our app flow.
+                flow.addOnCompleteListener {
+                    context.hideUi()
                 }
-            } else {
-                // There was some problem, continue regardless of the result.
-            }
+            } else showToast("Failed to load in-app review")
         }
     }
 
