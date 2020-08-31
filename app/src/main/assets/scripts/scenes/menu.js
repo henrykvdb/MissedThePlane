@@ -95,19 +95,19 @@ class MenuScene extends Phaser.Scene {
 
         // [ABOUT MENU]
 
-        this.aboutTitle = this.add.bitmapText(3 * SIZE_X / 2, Y_START, 'voxel_font', "Missed The Plane",  50 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(0.5, 0.5)
+        this.aboutTitle = this.add.bitmapText(3 * SIZE_X / 2, Y_START, 'voxel_font', "Missed The Plane", 50 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(0.5, 0.5)
         const START_X = 3 * SIZE_X / 2 - this.aboutTitle.width / 2
 
         this.aboutCredits0 = this.add.bitmapText(START_X, Y_START + 1.5 * TEXT_SPACING, 'voxel_font', "Winand Appels (Code/Art)", 32 * MIN_XY / 600).setTint(0).setDepth(100)
         this.aboutCredits1 = this.add.bitmapText(START_X, Y_START + 2.5 * TEXT_SPACING, 'voxel_font', "Henryk Van der Bruggen (Code/Art)", 32 * MIN_XY / 600).setTint(0).setDepth(100)
         this.aboutCredits2 = this.add.bitmapText(START_X, Y_START + 3.5 * TEXT_SPACING, 'voxel_font', "Markus Wood (Music/SFX)", 32 * MIN_XY / 600).setTint(0).setDepth(100)
         const version = getAndroid() ? "v" + Android.getVersion() : "version 0.0.0"
-        this.versionText = this.add.bitmapText(SIZE_X*2-10, SIZE_Y-10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
+        this.versionText = this.add.bitmapText(SIZE_X * 2 - 10, SIZE_Y - 10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
-        this.aboutStar = this.add.sprite(START_X+400, Y_START + 6 * TEXT_SPACING, 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutStar = this.add.sprite(START_X + 400, Y_START + 6 * TEXT_SPACING, 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutStar.setInteractive().on('pointerdown', () => Android.showRate())
-        this.aboutBalloon = this.add.sprite(START_X+650, Y_START + 5 * TEXT_SPACING, 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutBalloon = this.add.sprite(START_X + 650, Y_START + 5 * TEXT_SPACING, 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutBalloon.setInteractive().on('pointerdown', () => Android.showRate())
 
         this.aboutMenu = [this.aboutTitle, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane, this.versionText, this.aboutStar, this.aboutBalloon]

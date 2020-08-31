@@ -96,7 +96,7 @@ class BrowserScene extends Phaser.Scene {
 
 var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
-    PUBLIC_LEVELS.forEach(level => sizer.add(createCard(scene, level)))
+    PUBLIC_LEVELS.forEach(levelData => sizer.add(new CustomCard(scene, levelData, false)))
     return sizer
 }
 
@@ -250,11 +250,6 @@ class CustomCard {
     destroy() {
         this.children.forEach(sprite => sprite.destroy())
     }
-}
-
-var createCard = function (scene, levelData) {
-    var card = new CustomCard(scene, levelData, false)
-    return card
 }
 
 function receivePublicLevels(levelData) {
