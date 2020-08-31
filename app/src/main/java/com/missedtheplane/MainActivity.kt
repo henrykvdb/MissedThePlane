@@ -5,13 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.SkuType
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
-import kotlinx.android.synthetic.main.activity_test.*
-
 
 fun log(msg: String) {
     Log.d("MTP", msg)
@@ -21,12 +20,7 @@ fun log(msg: String) {
 class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     private lateinit var webView: WebView
     private lateinit var billingClient: BillingClient
-    private var premium = false
-    /*private val purchaseUpdateListener =
-        PurchasesUpdatedListener { billingResult, purchases ->
-            // To be implemented in a later section.
-            log("purchaseUpdateListener")
-        }*/
+    var showAds = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,15 +36,8 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         webView.addJavascriptInterface(JavaScriptInterface(this, webView), "Android")
         webView.loadUrl("file:///android_asset/index.html")
 
-        //Handler().postDelayed( {},5000)
-        //setupBillingClient()
+        setupBillingClient(false)
         //createAd() //TODO add actual ad id when we release
-
-        /*if (purchasesResult.purchasesList != null) {
-            for (purchase in purchasesResult.purchasesList!!) {
-                if (purchase.sku == "your_product_id") handlePurchase(purchase)
-            }
-        }*/
     }
 
     override fun onPause() {
@@ -119,50 +106,44 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupBillingClient() {
+    fun setupBillingClient(buy: Boolean) {
         billingClient = BillingClient.newBuilder(this)
             .enablePendingPurchases().setListener(this).build()
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
-                    log("Setup Billing Done")
-
+                    // Load previous purchases
                     val purchasesResult = billingClient.queryPurchases(SkuType.INAPP)
-                    log("HEY THIS IS THE LIST; ${purchasesResult.purchasesList}")
+                    if(purchasesResult.purchasesList!=null) for (purchase in purchasesResult.purchasesList!!) {
+                        acknowledgePurchase(purchase)
+                    }
 
-                    log("loading sku's")
-                    loadAllSKUs()
+                    // Buy the ad unlock
+                    if(buy) purchaseAdUnlock()
                 }
             }
 
             override fun onBillingServiceDisconnected() {
-                // Try to restart the connection on the next request to
-                // Google Play by calling the startConnection() method.
-                log("Failed")
+                log("Billing client connection failed")
             }
         })
     }
 
     private val skuList = listOf("remove_ads")
-    private fun loadAllSKUs() = if (billingClient.isReady) {
+    private fun purchaseAdUnlock() = if (billingClient.isReady) {
+        // Load detailed SKU's
         val params = SkuDetailsParams.newBuilder().setSkusList(skuList).setType(SkuType.INAPP).build()
         billingClient.querySkuDetailsAsync(params) { billingResult, skuDetailsList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList?.isNotEmpty() == true) {
-                for (skuDetails in skuDetailsList) {
-                    if (skuDetails.sku == "remove_ads") {
-                        buttonBuyProduct.setOnClickListener {
-                            val billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
-                            billingClient.launchBillingFlow(this, billingFlowParams)
-                        }
-                    }
+                for (skuDetails in skuDetailsList) if (skuDetails.sku == "remove_ads") {
+                    // Buy the ad unlock
+                    val billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
+                    billingClient.launchBillingFlow(this, billingFlowParams)
                 }
             }
-
+            else Toast.makeText(this, "Purchase failed", Toast.LENGTH_SHORT).show()
         }
-    } else {
-        log("Billing Client not ready")
-    }
+    } else log("Billing Client not ready")
 
     override fun onPurchasesUpdated(billingResult: BillingResult, purchases: MutableList<Purchase>?) {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
@@ -171,18 +152,21 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
             log("User Cancelled: (${billingResult.debugMessage})")
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
             log("Product already owned")
-        } else log("Billing error: (${billingResult.debugMessage})")
+        } else Toast.makeText(this, "Purchase failed", Toast.LENGTH_SHORT).show()
     }
 
     private fun acknowledgePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-            premium = true
-            if (!purchase.isAcknowledged) {
+            if (purchase.isAcknowledged) {
+                showAds = false
+                log("ADS REMOVED")
+            } else {
                 val params = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
                 billingClient.acknowledgePurchase(params) { billingResult ->
                     log(billingResult.debugMessage)
                     log(billingResult.responseCode.toString())
-                    premium = true
+                    showAds = false
+                    log("ADS REMOVED")
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.missedtheplane
 
-import android.app.Activity
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -23,7 +22,7 @@ private const val KEY_AUTHOR = "authorname"
 private const val KEY_PUBLISHED = "published"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
-class JavaScriptInterface(private val context: Activity, private val webView: WebView) {
+class JavaScriptInterface(private val context: MainActivity, private val webView: WebView) {
     val prefs = context.getSharedPreferences(KEY_SHARED_PREFS, 0)
     val editor = prefs.edit()
 
@@ -57,6 +56,16 @@ class JavaScriptInterface(private val context: Activity, private val webView: We
     fun showToast(toast: String) {
         Toast.makeText(context, toast, Toast.LENGTH_SHORT).show()
         log(toast)
+    }
+
+    @JavascriptInterface
+    fun purchaseAdUnlock() {
+        context.setupBillingClient(true)
+    }
+
+    @JavascriptInterface
+    fun showAd() {
+        if(context.showAds) context.createAd()
     }
 
     @JavascriptInterface
