@@ -118,7 +118,7 @@ class EditorScene extends Phaser.Scene {
         else this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         this.btnShift.on('pointerdown', function (pointer) {
             scene.shiftEnabled = !scene.shiftEnabled
-            shiftArrows.forEach(sprite => sprite.visible = scene.shiftEnabled)
+            shiftArrows.forEach(sprite => {sprite.visible = scene.shiftEnabled; sprite.setDepth(50)})
             if (scene.shiftEnabled) scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
             else scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         })

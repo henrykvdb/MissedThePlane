@@ -257,6 +257,7 @@ var createCard = function (scene, levelData) {
     return card
 }
 
+// todo next card
 function receivePublicLevels(levelData) {
     PUBLIC_LEVELS = JSON.parse(levelData)
 }
