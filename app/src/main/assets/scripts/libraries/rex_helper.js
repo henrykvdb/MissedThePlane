@@ -159,7 +159,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
     var caps = false
     keyboard.on('button.click', function (button, index, pointer, event) {
         var key = button.text
-        if(key == '_') key = ' '
+        if (key == '_') key = ' '
         var word = field.text
         if (key === '<') {
             if (word && word.length > 0) {
@@ -168,18 +168,18 @@ function createInputDialog(scene, depth, title, negative, positive) {
         }
         else if (key === '®') {
             caps = !caps
-        }  else {
-            if(!caps) key = key.toLowerCase()
+        } else {
+            if (!caps) key = key.toLowerCase()
             if (word) word += key
             else word = key
         }
         field.text = word
         scene.userInput = word
     }).on('button.over', function (button, groupName, index) {
-        if(keys["®"]==button && !caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
+        if (keys["®"] == button && !caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
         else button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
     }).on('button.out', function (button, groupName, index) {
-        if(keys["®"]==button && caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
+        if (keys["®"] == button && caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
         else button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
     })
 
@@ -236,8 +236,132 @@ function createInputDialog(scene, depth, title, negative, positive) {
     for (var i = 0, cnt = reference.length; i < cnt; i++) {
         key = reference[i]
         var btn = keys[key]
-        if (key == '<' || key == '_' ||key == '®') btn.x += -10 - btn.width / 2
+        if (key == '<' || key == '_' || key == '®') btn.x += -10 - btn.width / 2
         else btn.x += 10 + btn.width
+        keys[key].setDepth(depth + 10)
+    }
+
+    // Make buttons fancy & return
+    return textDialog.on('button.over', function (button, groupName, index) {
+        button.getElement('background').setStrokeStyle(1, 0xffffff)
+    }).on('button.out', function (button, groupName, index) {
+        button.getElement('background').setStrokeStyle()
+    })
+}
+
+
+function createKeypadDialog(scene, depth, title, positive) {
+    // Create input field
+    scene.userInput = ""
+
+    // Create keys
+    var keys = []
+    var reference = '0123456789', key
+    for (var i = 0, cnt = reference.length; i < cnt; i++) {
+        key = reference[i]
+        keys[key] = scene.rexUI.add.label({
+            background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.01)).setStrokeStyle(getXY(0.005), COLOR_LIGHT),
+            text: scene.add.bitmapText(0, 0, 'voxel_font', key, 30 * MIN_XY / 600),
+            align: 'center',
+        })
+    }
+
+    // Create the keyboard (grid containing the keys)
+    var keyboard = scene.rexUI.add.gridButtons({
+        width: getXY(0.9),
+        height: getXY(0.9) * 4 / 7,
+
+        buttons: [
+            [keys['7'], keys['8'], keys['9'], undefined],
+            [keys['4'], keys['5'], keys['6'], undefined],
+            [keys['1'], keys['2'], keys['3'], undefined],
+            [undefined, undefined, undefined, keys['0']],
+        ],
+        space: {
+            left: 0, right: 0, top: getXY(0.01), bottom: +getXY(0.12),
+            row: getXY(0.01), column: getXY(0.01)
+        }
+    })
+    keyboard.rowCount = 4
+    keyboard.setColumnProportion(3, 3)
+    keyboard.layout().setDepth(depth + 5)
+
+    // Create input field
+    var field
+    function createLabel(scene, text) {
+        field = scene.rexUI.add.label({
+            width: getXY(0.7), // Minimum width of round-rectangle
+            height: getXY(0.1), // Minimum height of round-rectangle
+            background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.02), 0x5e92f3),
+            text: scene.add.bitmapText(0, 0, 'voxel_font', text, 25 * MIN_XY / 600).setOrigin(0, 0.5),
+            space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: 10 }
+        })
+        return field
+    }
+
+    // Handle keyboard clicks
+    var word = ""
+    keyboard.on('button.click', function (button, index, pointer, event) {
+        var key = button.text
+        if (word) word += key
+        else word = key
+        field.text = word
+        scene.userInput = word
+    }).on('button.over', function (button, groupName, index) {
+        button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
+    }).on('button.out', function (button, groupName, index) {
+        button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
+    })
+
+    // Create dialog
+    var textDialog = scene.rexUI.add.dialog({
+        x: SIZE_X / 2, y: SIZE_Y / 2,
+        background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.02), 0x1565c0).setInteractive(),
+
+        title: scene.rexUI.add.label({
+            background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.02), 0x003c8f).setInteractive(),
+            text: scene.add.bitmapText(0, 0, 'voxel_font', title, 35 * MIN_XY / 600),
+            space: {
+                left: getXY(0.015),
+                right: getXY(0.015),
+                top: getXY(0.01),
+                bottom: getXY(0.01)
+            }
+        }),
+
+        content: scene.rexUI.add.sizer({ orientation: 1, })
+            .add(createLabel(scene, ''))
+            .add(keyboard).layout(),
+
+        actions: [
+            scene.rexUI.add.label({
+                background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.02), 0x5e92f3),
+                text: scene.add.bitmapText(0, 0, 'voxel_font', positive, 30 * MIN_XY / 600),
+                space: { left: getXY(0.01), right: getXY(0.01), top: getXY(0.01), bottom: getXY(0.01) },
+                align: 'right'
+            })
+        ],
+
+        space: {
+            title: getXY(0.02),
+            content: getXY(0.02),
+            action: getXY(0.015),
+
+            left: getXY(0.02),
+            right: getXY(0.02),
+            top: getXY(0.02),
+            bottom: getXY(0.02),
+        },
+
+        expand: { content: false }
+    }).layout().setDepth(depth)
+
+    // MAGIC - ONLY TOUCH IF YOU ARE A POWERFUL WIZZARD
+    for (var i = 0, cnt = reference.length; i < cnt; i++) {
+        key = reference[i]
+        var btn = keys[key]
+        if (key == '0') btn.x += -10 - btn.width / 2
+        else btn.x += 10 + (btn.width)*3/2
         keys[key].setDepth(depth + 10)
     }
 
