@@ -37,6 +37,10 @@ function createTextDialog1Option(scene, depth, title, body, positive) {
             top: getXY(0.02),
             bottom: getXY(0.02),
         },
+
+        align: {
+            actions: 'right',
+        },
         expand: { content: false }
     }).layout().popUp(500).setDepth(depth)
 
@@ -92,6 +96,10 @@ function createTextDialog2Options(scene, depth, title, body, negative, positive)
             right: getXY(0.02),
             top: getXY(0.02),
             bottom: getXY(0.02),
+        },
+
+        align: {
+            actions: 'right',
         },
         expand: { content: false }
     }).layout().popUp(500).setDepth(depth)
@@ -229,6 +237,10 @@ function createInputDialog(scene, depth, title, negative, positive) {
             bottom: getXY(0.02),
         },
 
+
+        align: {
+            actions: 'right',
+        },
         expand: { content: false }
     }).layout().setDepth(depth)
 
@@ -345,12 +357,16 @@ function createKeypadDialog(scene, depth, title, positive) {
         space: {
             title: getXY(0.02),
             content: getXY(0.02),
-            action: getXY(0.015),
+            action: getXY(0.02),
 
             left: getXY(0.02),
             right: getXY(0.02),
             top: getXY(0.02),
             bottom: getXY(0.02),
+        },
+        
+        align: {
+            actions: 'right',
         },
 
         expand: { content: false }
