@@ -130,3 +130,11 @@ function getAndroid(){
     if(typeof Android === "undefined") return undefined
     else return Android
 }
+
+function pauseSound(){
+    if(audio) audio.music.pause()
+}
+
+function resumeSound(){
+    if(audio) audio.music.resume()
+}

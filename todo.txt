@@ -1,7 +1,6 @@
 Should do
 + Android
     + Keep nav bar hidden
-    + Stop music/game on screen off
     + Ads
         + GDPR & child protection laws
         + Google billing: Remove ads in-app purchase
