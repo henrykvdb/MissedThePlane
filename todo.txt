@@ -13,7 +13,9 @@ Should do
     ~ Better level editor tile order
     ~ Maybe some story? explain why plane is flying
 - Browser
-    - Automatic paging
+    - paging
+    - cooldown on reads to server
+
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 

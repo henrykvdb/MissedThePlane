@@ -1,5 +1,7 @@
 var COLOR_LIGHT = "0xd5c175"
 var COLOR_DARK = "0xbe8f17"
+var COLOR_DARK_GREEN = "0x3ea529"
+var COLOR_LIGHT_GREEN = "0x4ac431"
 TIMEOUT_TRESHOLD = 7000 // ms after which to show timed out message
 
 PUBLIC_LEVELS = [] // This list will be filled with level objects as soon as the levels have been fetched from the database.
@@ -97,6 +99,7 @@ class BrowserScene extends Phaser.Scene {
 var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
     PUBLIC_LEVELS.forEach(level => sizer.add(createCard(scene, level)))
+    sizer.add(new NextCard(scene, PUBLIC_LEVELS[PUBLIC_LEVELS.length - 1]))
     return sizer
 }
 
@@ -112,19 +115,79 @@ function getTimeLetter(oldDate) {
     else return seconds + "s"
 }
 
+const CARD_WIDTH = 0.7
+const CARD_HEIGHT = 0.28
 class CustomCard {
+    constructor() {
+
+        const HEIGHT = CARD_HEIGHT * SIZE_Y
+        //Fields
+        this.rotation = 0
+        this.scaleX = 1
+        this.scaleY = 1
+        this.hidden_x = 0
+        this.hidden_y = 0
+        this.width = 0
+        this.height = 0
+        this.displayWidth = 0
+        this.displayHeight = HEIGHT
+        this.originX = 0
+        this.originY = 0
+        this.displayOriginX = 0
+        this.displayOriginY = 0
+
+        Object.defineProperty(this, 'x', {
+            set: function (newX) {
+                var diff = newX - this.hidden_x
+                this.hidden_x = newX
+                this.children.forEach(sprite => sprite.x += diff)
+            },
+            get: function () {
+                return this.hidden_x
+            },
+        });
+        Object.defineProperty(this, 'y', {
+            set: function (newY) {
+                var diff = newY - this.hidden_y
+                this.hidden_y = newY
+                this.children.forEach(sprite => sprite.y += diff)
+            },
+            get: function () {
+                return this.hidden_y
+            },
+        });
+    }
+
+    setScrollFactor(x, y) {
+        this.children.forEach(sprite => sprite.setScrollFactor(x, y))
+    }
+
+    on(event, fn, context) {
+        this.children.forEach(sprite => sprite.on(event, fn, context))
+    }
+
+    off(event, fn, context) {
+        this.children.forEach(sprite => sprite.off(event, fn, context))
+    }
+
+    destroy() {
+        this.children.forEach(sprite => sprite.destroy())
+    }
+}
+
+class LevelCard extends CustomCard {
     constructor(scene, levelData, shouldCheck) {
+        super()
+        const WIDTH = SIZE_X * CARD_WIDTH
+        const HEIGHT = SIZE_Y * CARD_HEIGHT
         if (!shouldCheck && scene.cardOverflow == undefined) {
             var testLevel = {}
             Object.assign(shouldCheck, levelData);
             testLevel.name = "AAAAAAAAAAAA"
             testLevel.authorName = "AAAAAAAAAAAA"
             testLevel.date = "2y"
-            new CustomCard(scene, levelData, true).destroy()
+            new LevelCard(scene, levelData, true).destroy()
         }
-
-        const WIDTH = SIZE_X * 0.7
-        const HEIGHT = SIZE_Y / 3.5
 
         this.children = []
         this.children.push(scene.rexUI.add.roundRectangle(0, 0, WIDTH, HEIGHT, getXY(0.04), COLOR_LIGHT).setStrokeStyle(getXY(0.01), COLOR_DARK, 1))
@@ -197,63 +260,34 @@ class CustomCard {
         clearText.x = CENTER_SECOND + CLEAR_INFO_WIDTH / 2
         this.children.push(clearIcon)
         this.children.push(clearText)
-
-        //Fields
-        this.rotation = 0
-        this.scaleX = 1
-        this.scaleY = 1
-        this.hidden_x = 0
-        this.hidden_y = 0
-        this.width = 0
-        this.height = 0
-        this.displayWidth = 0
-        this.displayHeight = HEIGHT
-        this.originX = 0
-        this.originY = 0
-        this.displayOriginX = 0
-        this.displayOriginY = 0
-
-        Object.defineProperty(this, 'x', {
-            set: function (newX) {
-                var diff = newX - this.hidden_x
-                this.hidden_x = newX
-                this.children.forEach(sprite => sprite.x += diff)
-            },
-            get: function () {
-                return this.hidden_x
-            },
-        });
-        Object.defineProperty(this, 'y', {
-            set: function (newY) {
-                var diff = newY - this.hidden_y
-                this.hidden_y = newY
-                this.children.forEach(sprite => sprite.y += diff)
-            },
-            get: function () {
-                return this.hidden_y
-            },
-        });
     }
+}
 
-    setScrollFactor(x, y) {
-        this.children.forEach(sprite => sprite.setScrollFactor(x, y))
-    }
+class NextCard extends CustomCard {
+    constructor(scene, lastLevel) {
+        super()
+        const WIDTH = SIZE_X * CARD_WIDTH
+        const HEIGHT = SIZE_Y * CARD_HEIGHT // maybe make next card bigger?
 
-    on(event, fn, context) {
-        this.children.forEach(sprite => sprite.on(event, fn, context))
-    }
+        this.children = []
+        this.children.push(scene.rexUI.add.roundRectangle(0, 0, WIDTH, HEIGHT, getXY(0.04), COLOR_LIGHT_GREEN).setStrokeStyle(getXY(0.01), COLOR_DARK_GREEN, 1))
 
-    off(event, fn, context) {
-        this.children.forEach(sprite => sprite.off(event, fn, context))
-    }
+        var title = scene.add.bitmapText(0, 0, 'voxel_font', "Next page", 60 * MIN_XY / 600).setOrigin(0.5, 0.5).setTint(0)
+        this.children.push(title)
 
-    destroy() {
-        this.children.forEach(sprite => sprite.destroy())
+        // next button
+        var nextButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
+        nextButton.on('pointerdown', () => {
+            if (scene.sortOn == "submitDate") var startAt = lastLevel.submitDate
+            console.log("Going to next page with value" + startAt)
+            scene.scene.restart({ sortOn: scene.sortOn, startAt: startAt })
+        })
+        this.children.push(nextButton)
     }
 }
 
 var createCard = function (scene, levelData) {
-    var card = new CustomCard(scene, levelData, false)
+    var card = new LevelCard(scene, levelData, false)
     return card
 }
 

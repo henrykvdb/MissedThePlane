@@ -136,5 +136,5 @@ function pauseSound(){
 }
 
 function resumeSound(){
-    if(audio) audio.music.resume()
+    if (audio && audio.music) audio.music.resume()
 }
