@@ -3,7 +3,6 @@ Should do
     + Keep nav bar hidden
     + Ads
         + GDPR & child protection laws
-        + Google billing: Remove ads in-app purchase
     + Reviews
         + Settings menu button
         + Review prompt every n levels?
