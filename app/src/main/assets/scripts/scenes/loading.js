@@ -132,9 +132,9 @@ function getAndroid(){
 }
 
 function pauseSound(){
-    if(audio) audio.music.pause()
+    if (audio && audio.music) audio.music.pause()
 }
 
 function resumeSound(){
-    if(audio) audio.music.resume()
+    if (audio && audio.music) audio.music.resume()
 }

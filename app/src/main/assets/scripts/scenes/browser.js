@@ -1,5 +1,7 @@
 var COLOR_LIGHT = "0xd5c175"
 var COLOR_DARK = "0xbe8f17"
+var COLOR_DARK_GREEN = "0x3ea529"
+var COLOR_LIGHT_GREEN = "0x4ac431"
 TIMEOUT_TRESHOLD = 7000 // ms after which to show timed out message
 
 PUBLIC_LEVELS = [] // This list will be filled with level objects as soon as the levels have been fetched from the database.
@@ -96,7 +98,8 @@ class BrowserScene extends Phaser.Scene {
 
 var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
-    PUBLIC_LEVELS.forEach(levelData => sizer.add(new CustomCard(scene, levelData, false)))
+    PUBLIC_LEVELS.forEach(level => sizer.add(createCard(scene, level)))
+    sizer.add(new NextCard(scene, PUBLIC_LEVELS[PUBLIC_LEVELS.length - 1]))
     return sizer
 }
 
@@ -112,92 +115,12 @@ function getTimeLetter(oldDate) {
     else return seconds + "s"
 }
 
+const CARD_WIDTH = 0.7
+const CARD_HEIGHT = 0.28
 class CustomCard {
-    constructor(scene, levelData, shouldCheck) {
-        if (!shouldCheck && scene.cardOverflow == undefined) {
-            var testLevel = {}
-            Object.assign(shouldCheck, levelData);
-            testLevel.name = "AAAAAAAAAAAA"
-            testLevel.authorName = "AAAAAAAAAAAA"
-            testLevel.date = "2y"
-            new CustomCard(scene, levelData, true).destroy()
-        }
+    constructor() {
 
-        const WIDTH = SIZE_X * 0.7
-        const HEIGHT = SIZE_Y / 3.5
-
-        this.children = []
-        this.children.push(scene.rexUI.add.roundRectangle(0, 0, WIDTH, HEIGHT, getXY(0.04), COLOR_LIGHT).setStrokeStyle(getXY(0.01), COLOR_DARK, 1))
-
-        // [Main info text]
-
-        // Title
-        const START_FIRST = -WIDTH / 2 + getXY(0.04)
-        var title = scene.add.bitmapText(START_FIRST, -HEIGHT / 2 + getXY(0.08), 'voxel_font', levelData.name, 40 * MIN_XY / 600).setOrigin(0, 1).setTint(0)
-        this.children.push(title)
-        var remainingWidth = WIDTH - title.width - getXY(0.04)
-
-        // Start button
-        var startButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
-        startButton.on('pointerdown', () => {
-            console.log("playing level " + levelData.id)
-            Android.playLevel(levelData.id, false)
-            scene.scene.start('GameScene', { levelIndex: levelData.id, levelString: levelData.levelString, public: true, levelName: levelData.name })
-        })
-        this.children.push(startButton)
-        remainingWidth -= startButton.width * startButton.scaleX + getXY(0.04)
-
-        // Details
-        var date = new Date(1970, 0, 1); date.setSeconds(levelData.submitDate)
-        const START_DETAILS = START_FIRST + title.width * title.scaleX + getXY(0.06)
-        const DETAILS_TEXT = "by " + levelData.authorName + ", " + getTimeLetter(date)
-        var detailsText = scene.add.bitmapText(START_DETAILS, -HEIGHT / 2 + getXY(0.08), 'voxel_font', DETAILS_TEXT, 28 * MIN_XY / 600).setOrigin(0, 1).setTint(0)
-        this.children.push(detailsText)
-        if (shouldCheck) { scene.cardOverflow = detailsText.width + getXY(0.06) > remainingWidth; return }
-        else if (scene.cardOverflow) {
-            detailsText.x = START_FIRST
-            detailsText.y = 0
-        }
-
-        // [First column]
-
-        // Vote bar
-        const rateBarTexture = levelData.upvotes + levelData.downvotes <= 0 ? "rating20" : 'rating' + Math.floor(20 * levelData.upvotes / (levelData.upvotes + levelData.downvotes))
-        var rateBar = scene.add.sprite(START_FIRST, HEIGHT / 2 - getXY(0.02), rateBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40)
-        this.children.push(rateBar)
-
-        // Vote text
-        const BAR_WIDTH = rateBar.width * rateBar.scaleX
-        const CENTER_FIRST = START_FIRST + BAR_WIDTH / 2
-        var rateUpIcon = scene.add.sprite(0, HEIGHT * 0.15, 'upvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
-        var rateUpText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', 9999/*levelData.upvotes*/, 30 * MIN_XY / 600).setOrigin(0, 0.5).setTint(0)
-        var rateDownIcon = scene.add.sprite(0, HEIGHT * 0.15, 'downvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
-        var rateDownText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.downvotes, 30 * MIN_XY / 600).setOrigin(1, 0.5).setTint(0)
-        const RATE_INFO_WIDTH = 2 * rateUpIcon.width * rateUpIcon.scaleX + rateUpText.width + rateDownText.width + 3 * getXY(0.02)
-        rateUpIcon.x = CENTER_FIRST - RATE_INFO_WIDTH / 2
-        rateUpText.x = rateUpIcon.x + rateUpIcon.width * rateUpIcon.scaleX + getXY(0.02)
-        rateDownIcon.x = rateUpText.x + rateUpText.width + getXY(0.02)
-        rateDownText.x = rateUpIcon.x + RATE_INFO_WIDTH
-        this.children.push(rateUpIcon)
-        this.children.push(rateUpText)
-        this.children.push(rateDownIcon)
-        this.children.push(rateDownText)
-
-        // [Second column]
-
-        const START_SECOND = START_FIRST + BAR_WIDTH + getXY(0.04)
-        const clearBarTexture = levelData.plays <= 0 ? 'clear0' : 'clear' + Math.floor(20 * levelData.clears / levelData.plays)
-        this.children.push(scene.add.sprite(START_SECOND, HEIGHT / 2 - getXY(0.02), clearBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40))
-
-        const CENTER_SECOND = START_SECOND + BAR_WIDTH / 2
-        var clearIcon = scene.add.sprite(0, HEIGHT * 0.15, 'trophy').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
-        var clearText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', 'Solved: ' + (levelData.plays <= 0 ? 0 : Math.round(levelData.clears / levelData.plays * 100)) + '%', 30 * MIN_XY / 600).setTint(0).setOrigin(1, 0.5)
-        const CLEAR_INFO_WIDTH = clearIcon.width * clearIcon.scaleX + clearText.width * clearText.scaleX + getXY(0.02)
-        clearIcon.x = CENTER_SECOND - CLEAR_INFO_WIDTH / 2
-        clearText.x = CENTER_SECOND + CLEAR_INFO_WIDTH / 2
-        this.children.push(clearIcon)
-        this.children.push(clearText)
-
+        const HEIGHT = CARD_HEIGHT * SIZE_Y
         //Fields
         this.rotation = 0
         this.scaleX = 1
@@ -252,6 +175,123 @@ class CustomCard {
     }
 }
 
+class LevelCard extends CustomCard {
+    constructor(scene, levelData, shouldCheck) {
+        super()
+        const WIDTH = SIZE_X * CARD_WIDTH
+        const HEIGHT = SIZE_Y * CARD_HEIGHT
+        if (!shouldCheck && scene.cardOverflow == undefined) {
+            var testLevel = {}
+            Object.assign(shouldCheck, levelData);
+            testLevel.name = "AAAAAAAAAAAA"
+            testLevel.authorName = "AAAAAAAAAAAA"
+            testLevel.date = "2y"
+            new LevelCard(scene, levelData, true).destroy()
+        }
+
+        this.children = []
+        this.children.push(scene.rexUI.add.roundRectangle(0, 0, WIDTH, HEIGHT, getXY(0.04), COLOR_LIGHT).setStrokeStyle(getXY(0.01), COLOR_DARK, 1))
+
+        // [Main info text]
+
+        // Title
+        const START_FIRST = -WIDTH / 2 + getXY(0.04)
+        var title = scene.add.bitmapText(START_FIRST, -HEIGHT / 2 + getXY(0.08), 'voxel_font', levelData.name, 40 * MIN_XY / 600).setOrigin(0, 1).setTint(0)
+        this.children.push(title)
+        var remainingWidth = WIDTH - title.width - getXY(0.04)
+
+        // Start button
+        var startButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
+        startButton.on('pointerdown', () => {
+            console.log("playing level " + levelData.id)
+            Android.playLevel(levelData.id, false)
+            scene.scene.start('GameScene', { levelIndex: levelData.id, levelString: levelData.levelString, public: true, levelName: levelData.name })
+        })
+        this.children.push(startButton)
+        remainingWidth -= startButton.width * startButton.scaleX + getXY(0.04)
+
+        // Details
+        var date = new Date(1970, 0, 1); date.setSeconds(levelData.submitDate)
+        const START_DETAILS = START_FIRST + title.width * title.scaleX + getXY(0.06)
+        const DETAILS_TEXT = "by " + levelData.authorName + ", " + getTimeLetter(date)
+        var detailsText = scene.add.bitmapText(START_DETAILS, -HEIGHT / 2 + getXY(0.08), 'voxel_font', DETAILS_TEXT, 28 * MIN_XY / 600).setOrigin(0, 1).setTint(0)
+        this.children.push(detailsText)
+        if (shouldCheck) { scene.cardOverflow = detailsText.width + getXY(0.06) > remainingWidth; return }
+        else if (scene.cardOverflow) {
+            detailsText.x = START_FIRST
+            detailsText.y = 0
+        }
+
+        // [First column]
+
+        // Vote bar
+        const rateBarTexture = levelData.upvotes + levelData.downvotes <= 0 ? "rating20" : 'rating' + Math.floor(20 * levelData.upvotes / (levelData.upvotes + levelData.downvotes))
+        var rateBar = scene.add.sprite(START_FIRST, HEIGHT / 2 - getXY(0.02), rateBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40)
+        this.children.push(rateBar)
+
+        // Vote text
+        const BAR_WIDTH = rateBar.width * rateBar.scaleX
+        const CENTER_FIRST = START_FIRST + BAR_WIDTH / 2
+        var rateUpIcon = scene.add.sprite(0, HEIGHT * 0.15, 'upvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
+        var rateUpText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.upvotes, 30 * MIN_XY / 600).setOrigin(0, 0.5).setTint(0)
+        var rateDownIcon = scene.add.sprite(0, HEIGHT * 0.15, 'downvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
+        var rateDownText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.downvotes, 30 * MIN_XY / 600).setOrigin(1, 0.5).setTint(0)
+        const RATE_INFO_WIDTH = 2 * rateUpIcon.width * rateUpIcon.scaleX + rateUpText.width + rateDownText.width + 3 * getXY(0.02)
+        rateUpIcon.x = CENTER_FIRST - RATE_INFO_WIDTH / 2
+        rateUpText.x = rateUpIcon.x + rateUpIcon.width * rateUpIcon.scaleX + getXY(0.02)
+        rateDownIcon.x = rateUpText.x + rateUpText.width + getXY(0.02)
+        rateDownText.x = rateUpIcon.x + RATE_INFO_WIDTH
+        this.children.push(rateUpIcon)
+        this.children.push(rateUpText)
+        this.children.push(rateDownIcon)
+        this.children.push(rateDownText)
+
+        // [Second column]
+
+        const START_SECOND = START_FIRST + BAR_WIDTH + getXY(0.04)
+        const clearBarTexture = levelData.plays <= 0 ? 'clear0' : 'clear' + Math.floor(20 * levelData.clears / levelData.plays)
+        this.children.push(scene.add.sprite(START_SECOND, HEIGHT / 2 - getXY(0.02), clearBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40))
+
+        const CENTER_SECOND = START_SECOND + BAR_WIDTH / 2
+        var clearIcon = scene.add.sprite(0, HEIGHT * 0.15, 'trophy').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
+        var clearText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', 'Solved: ' + (levelData.plays <= 0 ? 0 : Math.round(levelData.clears / levelData.plays * 100)) + '%', 30 * MIN_XY / 600).setTint(0).setOrigin(1, 0.5)
+        const CLEAR_INFO_WIDTH = clearIcon.width * clearIcon.scaleX + clearText.width * clearText.scaleX + getXY(0.02)
+        clearIcon.x = CENTER_SECOND - CLEAR_INFO_WIDTH / 2
+        clearText.x = CENTER_SECOND + CLEAR_INFO_WIDTH / 2
+        this.children.push(clearIcon)
+        this.children.push(clearText)
+    }
+}
+
+class NextCard extends CustomCard {
+    constructor(scene, lastLevel) {
+        super()
+        const WIDTH = SIZE_X * CARD_WIDTH
+        const HEIGHT = SIZE_Y * CARD_HEIGHT // maybe make next card bigger?
+
+        this.children = []
+        this.children.push(scene.rexUI.add.roundRectangle(0, 0, WIDTH, HEIGHT, getXY(0.04), COLOR_LIGHT_GREEN).setStrokeStyle(getXY(0.01), COLOR_DARK_GREEN, 1))
+
+        var title = scene.add.bitmapText(0, 0, 'voxel_font', "Next page", 60 * MIN_XY / 600).setOrigin(0.5, 0.5).setTint(0)
+        this.children.push(title)
+
+        // next button
+        var nextButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
+        nextButton.on('pointerdown', () => {
+            if (scene.sortOn == "submitDate") var startAt = lastLevel.submitDate
+            console.log("Going to next page with value" + startAt)
+            scene.scene.restart({ sortOn: scene.sortOn, startAt: startAt })
+        })
+        this.children.push(nextButton)
+    }
+}
+
+var createCard = function (scene, levelData) {
+    var card = new LevelCard(scene, levelData, false)
+    return card
+}
+
+// todo next card
 function receivePublicLevels(levelData) {
     PUBLIC_LEVELS = JSON.parse(levelData)
 }

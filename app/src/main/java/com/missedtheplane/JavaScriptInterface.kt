@@ -223,9 +223,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
                 dataToParse["id"] = document.id
                 onlyData.add(convertToJSONString(dataToParse))
             }
-            log(onlyData.toString())
             val urlData = "\'" + onlyData.toString() + "\'"
-            log(urlData)
             webView.loadUrl("javascript:receivePublicLevels($urlData)");
         }.addOnFailureListener { exception ->
             webView.loadUrl("javascript:receivePublicLevels($exception)");
