@@ -14,7 +14,7 @@ class BrowserScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.sortOn = data.sortOn
+        this.sortOn = data.sortOn ? data.sortOn : "upvoteRatio"
         this.startAt = data.startAt
     }
 
@@ -34,9 +34,8 @@ class BrowserScene extends Phaser.Scene {
             waitForLevels().then(() => scene.createBrowser(scene))
             .catch((errorMessage) => showDialog(scene, 400, "An error occured", errorMessage+"\nPlease try again.", undefined, "Okay...", () => scene.scene.start('MenuScene', {caller: null})))
         } else {
-            // TODO remove pc dev lines
-            PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" }, { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
-            this.createBrowser(this)
+            // PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" }, { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
+            // this.createBrowser(this)
         }
 
     }
@@ -46,7 +45,7 @@ class BrowserScene extends Phaser.Scene {
         const BUTTON_SPACING = getXY(0.3)
         scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortVotes.on('pointerdown', () => {if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({sortOn: 'upvoteRatio'})})
-        if (scene.sortOn != "upvoteRatio" && scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
+        if (scene.sortOn != "upvoteRatio") scene.sortVotes.setTint("0xaaaaaa")
 
         scene.sortDate = scene.add.sprite(SIZE_X / 2, getXY(0.04), 'sort_date').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortDate.on('pointerdown', () => {if (scene.sortOn == "submitDate") return; scene.scene.restart({sortOn: 'submitDate'})})
@@ -98,7 +97,7 @@ class BrowserScene extends Phaser.Scene {
 var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
     PUBLIC_LEVELS.forEach(level => sizer.add(createCard(scene, level)))
-    sizer.add(new NextCard(scene, PUBLIC_LEVELS[PUBLIC_LEVELS.length - 1]))
+    if (PUBLIC_LEVELS.length >= 50) sizer.add(new NextCard(scene, PUBLIC_LEVELS[PUBLIC_LEVELS.length - 1]))
     return sizer
 }
 
@@ -275,11 +274,13 @@ class NextCard extends CustomCard {
         this.children.push(title)
 
         // next button
-        var nextButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
+        var nextButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5).setDepth(50)
         nextButton.on('pointerdown', () => {
-            if (scene.sortOn == "submitDate") var startAt = lastLevel.submitDate
+            if (scene.sortOn == "submitDate") var startAt = lastLevel.submitDate - 1
+            else if (scene.sortOn == "clearRatio") var startAt = lastLevel.clearRatio - 0.0001
+            else if (scene.sortOn == "upvoteRatio") var startAt = lastLevel.upvoteRatio - 0.0001
             console.log("Going to next page with value" + startAt)
-            scene.scene.restart({ sortOn: scene.sortOn, startAt: startAt })
+            scene.scene.restart({ sortOn: scene.sortOn, startAt: startAt.toString() })
         })
         this.children.push(nextButton)
     }
@@ -290,9 +291,13 @@ var createCard = function (scene, levelData) {
     return card
 }
 
-// todo next card
+// Accepts level data (or an error string if we couldn't fetch levels for any reason) from kotlin function
 function receivePublicLevels(levelData) {
-    PUBLIC_LEVELS = JSON.parse(levelData)
+    try {
+        PUBLIC_LEVELS = JSON.parse(levelData)
+    } catch (error) {
+        PUBLIC_LEVELS = levelData
+    }
 }
 
 function waitForLevels() {
@@ -301,7 +306,7 @@ function waitForLevels() {
         (function checkLevels(timeSpentWaiting) {
             if (timeSpentWaiting > TIMEOUT_TRESHOLD) return reject("Connection timed out.")
             if (PUBLIC_LEVELS.length > 0) { // We received an answer
-                if (Array.isArray(PUBLIC_LEVELS))  return resolve();
+                if (Array.isArray(PUBLIC_LEVELS)) return resolve();
                 else { // PUBLIC_LEVELS was accepted but it is not an array, meaning we assume it is an error string
                     var errorMessage = PUBLIC_LEVELS
                     PUBLIC_LEVELS = []

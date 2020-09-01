@@ -210,13 +210,19 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
      *  on the sort, e.g. if we fetched first 50 levels based on clearRatio and last was 0.7, we need to pass 0.7 to get the next
      *  50 levels with a clear ratio of 0.7 or lower. Thanks Firestore. */
     @JavascriptInterface
-    fun getPublishedLevels(sortOn: String?, startAt: Double?) {
+    fun getPublishedLevels(sortOn: String?, startAt: String?) {
+        log("Getting public levels with $sortOn and $startAt")
         val levelsRef = Firebase.firestore.collection("levels")
         var query = levelsRef.whereEqualTo("public", true)
                              .orderBy(sortOn ?: "upvoteRatio", Query.Direction.DESCENDING)
                              .limit(50)
-        if (startAt != null) query = query.startAt(startAt)
+        if (startAt != null && sortOn == "submitDate") query = query.startAt(Timestamp(startAt.toLong(), 0))
+        else if (startAt != null && (sortOn == "clearRatio" || sortOn == "upvoteRatio")) query = query.startAt(startAt.toDouble())
         query.get().addOnSuccessListener { documents ->
+            if (documents.size() == 0) {
+                webView.loadUrl("javascript:receivePublicLevels(\"No more levels found.\")");
+                return@addOnSuccessListener
+            }
             val onlyData: MutableList<String> = ArrayList()
             for (document in documents) {
                 val dataToParse = document.data.toMutableMap()

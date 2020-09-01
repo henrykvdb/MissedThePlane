@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     // Buy the ad unlock
                     if(buy) purchaseAdUnlock()
                 }
-                else Toast.makeText(this@MainActivity, "Purchase failed", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(this@MainActivity, "User not logged in", Toast.LENGTH_SHORT).show()
             }
 
             override fun onBillingServiceDisconnected() {
