@@ -94,7 +94,10 @@ class UI {
         this.downvote.on('pointerdown', () => this.setVote(false))
 
         this.btnConfirm = this.scene.add.sprite(SIZE_X / 2, SIZE_Y - getXY(0.2), 'btn_next').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0)
-        this.btnConfirm.on('pointerdown', () => this.scene.returnToBrowser())
+        this.btnConfirm.on('pointerdown', function(){
+            this.scene.returnToBrowser()
+            if(getAndroid()) Android.showAd()
+        })
 
         var ratingElements = [background, rateText, this.upvote, this.downvote, this.btnConfirm]
         ratingElements.forEach(b => this.scene.tweens.add({
