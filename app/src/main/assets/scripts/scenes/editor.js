@@ -199,7 +199,7 @@ class EditorScene extends Phaser.Scene {
         })
 
         // Rotate button for plane, pilot and oneways (default hidden)
-        this.btnRotate = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.20), 'btn_rotate_1').setOrigin(0, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
+        this.btnRotate = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.20), 'btn_rotate').setOrigin(0, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnRotate.on('pointerdown', () => {
             // Get the sprite index and texture asset
             var index = Math.round(scene.position + scene.relativePos + (scene.COUNT_DISPLAY - 1) / 2) % scene.sprites.length

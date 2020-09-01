@@ -5,7 +5,6 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.tasks.OnCompleteListener
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
@@ -15,22 +14,28 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-private const val KEY_SHARED_PREFS = "missedtheplane"
+const val KEY_SHARED_PREFS = "missedtheplane"
 private const val KEY_USER_ID = "userid"
 private const val KEY_LOCAL_LEVEL = "locallevel"
 private const val KEY_SOLVABLE = "solvable"
 private const val KEY_AUTHOR = "authorname"
 private const val KEY_PUBLISHED = "published"
+const val KEY_FIRST_LAUNCH = "firstlaunch"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
 class JavaScriptInterface(private val context: MainActivity, private val webView: WebView) {
     val prefs = context.getSharedPreferences(KEY_SHARED_PREFS, 0)
     val editor = prefs.edit()
 
-    // TODO INLINE?
     fun getUserId() = prefs.getString(KEY_USER_ID, null)
     fun setUserId(id: String) {
         editor.putString(KEY_USER_ID, id)
+        editor.apply()
+    }
+
+    fun getAge()= prefs.getInt(KEY_FIRST_LAUNCH, -1)
+    fun setAge(age: Int) {
+        editor.putInt(KEY_FIRST_LAUNCH, age)
         editor.apply()
     }
 
@@ -62,7 +67,9 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
 
     @JavascriptInterface
     fun showAd() {
-        if(context.showAds) context.createAd()
+        context.runOnUiThread {
+            context.showAd()
+        }
     }
 
     @JavascriptInterface

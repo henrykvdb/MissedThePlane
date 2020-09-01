@@ -1,13 +1,8 @@
 Should do
-+ Android
-    + Ads
-        + GDPR & child protection laws
-    + Reviews
-        + Review prompt every n levels?
++ Switch from test ads to actual admob id -> indicated in mainactivity with TODO
 - UI
     + NEUTRAL AGE SCREEN
     - Decorate main menu
-    - Add space button to input screen
     + Rate button in settings menu too
     ~ Tutorial: New controls explanation
     ~ Better level editor tile order

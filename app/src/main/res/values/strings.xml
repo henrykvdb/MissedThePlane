@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Missed The Plane</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="admob_ad_id">ca-app-pub-6464324284979557/4634258352</string>
 </resources>
