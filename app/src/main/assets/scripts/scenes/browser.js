@@ -42,6 +42,12 @@ class BrowserScene extends Phaser.Scene {
 
     createBrowser(scene) {
         if (this.loadingText) this.loadingText.destroy()
+
+        // Todo replace with age check
+        if (false) {
+            PUBLIC_LEVELS = this.cleanseLevels(PUBLIC_LEVELS)
+        }
+
         const BUTTON_SPACING = getXY(0.3)
         scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         scene.sortVotes.on('pointerdown', () => {if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({sortOn: 'upvoteRatio'})})
@@ -92,11 +98,20 @@ class BrowserScene extends Phaser.Scene {
             })
         })
     }
+
+    // Strips all levels from user created text, such as author and level name
+    cleanseLevels(levels) {
+        levels.forEach(level => {
+            level.name = "Level " + level.id.substring(0, 3)
+            level.authorName = level.authorName.substring(0, 3)
+        })
+        return levels
+    }
 }
 
 var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
-    PUBLIC_LEVELS.forEach(level => sizer.add(createCard(scene, level)))
+    PUBLIC_LEVELS.forEach(level => sizer.add(new LevelCard(scene, level, false)))
     if (PUBLIC_LEVELS.length >= 50) sizer.add(new NextCard(scene, PUBLIC_LEVELS[PUBLIC_LEVELS.length - 1]))
     return sizer
 }
@@ -284,11 +299,6 @@ class NextCard extends CustomCard {
         })
         this.children.push(nextButton)
     }
-}
-
-var createCard = function (scene, levelData) {
-    var card = new LevelCard(scene, levelData, false)
-    return card
 }
 
 // Accepts level data (or an error string if we couldn't fetch levels for any reason) from kotlin function

@@ -218,7 +218,6 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
      *  50 levels with a clear ratio of 0.7 or lower. Thanks Firestore. */
     @JavascriptInterface
     fun getPublishedLevels(sortOn: String?, startAt: String?) {
-        log("Getting public levels with $sortOn and $startAt")
         val levelsRef = Firebase.firestore.collection("levels")
         var query = levelsRef.whereEqualTo("public", true)
                              .orderBy(sortOn ?: "upvoteRatio", Query.Direction.DESCENDING)

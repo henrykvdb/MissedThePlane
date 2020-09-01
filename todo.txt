@@ -8,7 +8,6 @@ Should do
     ~ Better level editor tile order
     ~ Maybe some story? explain why plane is flying
 - Browser
-    - paging
     - cooldown on reads to server
 
 - More levels
