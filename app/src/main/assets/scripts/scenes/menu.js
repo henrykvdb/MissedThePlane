@@ -57,7 +57,7 @@ class MenuScene extends Phaser.Scene {
         this.mainAbout.on('pointerdown', () => scene.openSideMenu(true))
 
         this.mainRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(0, 1).setScale(0.2 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainRemoveAds.on('pointerdown', () => Android.purchaseAdUnlock()) //TODO CALL TO KOTLIN TO SHOW ANDROID PAYMENT POPUP
+        this.mainRemoveAds.on('pointerdown', () => Android.purchaseAdUnlock())
 
         this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings

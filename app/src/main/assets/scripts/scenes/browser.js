@@ -92,7 +92,6 @@ class BrowserScene extends Phaser.Scene {
                 }
             })
         })
-
     }
 }
 
@@ -201,7 +200,7 @@ class LevelCard extends CustomCard {
         var remainingWidth = WIDTH - title.width - getXY(0.04)
 
         // Start button
-        var startButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
+        var startButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5).setDepth(50)
         startButton.on('pointerdown', () => {
             console.log("playing level " + levelData.id)
             Android.playLevel(levelData.id, false)
