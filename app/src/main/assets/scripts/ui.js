@@ -11,7 +11,10 @@ class UI {
         this.btnNext = scene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'btn_next').setOrigin(1, 0).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100);
         this.btnNext.visible = false
         this.btnNext.on('pointerdown', function (pointer) {
-            if (!playTesting) scene.scene.restart({ levelIndex: ++scene.levelIndex })
+            if (!playTesting) {
+                scene.scene.restart({ levelIndex: ++scene.levelIndex })
+                if(getAndroid()) Android.showAd()
+            }
             else scene.returnToEditor(true)
         })
 
@@ -32,7 +35,7 @@ class UI {
             this.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
             this.btnMenu.on('pointerdown', function (pointer) {
                 scene.ui.toggleVisibility(false)
-                scene.scene.launch('MenuScene', {caller: scene.scene.key});
+                scene.scene.launch('MenuScene', { caller: scene.scene.key });
                 scene.scene.pause()
             })
         } else {
@@ -82,7 +85,7 @@ class UI {
 
     showRatingOptions() {
         var rateText = this.scene.add.text(SIZE_X / 2, getXY(0.24), "How did you like this level?", { fill: '#FFFFFF', fontSize: 40 * MIN_XY / 600, fontStyle: 'bold' }).setOrigin(0.5, 0).setDepth(150).setAlpha(0)
-        var background = this.scene.add.rectangle(0, 0, 2*SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(120).setOrigin(0).setInteractive()
+        var background = this.scene.add.rectangle(0, 0, 2 * SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(120).setOrigin(0).setInteractive()
 
         this.upvote = this.scene.add.sprite(SIZE_X / 2 - getXY(0.25), SIZE_Y / 2, 'btn_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0).setTint("0x777777")
         this.upvote.on('pointerdown', () => this.setVote(true))
@@ -109,10 +112,10 @@ class UI {
         this.upvote.setTint(upvote ? "0xffffff" : "0x777777")
         this.downvote.setTint(upvote ? "0x777777" : "0xffffff")
     }
-    
+
     showTutorial(index) {
         var LEVELS_WITH_TUTORIAL = [1, 2]
-        var SHOW_TIMES = {1: 6000, 2: 8000}
+        var SHOW_TIMES = { 1: 6000, 2: 8000 }
         if (!LEVELS_WITH_TUTORIAL.includes(index)) return // Add all levels with tutorials here
         var tutorialElements = []
         tutorialElements.push(this.scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.6).setDepth(150).setOrigin(0).setInteractive())
@@ -122,7 +125,7 @@ class UI {
             tutorialElements.push(title)
             this.scene.anims.create({
                 key: 'tutorial1',
-                frames: [{key: 'tutorial10'}, {key: 'tutorial11'},{key: 'tutorial12'},{key: 'tutorial13'},{key: 'tutorial14'},{key: 'tutorial15'}],
+                frames: [{ key: 'tutorial10' }, { key: 'tutorial11' }, { key: 'tutorial12' }, { key: 'tutorial13' }, { key: 'tutorial14' }, { key: 'tutorial15' }],
                 frameRate: 5,
                 hideOnComplete: false,
                 repeat: -1
@@ -139,7 +142,7 @@ class UI {
             tutorialElements.push(title)
             this.scene.anims.create({
                 key: 'tutorial2',
-                frames: [{key: 'tutorial20'}, {key: 'tutorial21'}],
+                frames: [{ key: 'tutorial20' }, { key: 'tutorial21' }],
                 frameRate: 1.5,
                 hideOnComplete: false,
                 repeat: -1

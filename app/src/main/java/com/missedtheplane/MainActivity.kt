@@ -12,15 +12,18 @@ import com.android.billingclient.api.BillingClient.SkuType
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
 
+
 fun log(msg: String) {
     Log.d("MTP", msg)
 }
 
 @SuppressLint("SetJavaScriptEnabled")
 class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
-    private lateinit var webView: WebView
     private lateinit var billingClient: BillingClient
-    var showAds = true
+    private lateinit var ad: InterstitialAd
+    private lateinit var webView: WebView
+    private val skuList = listOf("remove_ads")
+    private var showAds = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,19 +40,23 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         webView.loadUrl("file:///android_asset/index.html")
 
         setupBillingClient(false)
-        //createAd() //TODO add actual ad id when we release
+        setupAds() //TODO add actual ad id when we release
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if(hasFocus) hideUi()
     }
 
     override fun onPause() {
         webView.onPause()
-        webView.pauseTimers()
         webView.loadUrl("javascript:pauseSound()")
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        webView.resumeTimers()
+        hideUi()
         webView.onResume()
         webView.loadUrl("javascript:resumeSound()")
     }
@@ -64,7 +71,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         hideUi()
     }
 
-    fun hideUi(){
+    fun hideUi() {
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LOW_PROFILE or
                     View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -74,36 +81,52 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
 
-    var consent = false
-    fun createAd() {
+    fun showAd() {
+        ad.show()
+    }
+
+    fun setupAds() {
+        // Don't request an ad if ads are disabled
+        if (!showAds) return
+
+        val age = getSharedPreferences(KEY_SHARED_PREFS, 0).getInt(KEY_FIRST_LAUNCH, -1)
         MobileAds.setRequestConfiguration(MobileAds.getRequestConfiguration().toBuilder().apply {
             // The tag for Children's Online Privacy Protection Act (COPPA)
-            setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+            if (age <= 16) setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+            else setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_FALSE)
 
             // Age consent
-            setTagForUnderAgeOfConsent(RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE)
+            if (age < 18) setTagForUnderAgeOfConsent(RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE)
+            else setTagForUnderAgeOfConsent(RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_FALSE)
 
-            // Maximum ad content rating
-            setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_PG) // Parental guidence
+            when { // Maximum ad content rating
+                age > 18 -> setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_MA)
+                age > 12 -> setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_T)
+                age > 7 -> setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_PG)
+                age > 3 -> setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
+            }
         }.build())
         MobileAds.initialize(this)
 
-        InterstitialAd(this).apply {
+        ad = InterstitialAd(this).apply {
             adUnitId = "ca-app-pub-3940256099942544/1033173712"//getString(R.string.admob_ad_id)
 
-            //GDPR bitch
-            Log.e("ADMOB", "Loading ad consent: $consent")
+            // Only serve non personalised ads since we never asked for consent - GDPR BITCH
             val builder = AdRequest.Builder()
-            if (!consent) {
-                val extras = Bundle()
-                extras.putString("npa", "1")
-                builder.addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
-            }
+            val extras = Bundle()
+            extras.putString("npa", "1")
+            builder.addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
             loadAd(builder.build())
 
+            // Request next ad
             adListener = object : AdListener() {
-                override fun onAdLoaded() = show()
+                override fun onAdClosed() {
+                    super.onAdClosed()
+                    setupAds()
+                    hideUi()
+                }
                 override fun onAdFailedToLoad(p0: Int) {
+                    super.onAdFailedToLoad(p0)
                     Log.e("ADMOB", "Ad failed to load (code $p0)")
                 }
             }
@@ -118,14 +141,13 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // Load previous purchases
                     val purchasesResult = billingClient.queryPurchases(SkuType.INAPP)
-                    if(purchasesResult.purchasesList!=null) for (purchase in purchasesResult.purchasesList!!) {
+                    if (purchasesResult.purchasesList != null) for (purchase in purchasesResult.purchasesList!!) {
                         acknowledgePurchase(purchase)
                     }
 
                     // Buy the ad unlock
-                    if(buy) purchaseAdUnlock()
-                }
-                else Toast.makeText(this@MainActivity, "Purchase failed", Toast.LENGTH_SHORT).show()
+                    if (buy) purchaseAdUnlock()
+                } else Toast.makeText(this@MainActivity, "Purchase failed", Toast.LENGTH_SHORT).show()
             }
 
             override fun onBillingServiceDisconnected() {
@@ -134,7 +156,6 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         })
     }
 
-    private val skuList = listOf("remove_ads")
     private fun purchaseAdUnlock() = if (billingClient.isReady) {
         // Load detailed SKU's
         val params = SkuDetailsParams.newBuilder().setSkusList(skuList).setType(SkuType.INAPP).build()
@@ -145,8 +166,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     val billingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
                     billingClient.launchBillingFlow(this, billingFlowParams)
                 }
-            }
-            else Toast.makeText(this, "Purchase failed", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this, "Purchase failed", Toast.LENGTH_SHORT).show()
         }
     } else log("Billing Client not ready")
 
