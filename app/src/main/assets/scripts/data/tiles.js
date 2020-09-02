@@ -41,7 +41,7 @@ const TILES = {
     },
     RUNWAY: {
         id: 5,
-        assets: ['stripmiddle0', 'stripmiddle1','stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
+        assets: ['stripmiddle0', 'stripmiddle1', 'stripstart0', 'stripstart1', 'stripstart2', 'stripstart3'],
         preferedAssetIndex: 0,
         passable_pilot: true,
         passable_plane: true,
@@ -90,7 +90,7 @@ const TILES = {
     },
     BUTTON_OTHER: {
         id: 10,
-        assets: ['button0b','button1b'],
+        assets: ['button0b', 'button1b'],
         passable_pilot: true,
         passable_plane: true,
         levelEditor: false,
@@ -98,7 +98,7 @@ const TILES = {
     },
     BUTTON: {
         id: 9,
-        assets: ['button0r','button1r'],
+        assets: ['button0r', 'button1r'],
         passable_pilot: true,
         passable_plane: true,
         levelEditor: true,

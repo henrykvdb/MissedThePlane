@@ -34,7 +34,7 @@ class World {
         for (var i = 0; i < 4; i++) {
             this.game.anims.create({
                 key: 'grow' + i,
-                frames: [{ key: 'mountain3' + i }, { key: 'mountain2' + i }, { key: 'mountain1' + i }, { key: 'mountain0' + i }],
+                frames: [{ key: 'tiles', frame: 'mountain3' + i }, { key: 'tiles', frame: 'mountain2' + i }, { key: 'tiles', frame: 'mountain1' + i }, { key: 'tiles', frame: 'mountain0' + i }],
                 frameRate: 18,
                 repeat: 0
             })
@@ -43,7 +43,7 @@ class World {
         this.sprites = Array.from(Array(this.tiles.length)).map(() => Array.from(Array(this.tiles.length)).map(() => undefined))
         for (var x = 0; x < this.tiles.length; x++) {
             for (var y = 0; y < this.tiles[0].length; y++) {
-                this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom(x*this.tiles.length+y))
+                this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom(x * this.tiles.length + y))
             }
         }
     }
@@ -53,7 +53,7 @@ class World {
         if (!Object.values(TILES).includes(tileTypeEnum)) console.log(tileTypeEnum, " is not registered in TILES")
 
         // Choose asset from the tile's asset dictionary
-        var asset;
+        var asset
         if (tileTypeEnum == TILES.RUNWAY) {
             this.runwayCoords.push([x, y])
             var neighbours = getNeighbourCoords([x, y]).map((c, i) => [this.getTile(c), i]).filter(t => t[0] == TILES.RUNWAY)
@@ -61,8 +61,8 @@ class World {
             else if (neighbours.length == 1) asset = tileTypeEnum.assets[2 + neighbours[0][1]] // End runway
             else asset = tileTypeEnum.assets[neighbours[0][1]] // Center runway
         }
-        else if (tileTypeEnum == TILES.BUTTON || tileTypeEnum == TILES.BUTTON_OTHER){
-            if(random) asset = tileTypeEnum.assets[0]
+        else if (tileTypeEnum == TILES.BUTTON || tileTypeEnum == TILES.BUTTON_OTHER) {
+            if (random) asset = tileTypeEnum.assets[0]
             else asset = tileTypeEnum.assets[rng]
         }
         else if (!random) asset = tileTypeEnum.assets[rng]
@@ -71,7 +71,7 @@ class World {
 
         //Create the sprite
         var coords = getScreenCoords(this.game, x, y)
-        var sprite = this.game.add.sprite(coords[0], coords[1], asset)
+        var sprite = this.game.add.sprite(coords[0], coords[1], 'tiles', asset)
         sprite.setScale(this.game.tileScale)
         sprite.setOrigin(0.5, (800 - 284 - 85 * 2) / 800) // Magic numbers for our specific 400x800 tile resolution
         sprite.setDepth(x + y + tileTypeEnum.z_index)
@@ -98,7 +98,7 @@ class World {
         var sprite = this.sprites[x][y]
 
         this.sprites[x][y].destroy()
-        var nextAsset = (tile.assets.indexOf(sprite.texture.key) + 1) % tile.assets.length
+        var nextAsset = (tile.assets.indexOf(sprite.frame.name) + 1) % tile.assets.length
         this.sprites[x][y] = this.createTileSprite(x, y, false, nextAsset)
     }
 
@@ -106,7 +106,7 @@ class World {
         var x = coords[0]; var y = coords[1]
         this.tiles[x][y] = type
         this.sprites[x][y].destroy()
-        this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom(x*this.tiles.length+y))
+        this.sprites[x][y] = this.createTileSprite(x, y, true, this.pseudoRandom(x * this.tiles.length + y))
     }
 
     getTile(coords) {
@@ -123,7 +123,7 @@ class World {
         if (this.getTile(tilePos) != TILES.BUTTON && this.getTile(tilePos) != TILES.BUTTON_OTHER) return
 
         // Check if blocked
-        var neighbours = this.getTile(tilePos) == TILES.BUTTON ?getNeighbourCoords(tilePos):getNeighbourDiagonalCoords(tilePos)
+        var neighbours = this.getTile(tilePos) == TILES.BUTTON ? getNeighbourCoords(tilePos) : getNeighbourDiagonalCoords(tilePos)
         var withPlane = neighbours.filter(c => c[0] == Math.floor(this.plane.coords[0]) &&
             c[1] == Math.floor(this.plane.coords[1]) &&
             [TILES.MOUNTAIN, TILES.GRASS].includes(this.getTile(c)))
@@ -144,7 +144,7 @@ class World {
 
         // Play button sound, swap texture and cancel route
         var x = Math.floor(coords[0]); var y = Math.floor(coords[1])
-        this.buttonSounds[this.tiles[x][y].assets.indexOf(this.sprites[x][y].texture.key)].play()
+        this.buttonSounds[this.tiles[x][y].assets.indexOf(this.sprites[x][y].frame.name)].play()
         this.nextAsset(tilePos)
         this.updatePilotPath(tilePos)
 
@@ -153,16 +153,16 @@ class World {
             var scene = this
             var tile = this.tiles[c[0]][c[1]]
             var sprite = this.sprites[c[0]][c[1]]
-            var animationIndex = Math.floor(this.pseudoRandom(c[0]*this.tiles.length+c[1])*4)
+            var animationIndex = Math.floor(this.pseudoRandom(c[0] * this.tiles.length + c[1]) * 4)
 
             // Play switch animation
-            if (sprite.anims.isPlaying) sprite.anims.reverse('grow'+animationIndex)
+            if (sprite.anims.isPlaying) sprite.anims.reverse('grow' + animationIndex)
             else {
-                if (tile == TILES.MOUNTAIN) sprite.anims.playReverse('grow'+animationIndex)
-                else sprite.anims.play('grow'+animationIndex)
+                if (tile == TILES.MOUNTAIN) sprite.anims.playReverse('grow' + animationIndex)
+                else sprite.anims.play('grow' + animationIndex)
                 sprite.on('animationcomplete', function () {
                     sprite.destroy()
-                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], true, scene.pseudoRandom(c[0]*scene.tiles.length+c[1]))
+                    scene.sprites[c[0]][c[1]] = scene.createTileSprite(c[0], c[1], true, scene.pseudoRandom(c[0] * scene.tiles.length + c[1]))
                 })
             }
 
@@ -190,7 +190,7 @@ class World {
             else {
                 var startTile = [Math.floor(this.plane.coords[0]), Math.floor(this.plane.coords[1])]
                 if (this.runwayCoords.length > PLANE_LANDING_LENGTH + 1) { //Path to end
-                    var endTile = this.runwayCoords.filter(c => TILES.RUNWAY.assets.indexOf(this.sprites[c[0]][c[1]].texture.key) >= 2)
+                    var endTile = this.runwayCoords.filter(c => TILES.RUNWAY.assets.indexOf(this.sprites[c[0]][c[1]].frame.name) >= 2)
                     endTile = endTile.filter(c => c[0] != startTile[0] || c[1] != startTile[1])
                     this.updatePilotPath(endTile[0])
                 }
@@ -208,9 +208,9 @@ class World {
 
         var diff = nextPos.map((e, i) => e - pos1[i])
         if (Math.abs(diff[0]) > 1 || Math.abs(diff[1]) > 1) return false
-        if (diff[0] == 1 && diff[1] == 0  && nextTile == TILES.ONEWAY_0) return false
+        if (diff[0] == 1 && diff[1] == 0 && nextTile == TILES.ONEWAY_0) return false
         if (diff[0] == -1 && diff[1] == 0 && nextTile == TILES.ONEWAY_2) return false
-        if (diff[0] == 0 && diff[1] == 1  && nextTile == TILES.ONEWAY_3) return false
+        if (diff[0] == 0 && diff[1] == 1 && nextTile == TILES.ONEWAY_3) return false
         if (diff[0] == 0 && diff[1] == -1 && nextTile == TILES.ONEWAY_1) return false
 
         if (diff[0] == 1 && diff[1] == 1 && [TILES.ONEWAY_0, TILES.ONEWAY_3].includes(nextTile)) return false
@@ -248,12 +248,12 @@ class World {
     calculatePath(startCoord, endCoord) {
         startCoord = [Math.floor(startCoord[0]), Math.floor(startCoord[1])]
         // console.log("Going from ", startCoord + " to " + endCoord)
-        var queue = new PriorityQueue({ comparator: function (a, b) { return a.priority - b.priority; } });
+        var queue = new PriorityQueue({ comparator: function (a, b) { return a.priority - b.priority; } })
         queue.queue({ priority: 0, coord: startCoord })
         var size = this.tiles.length
         var cameFrom = {}; // Keys are coords, saved as Coord[0] * this.tiles.length + Coord[1]
-        var costSoFar = {};
-        costSoFar[startCoord[0] * size + startCoord[1]] = 0;
+        var costSoFar = {}
+        costSoFar[startCoord[0] * size + startCoord[1]] = 0
 
         var current = undefined
         while (queue.length > 0) {
@@ -263,7 +263,7 @@ class World {
             this.getPathNeighbours(current.coord).forEach(c => {
                 var oldCost = costSoFar[current.coord[0] * size + current.coord[1]]
                 var newCost = oldCost + Math.hypot(c[0] - current.coord[0], c[1] - current.coord[1]) // If some tiles slow down/speed up, it's here you should add that
-                if (!(costSoFar[c[0] * size + c[1]] == undefined || newCost < costSoFar[c[0]*size+c[1]])) return // "continue" in the foreach
+                if (!(costSoFar[c[0] * size + c[1]] == undefined || newCost < costSoFar[c[0] * size + c[1]])) return // "continue" in the foreach
                 costSoFar[c[0] * size + c[1]] = newCost
                 var priority = newCost + Math.hypot(c[0] - endCoord[0], c[1] - endCoord[1]) // We use distance to end coord as heuristic
                 queue.queue({ priority: priority, coord: c })
@@ -283,7 +283,7 @@ class World {
             totalLength += Math.hypot(current[0] - next[0], current[1] - next[1])
             current = next
         }
-        result.totalLength = totalLength;
+        result.totalLength = totalLength
 
         return result
     }
@@ -300,7 +300,7 @@ class World {
 
         var canGoBack = this.isValidNeighbour([Math.floor(this.pilot.coords[0]), Math.floor(this.pilot.coords[1])], this.pilot.prevTile)
         if (clickedTile[0] == this.pilot.prevTile[0] && clickedTile[1] == this.pilot.prevTile[1] && canGoBack) // We want to go where we just came from, might as well simply cancel our current movement
-                this.pilot.cancelCurrent()
+            this.pilot.cancelCurrent()
 
         // If we are already on a path, check if it is faster to cancel the current movement to the next tile instead of pathing from there.
         var pathFromNext = this.calculatePath(this.pilot.nextTile, clickedTile)
@@ -319,8 +319,8 @@ class World {
     rotateOneways() {
         for (var x = 0; x < this.tiles.length; x++) {
             for (var y = 0; y < this.tiles[0].length; y++) {
-                if (![TILES.ONEWAY_0, TILES.ONEWAY_1, TILES.ONEWAY_2, TILES.ONEWAY_3].includes(this.getTile([x, y]))) continue;
-                this.setTile([x, y], eval("TILES.ONEWAY_" + ((parseInt(this.sprites[x][y].texture.key.substr(-1)) + 1) % 4)))
+                if (![TILES.ONEWAY_0, TILES.ONEWAY_1, TILES.ONEWAY_2, TILES.ONEWAY_3].includes(this.getTile([x, y]))) continue
+                this.setTile([x, y], eval("TILES.ONEWAY_" + ((parseInt(this.sprites[x][y].frame.name.substr(-1)) + 1) % 4)))
             }
         }
     }
@@ -331,7 +331,7 @@ class World {
         else return
         if (coords[0] != endCoord[0] || coords[1] != endCoord[1]) return // User clicked somewhere random, where pilot is not moving to
         if (!this.highlight) {
-            this.highlight = this.game.add.sprite(coords[0], coords[1], 'highlight')
+            this.highlight = this.game.add.sprite(coords[0], coords[1], 'entities', 'highlight')
             this.highlight.setScale(this.game.tileScale)
             this.highlight.setOrigin(0.5, (800 - 284 - 85 * 2) / 800) // Magic numbers for our specific 400x800 tile resolution
             this.highlight.setTint("0xf7eb45")
@@ -340,7 +340,7 @@ class World {
         var screenCoords = getScreenCoords(this.game, coords[0], coords[1])
         this.highlight.x = screenCoords[0]; this.highlight.y = screenCoords[1]
         this.highlight.setDepth(coords[0] + coords[1] + 0.01).setAlpha(1)
-        this.highlightTween = this.game.tweens.add({delay: 0, targets: this.highlight, alpha: 0, duration: 600 })
+        this.highlightTween = this.game.tweens.add({ delay: 0, targets: this.highlight, alpha: 0, duration: 600 })
     }
 
     // Save it in a string of format {"size": size, "tiles": [[1,1,1,2],[1,1,1,etc]], "pilot":[pilotX, pilotY, pilotDir], "plane":[planeX, planeY, planeDir]}
@@ -355,8 +355,8 @@ class World {
     }
 
     pseudoRandom(posNumber) {
-        var x = Math.sin(this.seed + posNumber) * 10000;
-        return x - Math.floor(x);
+        var x = Math.sin(this.seed + posNumber) * 10000
+        return x - Math.floor(x)
     }
 
     destroy() {

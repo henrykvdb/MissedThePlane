@@ -20,7 +20,7 @@ class Plane {
 
         // Create shadow sprite
         var screenCoords = getScreenCoords(game, coords[0], coords[1])
-        var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
+        var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'entities', 'shadow')
         shadow.setScale(game.tileScale / 4)
         shadow.setOrigin(0.5, (800 - 405) / 800)
         shadow.alpha = 0
@@ -30,7 +30,7 @@ class Plane {
         // Create plane sprites
         this.sprites = []
         for (var i = 0; i < 8; i++) {
-            var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'plane' + i)
+            var sprite = game.add.sprite(screenCoords[0], screenCoords[1], 'entities', 'plane' + i)
             sprite.setScale(game.tileScale / 2)
             sprite.setOrigin(0.5, (800 - 320 + this.height) / 800)
             sprite.visible = false

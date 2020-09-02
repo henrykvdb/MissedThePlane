@@ -9,7 +9,7 @@ class MenuScene extends Phaser.Scene {
         this.caller = data.caller
 
         // Return button gets initialised here already (will be hidden if this is a main menu)
-        this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(300)
+        this.mainReturn = this.add.sprite(getXY(0.04), getXY(0.04), 'menu', 'button_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(300)
         this.mainReturn.on('pointerdown', () => {
             if (this.caller == 'GameScene') this.scene.get('GameScene').ui.toggleVisibility(true)
             this.scene.resume(this.caller); this.scene.stop()
@@ -27,39 +27,39 @@ class MenuScene extends Phaser.Scene {
 
         // [MAIN MENU]
 
-        this.upvote = this.add.sprite(SIZE_X / 2 - getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'btn_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
+        this.upvote = this.add.sprite(SIZE_X / 2 - getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'menu', 'button_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
         this.upvote.on('pointerdown', () => {
             scene.buttonSound.play()
             scene.scene.get('GameScene').ui.setVote(true)
             scene.upvote.setTint("0xffffff"); scene.downvote.setTint("0x777777")
         })
 
-        this.downvote = this.add.sprite(SIZE_X / 2 + getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'btn_downvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
+        this.downvote = this.add.sprite(SIZE_X / 2 + getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'menu', 'button_downvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)
         this.downvote.on('pointerdown', () => {
             scene.buttonSound.play()
             scene.scene.get('GameScene').ui.setVote(false)
             scene.downvote.setTint("0xffffff"); scene.upvote.setTint("0x777777")
         })
 
-        this.mainMenu = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_menu').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainMenu = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'menu', 'button_main_menu').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainMenu.on('pointerdown', () => scene.switchToMainMenu())
 
-        this.mainCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'btn_main_campaign').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainCampaign = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'menu', 'button_main_campaign').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainCampaign.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.PLAY))
 
-        this.mainUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'btn_main_browser').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainUserLevels = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'menu', 'button_main_browser').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainUserLevels.on('pointerdown', () => scene.startScene('BrowserScene'))
 
-        this.mainLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'btn_main_editor').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainLevelEdit = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 0.5 * BUTTON_SPACING, 'menu', 'button_main_editor').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainLevelEdit.on('pointerdown', () => scene.startScene('LevelSelectScene', SELECT_MODES.EDIT))
 
-        this.mainAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'btn_main_about').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainAbout = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 + 1.5 * BUTTON_SPACING, 'menu', 'button_main_about').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainAbout.on('pointerdown', () => scene.openSideMenu(true))
 
-        this.mainRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'btn_removeads').setOrigin(0, 1).setScale(0.2 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainRemoveAds = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.04), 'menu', 'button_removeads').setOrigin(0, 1).setScale(0.2 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainRemoveAds.on('pointerdown', () => Android.purchaseAdUnlock())
 
-        this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'btn_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'menu', 'button_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings
 
         this.pauseText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'voxel_font', 'Game paused', 50 * MIN_XY / 600).setDepth(100).setOrigin(0.5, 0.5)
@@ -70,7 +70,7 @@ class MenuScene extends Phaser.Scene {
 
         // [SHARED] - side menu return button
 
-        this.sideReturn = this.add.sprite(SIZE_X + getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.sideReturn = this.add.sprite(SIZE_X + getXY(0.04), getXY(0.04), 'menu', 'button_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
         this.sideReturn.on('pointerdown', () => scene.tweenSideMenu(SIZE_X / 2))
 
         // [SETTINGS MENU]
@@ -80,7 +80,7 @@ class MenuScene extends Phaser.Scene {
 
         // Sound change button
         for (var i = 0; i < 4; i++) {
-            var button = this.add.sprite(SIZE_X + getX(0.4), getY(0.4), 'btn_volume_' + i).setScale(0.3 * MIN_XY / 600).setOrigin(0, 0.5).setInteractive().setDepth(300)
+            var button = this.add.sprite(SIZE_X + getX(0.4), getY(0.4), 'menu', 'button_volume_' + i).setScale(0.3 * MIN_XY / 600).setOrigin(0, 0.5).setInteractive().setDepth(300)
             this.settingsMenu.push(button)
             button.on('pointerdown', function (pointer) {
                 scene.buttonSound.play()
@@ -91,7 +91,7 @@ class MenuScene extends Phaser.Scene {
         }
 
         this.settingsMenu.push(this.add.bitmapText(SIZE_X + SIZE_X / 2, Y_START, 'voxel_font', "Settings", 40 * MIN_XY / 600).setDepth(300).setTint("0").setOrigin(0.5, 0))
-        this.settingsMenu.push(this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'pilot_tip').setDepth(300).setScale(MIN_XY / 600).setOrigin(1, 1))
+        this.settingsMenu.push(this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'menu', 'pilot_tip').setDepth(300).setScale(MIN_XY / 600).setOrigin(1, 1))
 
         // [ABOUT MENU]
 
@@ -103,11 +103,11 @@ class MenuScene extends Phaser.Scene {
         this.aboutCredits2 = this.add.bitmapText(START_X, Y_START + 3.5 * TEXT_SPACING, 'voxel_font', "Markus Wood (Music/SFX)", 32 * MIN_XY / 600).setTint(0).setDepth(100)
         const version = getAndroid() ? "v" + Android.getVersion() : "version 0.0.0"
         this.versionText = this.add.bitmapText(SIZE_X * 2 - 10, SIZE_Y - 10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
-        this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
+        this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'entities', 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
-        this.aboutStar = this.add.sprite(START_X + 400, Y_START + 6 * TEXT_SPACING, 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutStar = this.add.sprite(START_X + 400, Y_START + 6 * TEXT_SPACING, 'menu', 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutStar.setInteractive().on('pointerdown', () => Android.showRate())
-        this.aboutBalloon = this.add.sprite(START_X + 650, Y_START + 5 * TEXT_SPACING, 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutBalloon = this.add.sprite(START_X + 650, Y_START + 5 * TEXT_SPACING, 'menu', 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutBalloon.setInteractive().on('pointerdown', () => Android.showRate())
 
         this.aboutMenu = [this.aboutTitle, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane, this.versionText, this.aboutStar, this.aboutBalloon]
@@ -189,7 +189,7 @@ class MenuScene extends Phaser.Scene {
         audio.start()
 
         this.settingsMenu.forEach(sprite => {
-            if (sprite.texture && sprite.texture.key.includes('btn_volume_')) sprite.visible = (!isAbout && sprite.texture.key.slice(-1) == audio.volumeIndex.toString())
+            if (sprite.texture && sprite.frame.name.includes('button_volume_')) sprite.visible = (!isAbout && sprite.frame.name.slice(-1) == audio.volumeIndex.toString())
             else sprite.visible = !isAbout
         })
         this.aboutMenu.forEach(sprite => sprite.visible = isAbout)

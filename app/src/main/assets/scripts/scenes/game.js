@@ -1,7 +1,7 @@
 class GameScene extends Phaser.Scene {
 
     constructor() {
-        super({ key: 'GameScene' });
+        super({ key: 'GameScene' })
     }
 
     init(data) {
@@ -14,17 +14,17 @@ class GameScene extends Phaser.Scene {
     create() {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
         this.cursors = this.input.keyboard.createCursorKeys()
-        this.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D,restart:Phaser.Input.Keyboard.KeyCodes.R});
-        this.graphics = this.add.graphics();
+        this.input.keyboard.addKeys({ up: Phaser.Input.Keyboard.KeyCodes.W, down: Phaser.Input.Keyboard.KeyCodes.S, left: Phaser.Input.Keyboard.KeyCodes.A, right: Phaser.Input.Keyboard.KeyCodes.D, restart: Phaser.Input.Keyboard.KeyCodes.R })
+        this.graphics = this.add.graphics()
         this.ui = new UI(this, this.levelString != undefined && !this.public)
 
         // Create level
         var inputString = this.levelString != undefined ? this.levelString : ALL_LEVELS[this.levelIndex]
         this.levelStatus = LEVEL_STATUS.PLAYING
         this.world = new World(this, inputString)
-        this.timePlaying = 0;
+        this.timePlaying = 0
 
-        this.input.on('pointerdown', () => this.world.handleMouseInput(this.input.activePointer.x, this.input.activePointer.y));
+        this.input.on('pointerdown', () => this.world.handleMouseInput(this.input.activePointer.x, this.input.activePointer.y))
     }
 
     //Handle input
@@ -45,8 +45,8 @@ class GameScene extends Phaser.Scene {
             this.world.clearRunway()
             audio.playPopup(true)
             this.ui.startPopupAnimation(true)
-            this.ui.btnRestart.visible = false
-            if (this.levelIndex < ALL_LEVELS.length - 1 && !this.public) this.ui.btnNext.visible = true
+            this.ui.buttonRestart.visible = false
+            if (this.levelIndex < ALL_LEVELS.length - 1 && !this.public) this.ui.buttonNext.visible = true
         } else if (newStatus == LEVEL_STATUS.FAILED) {
             audio.playPopup(false)
             this.ui.startPopupAnimation(false)

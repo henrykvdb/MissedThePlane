@@ -23,16 +23,16 @@ class BrowserScene extends Phaser.Scene {
         this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#D0EEFF")
 
         // Return button gets made early
-        scene.btnMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'btn_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.btnMenu.on('pointerdown', function (pointer) {
+        scene.buttonMenu = scene.add.sprite(getXY(0.04), getXY(0.04), 'menu', 'button_back').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        scene.buttonMenu.on('pointerdown', function (pointer) {
             scene.scene.start('MenuScene', { caller: null })
         })
 
         if (getAndroid()) { // We don't have levels or want to refresh, we fetch from server
-            Android.getPublishedLevels(this.sortOn ? this.sortOn : null, this.startAt ? this.startAt : null) 
-            this.loadingText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2, 'voxel_font', "Loading levels...",  40 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(0.5, 0.5)
+            Android.getPublishedLevels(this.sortOn ? this.sortOn : null, this.startAt ? this.startAt : null)
+            this.loadingText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2, 'voxel_font', "Loading levels...", 40 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(0.5, 0.5)
             waitForLevels().then(() => scene.createBrowser(scene))
-            .catch((errorMessage) => showDialog(scene, 400, "An error occured", errorMessage+"\nPlease try again.", undefined, "Okay...", () => scene.scene.start('MenuScene', {caller: null})))
+                .catch((errorMessage) => showDialog(scene, 400, "An error occured", errorMessage + "\nPlease try again.", undefined, "Okay...", () => scene.scene.start('MenuScene', { caller: null })))
         } else {
             // TODO remove pc dev lines
             PUBLIC_LEVELS = [{ "deleted": false, "plays": 2, "public": true, "upvotes": 89, "authorName": "winnie", "lastUpdate": 1598301498, "levelString": "{\"size\":4,\"tiles\":[[1,1,8,8],[6,1,8,8],[4,1,8,8],[1,1,8,8]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\",\"seed\":24868.43850759175}", "clears": 1, "name": "Epic level name", "submitDate": 1598832120, "authorId": "S2VK21LCRgEVy2jhEpT3", "downvotes": 0, "id": "1KHWkR2T7Tng5senQfWr" }, { "deleted": false, "plays": 13, "upvotes": 4, "public": true, "authorName": "Robert", "levelString": "{\"size\":4,\"tiles\":[[1,1,1,1],[8,8,8,1],[8,6,4,1],[1,1,1,2]],\"pilot\":[3.5,0.5,1],\"plane\":[0.5,3.5,5],\"difficulty\":\"0\",\"seed\":67.49858129093678}", "clears": 9, "lastUpdate": 1598386551, "submitDate": 1597753800, "name": "Private level", "downvotes": 1, "authorId": "S2VK21LCRgEVy2jhEpT3", "id": "W6C5Nj22mB3yGrwxCZv0" }]
@@ -44,22 +44,22 @@ class BrowserScene extends Phaser.Scene {
     createBrowser(scene) {
         if (this.loadingText) this.loadingText.destroy()
         const BUTTON_SPACING = getXY(0.3)
-        scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.sortVotes.on('pointerdown', () => {if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({sortOn: 'upvoteRatio'})})
+        scene.sortVotes = scene.add.sprite(SIZE_X / 2 - BUTTON_SPACING, getXY(0.04), 'menu', 'button_sort_upvote').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        scene.sortVotes.on('pointerdown', () => { if (scene.sortOn == "upvoteRatio") return; scene.scene.restart({ sortOn: 'upvoteRatio' }) })
         if (scene.sortOn != "upvoteRatio" && scene.sortOn) scene.sortVotes.setTint("0xaaaaaa")
 
-        scene.sortDate = scene.add.sprite(SIZE_X / 2, getXY(0.04), 'sort_date').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.sortDate.on('pointerdown', () => {if (scene.sortOn == "submitDate") return; scene.scene.restart({sortOn: 'submitDate'})})
+        scene.sortDate = scene.add.sprite(SIZE_X / 2, getXY(0.04), 'menu', 'button_sort_date').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        scene.sortDate.on('pointerdown', () => { if (scene.sortOn == "submitDate") return; scene.scene.restart({ sortOn: 'submitDate' }) })
         if (scene.sortOn != "submitDate") scene.sortDate.setTint("0xaaaaaa")
 
-        scene.sortHard = scene.add.sprite(SIZE_X / 2 + BUTTON_SPACING, getXY(0.04), 'sort_clear').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        scene.sortHard.on('pointerdown', () => {if (scene.sortOn == "clearRatio") return; scene.scene.restart({sortOn: 'clearRatio'})})
+        scene.sortHard = scene.add.sprite(SIZE_X / 2 + BUTTON_SPACING, getXY(0.04), 'menu', 'button_sort_trophy').setOrigin(0.5, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        scene.sortHard.on('pointerdown', () => { if (scene.sortOn == "clearRatio") return; scene.scene.restart({ sortOn: 'clearRatio' }) })
         if (scene.sortOn != "clearRatio") scene.sortHard.setTint("0xaaaaaa")
 
         // Create panel
         var panel = scene.rexUI.add.scrollablePanel({
-            x: SIZE_X/2,
-            y: SIZE_Y/2 + getXY(0.4)/2,
+            x: SIZE_X / 2,
+            y: SIZE_Y / 2 + getXY(0.4) / 2,
             width: SIZE_X,
             height: SIZE_Y - getXY(0.4),
 
@@ -105,12 +105,12 @@ var createPanel = function (scene) {
 function getTimeLetter(oldDate) {
     var seconds = (new Date().getTime() - oldDate.getTime()) / 1000
     if (seconds < 0) seconds = -seconds
-    if (seconds > 60*60*24*30.5*12) return Math.floor(seconds/(60*60*24*30.5*12)) + "y"
-    else if (seconds > 60*60*24*30.5) return Math.floor(seconds/(60*60*24*30.5)) + "m"
-    else if (seconds > 60*60*24*7) return Math.floor(seconds/(60*60*24*7)) + "w"
-    else if (seconds > 60*60*24) return Math.floor(seconds/(60*60*24)) + "d"
-    else if (seconds > 60*60) return Math.floor(seconds/(60*60)) + "h"
-    else if (seconds > 60) return Math.floor(seconds/(60)) + "m"
+    if (seconds > 60 * 60 * 24 * 30.5 * 12) return Math.floor(seconds / (60 * 60 * 24 * 30.5 * 12)) + "y"
+    else if (seconds > 60 * 60 * 24 * 30.5) return Math.floor(seconds / (60 * 60 * 24 * 30.5)) + "m"
+    else if (seconds > 60 * 60 * 24 * 7) return Math.floor(seconds / (60 * 60 * 24 * 7)) + "w"
+    else if (seconds > 60 * 60 * 24) return Math.floor(seconds / (60 * 60 * 24)) + "d"
+    else if (seconds > 60 * 60) return Math.floor(seconds / (60 * 60)) + "h"
+    else if (seconds > 60) return Math.floor(seconds / (60)) + "m"
     else return seconds + "s"
 }
 
@@ -144,7 +144,7 @@ class CustomCard {
             get: function () {
                 return this.hidden_x
             },
-        });
+        })
         Object.defineProperty(this, 'y', {
             set: function (newY) {
                 var diff = newY - this.hidden_y
@@ -154,7 +154,7 @@ class CustomCard {
             get: function () {
                 return this.hidden_y
             },
-        });
+        })
     }
 
     setScrollFactor(x, y) {
@@ -181,7 +181,7 @@ class LevelCard extends CustomCard {
         const HEIGHT = SIZE_Y * CARD_HEIGHT
         if (!shouldCheck && scene.cardOverflow == undefined) {
             var testLevel = {}
-            Object.assign(shouldCheck, levelData);
+            Object.assign(shouldCheck, levelData)
             testLevel.name = "AAAAAAAAAAAA"
             testLevel.authorName = "AAAAAAAAAAAA"
             testLevel.date = "2y"
@@ -200,7 +200,7 @@ class LevelCard extends CustomCard {
         var remainingWidth = WIDTH - title.width - getXY(0.04)
 
         // Start button
-        var startButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5).setDepth(50)
+        var startButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'menu', 'button_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5).setDepth(50)
         startButton.on('pointerdown', () => {
             console.log("playing level " + levelData.id)
             Android.playLevel(levelData.id, false)
@@ -225,15 +225,15 @@ class LevelCard extends CustomCard {
 
         // Vote bar
         const rateBarTexture = levelData.upvotes + levelData.downvotes <= 0 ? "rating20" : 'rating' + Math.floor(20 * levelData.upvotes / (levelData.upvotes + levelData.downvotes))
-        var rateBar = scene.add.sprite(START_FIRST, HEIGHT / 2 - getXY(0.02), rateBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40)
+        var rateBar = scene.add.sprite(START_FIRST, HEIGHT / 2 - getXY(0.02), 'menu', rateBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40)
         this.children.push(rateBar)
 
         // Vote text
         const BAR_WIDTH = rateBar.width * rateBar.scaleX
         const CENTER_FIRST = START_FIRST + BAR_WIDTH / 2
-        var rateUpIcon = scene.add.sprite(0, HEIGHT * 0.15, 'upvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
+        var rateUpIcon = scene.add.sprite(0, HEIGHT * 0.15, 'menu', 'upvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
         var rateUpText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.upvotes, 30 * MIN_XY / 600).setOrigin(0, 0.5).setTint(0)
-        var rateDownIcon = scene.add.sprite(0, HEIGHT * 0.15, 'downvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
+        var rateDownIcon = scene.add.sprite(0, HEIGHT * 0.15, 'menu', 'downvote').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
         var rateDownText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', levelData.downvotes, 30 * MIN_XY / 600).setOrigin(1, 0.5).setTint(0)
         const RATE_INFO_WIDTH = 2 * rateUpIcon.width * rateUpIcon.scaleX + rateUpText.width + rateDownText.width + 3 * getXY(0.02)
         rateUpIcon.x = CENTER_FIRST - RATE_INFO_WIDTH / 2
@@ -249,10 +249,10 @@ class LevelCard extends CustomCard {
 
         const START_SECOND = START_FIRST + BAR_WIDTH + getXY(0.04)
         const clearBarTexture = levelData.plays <= 0 ? 'clear0' : 'clear' + Math.floor(20 * levelData.clears / levelData.plays)
-        this.children.push(scene.add.sprite(START_SECOND, HEIGHT / 2 - getXY(0.02), clearBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40))
+        this.children.push(scene.add.sprite(START_SECOND, HEIGHT / 2 - getXY(0.02), 'menu', clearBarTexture).setOrigin(0, 1).setScale(0.015 * WIDTH, 40))
 
         const CENTER_SECOND = START_SECOND + BAR_WIDTH / 2
-        var clearIcon = scene.add.sprite(0, HEIGHT * 0.15, 'trophy').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
+        var clearIcon = scene.add.sprite(0, HEIGHT * 0.15, 'menu', 'trophy').setScale(getXY(0.001) / 8).setOrigin(0, 0.5)
         var clearText = scene.add.bitmapText(0, HEIGHT * 0.15, 'voxel_font', 'Solved: ' + (levelData.plays <= 0 ? 0 : Math.round(levelData.clears / levelData.plays * 100)) + '%', 30 * MIN_XY / 600).setTint(0).setOrigin(1, 0.5)
         const CLEAR_INFO_WIDTH = clearIcon.width * clearIcon.scaleX + clearText.width * clearText.scaleX + getXY(0.02)
         clearIcon.x = CENTER_SECOND - CLEAR_INFO_WIDTH / 2
@@ -275,7 +275,7 @@ class NextCard extends CustomCard {
         this.children.push(title)
 
         // next button
-        var nextButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'btn_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
+        var nextButton = scene.add.sprite(WIDTH / 2 - getXY(0.04), 0, 'menu', 'button_playtest_0').setScale(0.3 * MIN_XY / 600).setInteractive().setOrigin(1, 0.5)
         nextButton.on('pointerdown', () => {
             if (scene.sortOn == "submitDate") var startAt = lastLevel.submitDate
             console.log("Going to next page with value" + startAt)
@@ -301,14 +301,14 @@ function waitForLevels() {
         (function checkLevels(timeSpentWaiting) {
             if (timeSpentWaiting > TIMEOUT_TRESHOLD) return reject("Connection timed out.")
             if (PUBLIC_LEVELS.length > 0) { // We received an answer
-                if (Array.isArray(PUBLIC_LEVELS))  return resolve();
+                if (Array.isArray(PUBLIC_LEVELS)) return resolve()
                 else { // PUBLIC_LEVELS was accepted but it is not an array, meaning we assume it is an error string
                     var errorMessage = PUBLIC_LEVELS
                     PUBLIC_LEVELS = []
                     return reject(errorMessage)
                 }
             }
-            setTimeout(checkLevels, 50, timeSpentWaiting+50);
-        })(0);
-    });
+            setTimeout(checkLevels, 50, timeSpentWaiting + 50)
+        })(0)
+    })
 }

@@ -14,7 +14,7 @@ class Pilot {
 
         // Create shadow sprite
         var screenCoords = getScreenCoords(game, coords[0], coords[1])
-        var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'shadow')
+        var shadow = game.add.sprite(screenCoords[0], screenCoords[1], 'entities', 'shadow')
         shadow.setScale(game.tileScale / 6)
         shadow.setOrigin(0.5, (800 - 405) / 800)
         shadow.alpha = 0.2
@@ -22,7 +22,7 @@ class Pilot {
         this.shadow = shadow
 
         // Create pilot sprite
-        this.pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'pilot', 'pilot' + this.dir)
+        this.pilotSprite = game.add.sprite(screenCoords[0], screenCoords[1], 'entities', 'pilot' + this.dir)
         this.pilotSprite.setScale(game.tileScale / 4)
         this.pilotSprite.setOrigin(0.5, (800 - 204) / 800)
         this.pilotSprite.setDepth(coords[0] + coords[1])
@@ -30,17 +30,17 @@ class Pilot {
             game.anims.create({
                 key: 'walk' + i,
                 frames: [
-                    { key: 'pilot', frame: 'pilot' + i },
-                    { key: 'pilot', frame: 'pilot' + i + 'R' },
-                    { key: 'pilot', frame: 'pilot' + i },
-                    { key: 'pilot', frame: 'pilot' + i + 'L' },
+                    { key: 'entities', frame: 'pilot' + i },
+                    { key: 'entities', frame: 'pilot' + i + 'R' },
+                    { key: 'entities', frame: 'pilot' + i },
+                    { key: 'entities', frame: 'pilot' + i + 'L' },
                 ],
                 frameRate: 8,
                 repeat: -1
             })
             game.anims.create({
                 key: 'idle' + i,
-                frames: [{ key: 'pilot', frame: 'pilot' + i },],
+                frames: [{ key: 'entities', frame: 'pilot' + i },],
                 frameRate: 0,
                 repeat: 0
             })
@@ -82,7 +82,7 @@ class Pilot {
         else if (this.dirVector[0] > 0 && this.dirVector[1] < 0) this.dir = 6
         else if (this.dirVector[0] == 0 && this.dirVector[1] < 0) this.dir = 7
 
-        this.pilotSprite.anims.play((this.dirVector[0] == 0 && this.dirVector[1] == 0 ? 'idle' : 'walk') + this.dir, true);
+        this.pilotSprite.anims.play((this.dirVector[0] == 0 && this.dirVector[1] == 0 ? 'idle' : 'walk') + this.dir, true)
 
         // Update shadow position
         var worldCoords = getScreenCoords(this.game, this.coords[0], this.coords[1])

@@ -32,32 +32,32 @@ class EditorScene extends Phaser.Scene {
         const MARGIN_X = 0.04 //TODO INLINE AND MAKE GLOBAL VARIABLE
 
         // Menu button
-        this.btnMenu = this.add.sprite(getXY(0.04), getXY(MARGIN_X), 'btn_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.btnMenu.on('pointerdown', function (pointer) {
+        this.buttonMenu = this.add.sprite(getXY(0.04), getXY(MARGIN_X), 'menu', 'button_menu').setOrigin(0, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.buttonMenu.on('pointerdown', function (pointer) {
             scene.scene.launch('MenuScene', { caller: scene.scene.key })
-            scene.scene.pause();
+            scene.scene.pause()
         })
 
         // Increase size button
         var MAX_SIZE = 10
-        var plusTexture = 'btn_plus_' + (scene.world.tiles.length >= MAX_SIZE ? 0 : 1)
-        this.btnSizeUp = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), plusTexture).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
-        this.btnSizeUp.on('pointerdown', function (pointer) {
+        var plusTexture = 'button_plus_' + (scene.world.tiles.length >= MAX_SIZE ? 0 : 1)
+        this.buttonSizeUp = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 4 * getXY(BUTTON_GAP), getXY(0.04), 'menu', plusTexture).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(106)
+        this.buttonSizeUp.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
             if (tiles.length >= MAX_SIZE) return // Above 10x10 is pretty smol
             tiles.forEach(col => col.push(TILES.GRASS))
             tiles.push(Array.from(Array(tiles.length + 1)).map(_ => TILES.GRASS))
             scene.world.tiles = tiles
             scene.makeChanges(true)
-            if (scene.world.tiles.length > MIN_SIZE) scene.btnSizeDown.setTexture('btn_minus_1')
-            if (scene.world.tiles.length >= MAX_SIZE) scene.btnSizeUp.setTexture('btn_plus_0')
+            if (scene.world.tiles.length > MIN_SIZE) scene.buttonSizeDown.setTexture('menu', 'button_minus_1')
+            if (scene.world.tiles.length >= MAX_SIZE) scene.buttonSizeUp.setTexture('menu', 'button_plus_0')
         })
 
         // Decrease size button
         var MIN_SIZE = 4
-        var minusTexture = 'btn_minus_' + (scene.world.tiles.length <= MIN_SIZE ? 0 : 1)
-        this.btnSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), minusTexture).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107);
-        this.btnSizeDown.on('pointerdown', function (pointer) {
+        var minusTexture = 'button_minus_' + (scene.world.tiles.length <= MIN_SIZE ? 0 : 1)
+        this.buttonSizeDown = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 3 * getXY(BUTTON_GAP), getXY(0.04), 'menu', minusTexture).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(107)
+        this.buttonSizeDown.on('pointerdown', function (pointer) {
             var tiles = scene.world.tiles
             if (tiles.length <= MIN_SIZE) return // Below 4x4 is not useful and pretty ugly
             scene.world.tiles = tiles.slice(0, tiles.length - 1).map(col => col.slice(0, tiles.length - 1))
@@ -80,8 +80,8 @@ class EditorScene extends Phaser.Scene {
                 else if (planePos[0] < planePos[1]) scene.world.plane.coords = [planePos[0], planePos[1] - 1]
             }
             scene.makeChanges(true)
-            if (scene.world.tiles.length <= MIN_SIZE) scene.btnSizeDown.setTexture('btn_minus_0')
-            if (scene.world.tiles.length < MAX_SIZE) scene.btnSizeUp.setTexture('btn_plus_1')
+            if (scene.world.tiles.length <= MIN_SIZE) scene.buttonSizeDown.setTexture('menu', 'button_minus_0')
+            if (scene.world.tiles.length < MAX_SIZE) scene.buttonSizeUp.setTexture('menu', 'button_plus_1')
         })
 
         // Shift arrows
@@ -90,10 +90,10 @@ class EditorScene extends Phaser.Scene {
         var shiftArrows = []
         for (let i = 0; i < 4; i++) {
             var coords = getScreenCoords(this, positions[i][0], positions[i][1])
-            var btnMove = this.add.sprite(coords[0], coords[1], 'btn_shift_' + i).setDepth(50)
-            btnMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true }).setDepth(positions[i][0] + positions[i][1])
-            btnMove.setTint("0xFFAA00").visible = this.shiftEnabled
-            btnMove.on('pointerdown', function (pointer) {
+            var buttonMove = this.add.sprite(coords[0], coords[1], 'menu', 'button_shift_' + i).setDepth(50)
+            buttonMove.setOrigin(0.5, (800 - 284 - 85 * 2) / 800).setScale(this.tileScale).setInteractive({ pixelPerfect: true }).setDepth(positions[i][0] + positions[i][1])
+            buttonMove.setTint("0xFFAA00").visible = this.shiftEnabled
+            buttonMove.on('pointerdown', function (pointer) {
                 var tiles = scene.world.tiles
                 if (i % 2 == 0) scene.world.tiles = tiles.concat(tiles.splice(0, i == 0 ? 1 : scene.world.tiles.length - 1)) //shift X
                 else scene.world.tiles = tiles.map(row => row.concat(row.splice(0, i == 3 ? 1 : scene.world.tiles.length - 1))) //shift Y
@@ -109,23 +109,23 @@ class EditorScene extends Phaser.Scene {
                 // Update
                 scene.makeChanges(true)
             })
-            shiftArrows.push(btnMove)
+            shiftArrows.push(buttonMove)
         }
 
         // Shift toggle button
-        this.btnShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 1 * getXY(BUTTON_GAP), getXY(0.04), 'btn_shift_toggle_0').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
-        if (scene.shiftEnabled) this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
-        else this.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
-        this.btnShift.on('pointerdown', function (pointer) {
+        this.buttonShift = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 1 * getXY(BUTTON_GAP), getXY(0.04), 'menu', 'button_shift_toggle_0').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(108)
+        if (scene.shiftEnabled) this.buttonShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+        else this.buttonShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
+        this.buttonShift.on('pointerdown', function (pointer) {
             scene.shiftEnabled = !scene.shiftEnabled
-            shiftArrows.forEach(sprite => {sprite.visible = scene.shiftEnabled; sprite.setDepth(50)})
-            if (scene.shiftEnabled) scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
-            else scene.btnShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
+            shiftArrows.forEach(sprite => { sprite.visible = scene.shiftEnabled; sprite.setDepth(50) })
+            if (scene.shiftEnabled) scene.buttonShift.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+            else scene.buttonShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         })
 
         // Rotate button // todo oneways
-        this.btnRotateWorld = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'btn_rotate_world').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
-        this.btnRotateWorld.on('pointerdown', function (pointer) {
+        this.buttonRotateWorld = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'menu', 'button_rotate_world').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
+        this.buttonRotateWorld.on('pointerdown', function (pointer) {
             scene.world.rotateOneways()
             scene.world.tiles = scene.world.tiles[0].map((_, index) => scene.world.tiles.map(row => row[index]).reverse())
             scene.world.pilot.coords = [scene.world.pilot.coords[1], scene.world.tiles.length - scene.world.pilot.coords[0]]
@@ -136,8 +136,8 @@ class EditorScene extends Phaser.Scene {
         })
 
         // Export/Save current level button
-        this.btnSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'btn_save_' + (this.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105)
-        this.btnSave.on('pointerdown', function (pointer) {
+        this.buttonSave = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04 + BUTTON_GAP), 'menu', 'button_save_' + (this.madeChanges ? 1 : 0)).setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(105)
+        this.buttonSave.on('pointerdown', function (pointer) {
             if (!scene.madeChanges) return
             scene.madeChanges = false
             var levelString = scene.world.exportWorldAsString()
@@ -148,21 +148,21 @@ class EditorScene extends Phaser.Scene {
                 Android.updateLevel(scene.levelIndex, levelString)
                 Android.setSolvable(scene.levelIndex, scene.isSolvable)
             } else USER_LEVELS[scene.levelIndex] = levelString
-            scene.btnSave.setTexture('btn_save_0')
+            scene.buttonSave.setTexture('menu', 'button_save_0')
         })
 
         // Open tools drawer
-        var drawerSprites = [this.btnSizeUp, this.btnSizeDown, this.btnShift, this.btnRotateWorld, this.btnSave]
+        var drawerSprites = [this.buttonSizeUp, this.buttonSizeDown, this.buttonShift, this.buttonRotateWorld, this.buttonSave]
         var drawerSpritesX = drawerSprites.map(sprite => sprite.x)
         var drawerSpritesY = drawerSprites.map(sprite => sprite.y)
-        this.btnDrawer = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04), 'btn_wrench').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110);
+        this.buttonDrawer = this.add.sprite(SIZE_X - getXY(MARGIN_X), getXY(0.04), 'menu', 'button_wrench').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(110)
         if (!this.drawerOpen) {
-            drawerSprites.forEach(sprite => sprite.x = this.btnDrawer.x)
-            drawerSprites.forEach(sprite => sprite.y = this.btnDrawer.y)
+            drawerSprites.forEach(sprite => sprite.x = this.buttonDrawer.x)
+            drawerSprites.forEach(sprite => sprite.y = this.buttonDrawer.y)
         } else {
-            scene.btnDrawer.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+            scene.buttonDrawer.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
         }
-        this.btnDrawer.on('pointerdown', function (pointer) {
+        this.buttonDrawer.on('pointerdown', function (pointer) {
             scene.drawerOpen = !scene.drawerOpen
 
             drawerSprites.forEach(function (sprite, i) {
@@ -174,56 +174,56 @@ class EditorScene extends Phaser.Scene {
                         y: drawerSpritesY[i],
                         duration: 300, delay: 0,
                         ease: 'Expo'
-                    });
-                    scene.btnDrawer.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
+                    })
+                    scene.buttonDrawer.setTint(Phaser.Display.Color.GetColor(255, 170, 0))
                 }
                 // Close -> open
                 else {
                     scene.tweens.add({
                         targets: sprite,
-                        x: scene.btnDrawer.x,
-                        y: scene.btnDrawer.y,
+                        x: scene.buttonDrawer.x,
+                        y: scene.buttonDrawer.y,
                         duration: 300, delay: 0,
                         ease: 'Expo'
-                    });
-                    scene.btnDrawer.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
+                    })
+                    scene.buttonDrawer.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
                 }
             })
         })
 
         // Run button
-        this.btnRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'btn_playtest_' + (scene.isSolvable ? 1 : 0)).setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnRun.on('pointerdown', function (pointer) {
+        this.buttonRun = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.20), 'menu', 'button_playtest_' + (scene.isSolvable ? 1 : 0)).setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.buttonRun.on('pointerdown', function (pointer) {
             scene.scene.launch('GameScene', { levelIndex: scene.levelIndex, levelString: scene.world.exportWorldAsString() })
             scene.scene.sleep()
         })
 
         // Rotate button for plane, pilot and oneways (default hidden)
-        this.btnRotate = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.20), 'btn_rotate').setOrigin(0, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100);
-        this.btnRotate.on('pointerdown', () => {
+        this.buttonRotate = this.add.sprite(getXY(0.04), SIZE_Y - getXY(0.20), 'menu', 'button_rotate').setOrigin(0, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
+        this.buttonRotate.on('pointerdown', () => {
             // Get the sprite index and texture asset
             var index = Math.round(scene.position + scene.relativePos + (scene.COUNT_DISPLAY - 1) / 2) % scene.sprites.length
             while (index < 0) index += scene.sprites.length
-            var texture = scene.sprites[index].texture.key
+            var texture = scene.sprites[index].frame.name
 
             if (texture.includes('plane') && scene.world.plane) {
                 scene.world.plane.dir = (this.world.plane.dir + 2) % 8
-                scene.sprites[index].setTexture('plane' + scene.world.plane.dir)
+                scene.sprites[index].setTexture('entities', 'plane' + scene.world.plane.dir)
                 scene.world.plane.updateSprites()
                 scene.makeChanges(false)
             }
             else if (texture.includes('pilot') && scene.world.pilot) {
                 scene.world.pilot.dir = (scene.world.pilot.dir + 2) % 8
-                scene.sprites[index].setTexture('pilot', 'pilot' + scene.world.pilot.dir)
+                scene.sprites[index].setTexture('entities', 'pilot' + scene.world.pilot.dir)
                 scene.world.pilot.updateSprites()
                 scene.makeChanges(false)
             } else if (texture.includes('oneway')) {
                 var newRotation = (parseInt(texture.substr(-1)) + 1) % 4
-                scene.sprites[index].setTexture('oneway' + newRotation)
+                scene.sprites[index].setTexture('tiles', 'oneway' + newRotation)
             }
             else console.log("Tried to rotate current entity but neither pilot or plane is selected!")
         })
-        this.btnRotate.visible = false
+        this.buttonRotate.visible = false
 
         // Cover sprites out of screen
         this.add.rectangle(SIZE_X, 0, SIZE_X, SIZE_Y, 0xD0EEFF).setDepth(290).setOrigin(0)
@@ -232,17 +232,17 @@ class EditorScene extends Phaser.Scene {
         const SLIDER_SPRITES = []
         const TILE_HEIGHT = SIZE_Y - getY(0.01)
         for (let i = 0; i < TILES_LEVEL_EDITOR.length; i++) {
-            var tileSprite = this.add.sprite(0, TILE_HEIGHT, TILES_LEVEL_EDITOR[i].assets[0])
+            var tileSprite = this.add.sprite(0, TILE_HEIGHT, 'tiles', TILES_LEVEL_EDITOR[i].assets[0])
             tileSprite.setOrigin(0.5, (800 - 284 + 168) / 800).setDepth(200).setInteractive({ draggable: true, pixelPerfect: true }).visible = false
             SLIDER_SPRITES.push(tileSprite)
         }
 
         // Make entitiy sprites
-        var tileSprite = this.add.sprite(0, TILE_HEIGHT, 'pilot', 'pilot' + this.world.pilot.dir)
-        tileSprite.setOrigin(0.5, (800 - 178) / 800).setDepth(200).setInteractive({ draggable: true})
+        var tileSprite = this.add.sprite(0, TILE_HEIGHT, 'entities', 'pilot' + this.world.pilot.dir)
+        tileSprite.setOrigin(0.5, (800 - 178) / 800).setDepth(200).setInteractive({ draggable: true })
         SLIDER_SPRITES.push(tileSprite)
-        tileSprite = this.add.sprite(0, TILE_HEIGHT, 'plane' + this.world.plane.dir)
-        tileSprite.setOrigin(0.5, (800 - 249) / 800).setDepth(200).setInteractive({ draggable: true, pixelPerfect: true})
+        tileSprite = this.add.sprite(0, TILE_HEIGHT, 'entities', 'plane' + this.world.plane.dir)
+        tileSprite.setOrigin(0.5, (800 - 249) / 800).setDepth(200).setInteractive({ draggable: true, pixelPerfect: true })
         SLIDER_SPRITES.push(tileSprite)
 
         // Make scrollbar
@@ -309,10 +309,10 @@ class EditorScene extends Phaser.Scene {
 
     makeChanges(restart) {
         this.isSolvable = false
-        this.btnRun.setTexture("btn_playtest_0")
+        this.buttonRun.setTexture('menu', 'button_playtest_0')
         if (!this.madeChanges) {
             this.madeChanges = true
-            this.btnSave.setTexture('btn_save_1')
+            this.buttonSave.setTexture('menu', 'button_save_1')
             if (getAndroid()) Android.setSolvable(this.levelIndex, false)
         }
 
@@ -326,7 +326,7 @@ class EditorScene extends Phaser.Scene {
     setSolvable(solved) {
         if (this.isSolvable || !solved) return // The user didn't finish it, it doesn't give new information
         this.isSolvable = true
-        this.btnRun.setTexture("btn_playtest_1")
+        this.buttonRun.setTexture('menu', "button_playtest_1")
         // The user completed the level, and while we should wait until a save to store this value, there have been no changes since last save
         // Which means it is save to save the solvability immediately
         if (getAndroid() && !this.madeChanges) Android.setSolvable(this.levelIndex, true)
@@ -336,7 +336,7 @@ class EditorScene extends Phaser.Scene {
         // Get the sprite index and texture asset
         var index = Math.round(this.position + this.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
         while (index < 0) index += this.sprites.length
-        var texture = this.sprites[index].texture.key
+        var texture = this.sprites[index].frame.name
 
         // Get the input event
         var pointer = this.input.activePointer
@@ -362,7 +362,7 @@ class EditorScene extends Phaser.Scene {
         else if (this.inWorldBounds(coords)) {
             var oldTile = this.world.getTile(coords)
             var newTile = TILES_LEVEL_EDITOR[index]
-            if (newTile == TILES.ONEWAY_0) newTile = eval("TILES.ONEWAY_" + this.sprites[index].texture.key.substr(-1))
+            if (newTile == TILES.ONEWAY_0) newTile = eval("TILES.ONEWAY_" + this.sprites[index].frame.name.substr(-1))
             if (oldTile == newTile) return // No need to edit anything if this tile is already the selected tile
 
             // Check pilot collision with impassible
@@ -385,7 +385,7 @@ class EditorScene extends Phaser.Scene {
                 // Check if the new runway tile is in the right line
                 var runwayTiles = this.world.runwayCoords
                 if (runwayTiles.length > 1) {
-                    var index = TILES.RUNWAY.assets.indexOf(this.world.sprites[runwayTiles[0][0]][runwayTiles[0][1]].texture.key)
+                    var index = TILES.RUNWAY.assets.indexOf(this.world.sprites[runwayTiles[0][0]][runwayTiles[0][1]].frame.name)
                     removeOldRunway = (index % 2 == 0 && runwayTiles[0][1] != coords[1]) || (index % 2 == 1 && runwayTiles[0][0] != coords[0])
                 }
 
@@ -407,9 +407,9 @@ class EditorScene extends Phaser.Scene {
         // Get the sprite index and texture asset
         var index = Math.round(this.position + this.relativePos + (this.COUNT_DISPLAY - 1) / 2) % this.sprites.length
         while (index < 0) index += this.sprites.length
-        var texture = this.sprites[index].texture.key
+        var texture = this.sprites[index].frame.name
 
-        this.btnRotate.visible = (texture.includes('plane') || texture.includes('pilot') || texture.includes('oneway'))
+        this.buttonRotate.visible = (texture.includes('plane') || texture.includes('pilot') || texture.includes('oneway'))
     }
 
     updateDrawerSprites(position, duration) {
@@ -432,7 +432,7 @@ class EditorScene extends Phaser.Scene {
                 // Update sprite size
                 const CENTER = (this.COUNT_DISPLAY - 1) / 2
                 var size = Math.max(1 / (Math.abs(CENTER - localPos) + 1), 0.75)
-                if (sprite.texture.key.includes("pilot")) size /= 1.5
+                if (sprite.frame.name.includes("pilot")) size /= 1.5
                 sprite.setScale(this.TILE_SCALE * size)
 
                 // Move the sprite to the new position
@@ -441,7 +441,7 @@ class EditorScene extends Phaser.Scene {
                         targets: sprite,
                         x: newPos,
                         duration: duration, delay: 0, completeDelay: 0, loopDelay: 0, repeatDelay: 0
-                    });
+                    })
                 }
                 else sprite.x = newPos
             }
