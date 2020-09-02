@@ -125,6 +125,7 @@ class MenuScene extends Phaser.Scene {
     switchToMainMenu() {
         this.buttonSound.play()
         if (this.caller == null) { console.log("Error: no caller?"); return } // should never happen
+        if (this.caller == 'GameScene') this.sendVote()
         if (!this.ASK_CLOSE.includes(this.caller)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
@@ -134,7 +135,7 @@ class MenuScene extends Phaser.Scene {
             this.scene.stop(this.caller)
             this.caller = null
         } else if (this.caller == "GameScene" && (this.scene.get('GameScene').levelStatus != LEVEL_STATUS.PLAYING ||
-            this.scene.get('GameScene').timePlaying < 4000)) {
+                                                  this.scene.get('GameScene').timePlaying < 4000)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
             this.caller = null
@@ -146,6 +147,11 @@ class MenuScene extends Phaser.Scene {
                 scene.caller = null
             })
         }
+    }
+
+    sendVote() {
+        var game = this.scene.get('GameScene')
+        if (getAndroid() && game.ui.currentVote != undefined) Android.voteForLevel(game.levelIndex, game.ui.currentVote)
     }
 
     // Handles everything related to starting a scene

@@ -397,7 +397,6 @@ function showDialog(scene, depth, title, body, negative, positive, callback) {
     textDialog.on('button.click', function (button, groupName, index) {
         textDialog.destroy()
         stopInputs.destroy()
-        console.log("index was ", index)
         if (callback && (index == 1 || negative == undefined || negative == "")) callback()
     }, scene)
 }
@@ -427,7 +426,7 @@ function showComboDialog(scene, depth, inputSettings, inputChecker, wrongInputSe
         var stopInputs2 = scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(depth + 99).setOrigin(0).setInteractive()
         var input = scene.userInput
         if (inputChecker(input)) { // We got good input
-            var confirmDialog = createTextDialog2Options(scene, depth + 100, confirmSettings.title, confirmSettings.body + input, confirmSettings.negative, confirmSettings.positive)
+            var confirmDialog = createTextDialog2Options(scene, depth + 100, confirmSettings.title, confirmSettings.body + "\"" + input + "\"", confirmSettings.negative, confirmSettings.positive)
             confirmDialog.on('button.click', function (button, groupName, index2) {
                 confirmDialog.destroy()
                 stopInputs2.destroy()

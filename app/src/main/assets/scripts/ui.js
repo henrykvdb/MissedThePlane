@@ -87,11 +87,13 @@ class UI {
         var rateText = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.24), 'voxel_font', "How did you like this level?", 50 * MIN_XY / 600).setOrigin(0.5, 0).setDepth(150).setAlpha(0)
         var background = this.scene.add.rectangle(0, 0, 2 * SIZE_X, SIZE_Y, 0x000000).setAlpha(0.001).setDepth(120).setOrigin(0).setInteractive()
 
-        this.upvote = this.scene.add.sprite(SIZE_X / 2 - getXY(0.25), SIZE_Y / 2, 'button_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0).setTint("0x777777")
+        this.upvote = this.scene.add.sprite(SIZE_X / 2 - getXY(0.25), SIZE_Y / 2, 'button_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0)
         this.upvote.on('pointerdown', () => this.setVote(true))
+        this.upvote.setTint(this.currentVote ? "0xffffff" : "0x777777") // combines both undefined and false, wow
 
         this.downvote = this.scene.add.sprite(SIZE_X / 2 + getXY(0.25), SIZE_Y / 2, 'button_downvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0).setTint("0x777777")
         this.downvote.on('pointerdown', () => this.setVote(false))
+        this.downvote.setTint(this.currentVote == false ? "0xffffff" : "0x777777" )
 
         this.buttonConfirm = this.scene.add.sprite(SIZE_X / 2, SIZE_Y - getXY(0.2), 'button_next').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(150).setAlpha(0)
         this.buttonConfirm.on('pointerdown', function () {
