@@ -9,6 +9,7 @@ class GameScene extends Phaser.Scene {
         this.levelString = data.levelString // If this is passed, we are playtesting a level with this string
         this.public = data.public // If this is true, the levelIndex is the databse levelId of the level we are playing
         this.levelName = data.levelName // optional parameter to show levelName in the corner
+        this.currentVote = data.currentVote
     }
 
     create() {
@@ -17,6 +18,7 @@ class GameScene extends Phaser.Scene {
         this.input.keyboard.addKeys({ up: Phaser.Input.Keyboard.KeyCodes.W, down: Phaser.Input.Keyboard.KeyCodes.S, left: Phaser.Input.Keyboard.KeyCodes.A, right: Phaser.Input.Keyboard.KeyCodes.D, restart: Phaser.Input.Keyboard.KeyCodes.R })
         this.graphics = this.add.graphics()
         this.ui = new UI(this, this.levelString != undefined && !this.public)
+        if (this.currentVote != undefined) this.ui.setVote(this.currentVote)
 
         // Create level
         var inputString = this.levelString != undefined ? this.levelString : ALL_LEVELS[this.levelIndex]

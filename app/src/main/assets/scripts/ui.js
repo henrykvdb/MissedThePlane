@@ -21,7 +21,7 @@ class UI {
         // Restart button
         this.buttonRestart = scene.add.sprite(SIZE_X - getXY(0.04), getXY(0.04), 'menu', 'button_restart').setOrigin(1, 0).setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100)
         this.buttonRestart.on('pointerdown', function (pointer) {
-            scene.scene.restart({ levelIndex: scene.levelIndex, levelString: scene.levelString, public: scene.public, levelName: scene.levelName })
+            scene.scene.restart({ levelIndex: scene.levelIndex, levelString: scene.levelString, public: scene.public, levelName: scene.levelName, currentVote: scene.ui.currentVote })
         })
 
         // Press button

@@ -240,7 +240,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
         val levelsRef = Firebase.firestore.collection("levels")
         var query = levelsRef.whereEqualTo("public", true)
                              .orderBy(sortOn, Query.Direction.DESCENDING)
-                             .limit(5)
+                             .limit(50)
         if (startAt != null && sortOn == "submitDate") query = query.startAt(Timestamp(startAt.toLong(), 0))
         else if (startAt != null && (sortOn == "clearRatio" || sortOn == "upvoteRatio")) query = query.startAt(startAt.toDouble())
         query.get().addOnSuccessListener { documents ->
