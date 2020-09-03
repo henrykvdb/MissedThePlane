@@ -268,7 +268,7 @@ function createKeypadDialog(scene, depth, title, positive) {
 
     // Create keys
     var keys = []
-    var reference = '0123456789', key
+    var reference = '0123456789<', key
     for (var i = 0, cnt = reference.length; i < cnt; i++) {
         key = reference[i]
         keys[key] = scene.rexUI.add.label({
@@ -287,7 +287,7 @@ function createKeypadDialog(scene, depth, title, positive) {
             [keys['7'], keys['8'], keys['9'], undefined],
             [keys['4'], keys['5'], keys['6'], undefined],
             [keys['1'], keys['2'], keys['3'], undefined],
-            [undefined, undefined, undefined, keys['0']],
+            [keys['0'], undefined, undefined, keys['<']],
         ],
         space: {
             left: 0, right: 0, top: getXY(0.01), bottom: +getXY(0.12),
@@ -295,7 +295,7 @@ function createKeypadDialog(scene, depth, title, positive) {
         }
     })
     keyboard.rowCount = 4
-    keyboard.setColumnProportion(3, 3)
+    keyboard.setColumnProportion(3, 2)
     keyboard.layout().setDepth(depth + 5)
 
     // Create input field
@@ -315,8 +315,17 @@ function createKeypadDialog(scene, depth, title, positive) {
     var word = ""
     keyboard.on('button.click', function (button, index, pointer, event) {
         var key = button.text
-        if (word) word += key
-        else word = key
+        if (key != '<' && word.length == 4) return
+
+        if (key === '<') {
+            if (word && word.length > 0) {
+                word = word.substring(0, word.length - 1)
+            }
+        }
+        else if (word) word += key
+        else if (key != "0") word = key
+        else word = ""
+
         field.text = word
         scene.userInput = word
     }).on('button.over', function (button, groupName, index) {
@@ -364,7 +373,7 @@ function createKeypadDialog(scene, depth, title, positive) {
             top: getXY(0.02),
             bottom: getXY(0.02),
         },
-        
+
         align: {
             actions: 'right',
         },
@@ -376,8 +385,8 @@ function createKeypadDialog(scene, depth, title, positive) {
     for (var i = 0, cnt = reference.length; i < cnt; i++) {
         key = reference[i]
         var btn = keys[key]
-        if (key == '0') btn.x += -10 - btn.width / 2
-        else btn.x += 10 + (btn.width)*3/2
+        if (key == '<') btn.x += -10 - btn.width / 2
+        else btn.x += 10 + btn.width
         keys[key].setDepth(depth + 10)
     }
 

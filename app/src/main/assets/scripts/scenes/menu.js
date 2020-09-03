@@ -25,6 +25,20 @@ class MenuScene extends Phaser.Scene {
         const TEXT_SPACING = getXY(0.12)
         var scene = this
 
+        // Get age if needed
+        if (getAndroid()) {
+            var age = Android.getAge()
+            if (age == -1) {
+                var ageScreen = createKeypadDialog(this, 9999, "Enter your age:", "Start")
+                ageScreen.on('button.click', function (button, groupName, index) {
+                    if (scene.userInput && scene.userInput.length > 0) {
+                        Android.setAge(parseInt(scene.userInput))
+                        ageScreen.destroy()
+                    }
+                }, this)
+            }
+        }
+
         // [MAIN MENU]
 
         this.upvote = this.add.sprite(SIZE_X / 2 - getXY(0.2), SIZE_Y / 2 + 1 * BUTTON_SPACING, 'menu', 'button_upvote_square').setScale(0.3 * MIN_XY / 600).setInteractive().setDepth(100).setTint("0x777777").setVisible(false)

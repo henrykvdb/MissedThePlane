@@ -1,15 +1,10 @@
 Should do
 + Switch from test ads to actual admob id -> indicated in mainactivity with TODO
 - UI
-    + NEUTRAL AGE SCREEN
     - Decorate main menu
-    + Rate button in settings menu too
     ~ Tutorial: New controls explanation
     ~ Better level editor tile order
     ~ Maybe some story? explain why plane is flying
-- Browser
-    - cooldown on reads to server
-
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
 
