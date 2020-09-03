@@ -13,6 +13,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 const val KEY_SHARED_PREFS = "missedtheplane"
 private const val KEY_USER_ID = "userid"
@@ -20,6 +23,7 @@ private const val KEY_LOCAL_LEVEL = "locallevel"
 private const val KEY_SOLVABLE = "solvable"
 private const val KEY_AUTHOR = "authorname"
 private const val KEY_PUBLISHED = "published"
+private const val KEY_PUBLISH_REQUEST_TIME = "publishrequesttime" // This + sortName tracks the last time a given sort was requested
 const val KEY_FIRST_LAUNCH = "firstlaunch"
 private const val DEFAULT_LEVEL_STRING = "{\"size\":4,\"tiles\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"pilot\":[3.5,0.5,1],\"plane\":[4.5,0.5,1],\"difficulty\":\"0\"}"
 
@@ -212,21 +216,35 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
         }
     }
 
+    @JavascriptInterface
+    fun canGetPublished(sortOn: String): Boolean {
+        val lastRequest = prefs.getLong(KEY_PUBLISH_REQUEST_TIME + sortOn, 0)
+        if (Date().time - lastRequest < 60 * 3 * 1000) return false
+        editor.putLong(KEY_PUBLISH_REQUEST_TIME + sortOn, Date().time); editor.apply()
+        return true
+    }
+
     /** Returns a list of (max 50) dictionaries, each representing a level object (attributes like levelString, plays, rating, etc)
      *  A sort can be passed to sort the levels, as well as a start index (this index is the value from which we should continue based
      *  on the sort, e.g. if we fetched first 50 levels based on clearRatio and last was 0.7, we need to pass 0.7 to get the next
      *  50 levels with a clear ratio of 0.7 or lower. Thanks Firestore. */
     @JavascriptInterface
-    fun getPublishedLevels(sortOn: String?, startAt: String?) {
+    fun getPublishedLevels(sortOn: String, startAt: String?) {
+        val sortString = "\'" + sortOn + "\'"
+        if (sortOn != "submitDate" && sortOn != "upvoteRatio" && sortOn != "clearRatio") {
+            webView.loadUrl("javascript:receivePublicLevels(\"Unknown sort requested.\")");
+            return
+        }
         val levelsRef = Firebase.firestore.collection("levels")
         var query = levelsRef.whereEqualTo("public", true)
-                             .orderBy(sortOn ?: "upvoteRatio", Query.Direction.DESCENDING)
+                             .orderBy(sortOn, Query.Direction.DESCENDING)
                              .limit(50)
         if (startAt != null && sortOn == "submitDate") query = query.startAt(Timestamp(startAt.toLong(), 0))
         else if (startAt != null && (sortOn == "clearRatio" || sortOn == "upvoteRatio")) query = query.startAt(startAt.toDouble())
         query.get().addOnSuccessListener { documents ->
             if (documents.size() == 0) {
-                webView.loadUrl("javascript:receivePublicLevels(\"No more levels found.\")");
+                log("Query returned no results")
+                webView.loadUrl("javascript:receivePublicLevels($sortString, \"No more levels found.\")");
                 return@addOnSuccessListener
             }
             val onlyData: MutableList<String> = ArrayList()
@@ -236,9 +254,9 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
                 onlyData.add(convertToJSONString(dataToParse))
             }
             val urlData = "\'" + onlyData.toString() + "\'"
-            webView.loadUrl("javascript:receivePublicLevels($urlData)");
+            webView.loadUrl("javascript:receivePublicLevels($sortString, $urlData)");
         }.addOnFailureListener { exception ->
-            webView.loadUrl("javascript:receivePublicLevels($exception)");
+            webView.loadUrl("javascript:receivePublicLevels($sortString, $exception)");
         }
     }
 
