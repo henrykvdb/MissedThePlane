@@ -92,6 +92,8 @@ class MenuScene extends Phaser.Scene {
 
         this.settingsMenu.push(this.add.bitmapText(SIZE_X + SIZE_X / 2, Y_START, 'voxel_font', "Settings", 40 * MIN_XY / 600).setDepth(300).setTint("0").setOrigin(0.5, 0))
         this.settingsMenu.push(this.add.sprite(2 * SIZE_X - getXY(0.04), SIZE_Y, 'menu', 'pilot_tip').setDepth(300).setScale(MIN_XY / 600).setOrigin(1, 1))
+        this.settingsMenu.push(this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'menu', 'star').setScale(0.3 * MIN_XY / 600).setDepth(100).setOrigin(0, 1).setInteractive().on('pointerdown', () => Android.showRate()))
+        this.settingsMenu.push(this.add.sprite(SIZE_X + getXY(0.2), SIZE_Y - getXY(0.2), 'menu', 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100).setOrigin(0, 1).setInteractive().on('pointerdown', () => Android.showRate()))
 
         // [ABOUT MENU]
 
@@ -105,9 +107,10 @@ class MenuScene extends Phaser.Scene {
         this.versionText = this.add.bitmapText(SIZE_X * 2 - 10, SIZE_Y - 10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'entities', 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
+        console.log(MIN_XY)
         this.aboutStar = this.add.sprite(START_X + 400, Y_START + 6 * TEXT_SPACING, 'menu', 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutStar.setInteractive().on('pointerdown', () => Android.showRate())
-        this.aboutBalloon = this.add.sprite(START_X + 650, Y_START + 5 * TEXT_SPACING, 'menu', 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
+        this.aboutBalloon = this.add.sprite(START_X + 400 + getXY(0.2), Y_START + 5 * TEXT_SPACING, 'menu', 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutBalloon.setInteractive().on('pointerdown', () => Android.showRate())
 
         this.aboutMenu = [this.aboutTitle, this.aboutCredits0, this.aboutCredits1, this.aboutCredits2, this.aboutPlane, this.versionText, this.aboutStar, this.aboutBalloon]
@@ -135,7 +138,7 @@ class MenuScene extends Phaser.Scene {
             this.scene.stop(this.caller)
             this.caller = null
         } else if (this.caller == "GameScene" && (this.scene.get('GameScene').levelStatus != LEVEL_STATUS.PLAYING ||
-                                                  this.scene.get('GameScene').timePlaying < 4000)) {
+            this.scene.get('GameScene').timePlaying < 4000)) {
             this.setVisibility(true)
             this.scene.stop(this.caller)
             this.caller = null
