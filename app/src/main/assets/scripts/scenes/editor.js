@@ -123,7 +123,7 @@ class EditorScene extends Phaser.Scene {
             else scene.buttonShift.setTint(Phaser.Display.Color.GetColor(255, 255, 255))
         })
 
-        // Rotate button // todo oneways
+        // Rotate button
         this.buttonRotateWorld = this.add.sprite(SIZE_X - getXY(MARGIN_X) - 2 * getXY(BUTTON_GAP), getXY(0.04), 'menu', 'button_rotate_world').setOrigin(1, 0).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(109)
         this.buttonRotateWorld.on('pointerdown', function (pointer) {
             scene.world.rotateOneways()

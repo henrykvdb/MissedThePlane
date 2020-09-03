@@ -121,7 +121,6 @@ class MenuScene extends Phaser.Scene {
         this.versionText = this.add.bitmapText(SIZE_X * 2 - 10, SIZE_Y - 10, 'voxel_font', version, 30 * MIN_XY / 600).setTint(0).setDepth(100).setOrigin(1, 1)
         this.aboutPlane = this.add.sprite(SIZE_X + getXY(0.04), SIZE_Y - getXY(0.04), 'entities', 'plane3').setDepth(100).setScale(0.8 * MIN_XY / 600).setOrigin(211 / 800, 1 - 249 / 800)
 
-        console.log(MIN_XY)
         this.aboutStar = this.add.sprite(START_X + 400, Y_START + 6 * TEXT_SPACING, 'menu', 'star').setScale(0.3 * MIN_XY / 600).setDepth(100)
         this.aboutStar.setInteractive().on('pointerdown', () => Android.showRate())
         this.aboutBalloon = this.add.sprite(START_X + 400 + getXY(0.2), Y_START + 5 * TEXT_SPACING, 'menu', 'rate_balloon').setScale(0.3 * MIN_XY / 600).setDepth(100)

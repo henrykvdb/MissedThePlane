@@ -170,8 +170,8 @@ class LevelSelectScene extends Phaser.Scene {
 
             if (this.mode == SELECT_MODES.EDIT && getAndroid()) {
                 var isPublished = Android.getPublished(snappedPos - this.MIN_POS)
-                this.buttonConfirm.setTexture('button_select_edit_' + (isPublished ? 0 : 1))
-                this.buttonPublish.setTexture('button_publish_' + (isPublished ? 1 : 0))
+                this.buttonConfirm.setTexture('menu', 'button_select_edit_' + (isPublished ? 0 : 1))
+                this.buttonPublish.setTexture('menu', 'button_publish_' + (isPublished ? 1 : 0))
             }
         }
 

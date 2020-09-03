@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         webView.loadUrl("file:///android_asset/index.html")
 
         setupBillingClient(false)
-        setupAds() //TODO add actual ad id when we release
+        setupAds()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         MobileAds.initialize(this)
 
         ad = InterstitialAd(this).apply {
-            adUnitId = "ca-app-pub-3940256099942544/1033173712"//getString(R.string.admob_ad_id)
+            adUnitId = getString(R.string.admob_ad_id) //"ca-app-pub-3940256099942544/1033173712"
 
             // Only serve non personalised ads since we never asked for consent - GDPR BITCH
             val builder = AdRequest.Builder()

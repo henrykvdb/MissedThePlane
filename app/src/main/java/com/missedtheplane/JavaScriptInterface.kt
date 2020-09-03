@@ -37,7 +37,9 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
         editor.apply()
     }
 
+    @JavascriptInterface
     fun getAge()= prefs.getInt(KEY_FIRST_LAUNCH, -1)
+    @JavascriptInterface
     fun setAge(age: Int) {
         editor.putInt(KEY_FIRST_LAUNCH, age)
         editor.apply()

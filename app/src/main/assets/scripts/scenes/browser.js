@@ -157,8 +157,8 @@ class CustomCard {
 class LevelCard extends CustomCard {
     constructor(scene, levelData, shouldCheck) {
         super()
-        // Todo replace with age check
-        if (false) {
+
+        if (getAndroid() && Android.getAge() < 18) {
             levelData.name = "Level " + levelData.id.substring(0, 3)
             levelData.authorName = levelData.authorName.substring(0, 3)
         }
