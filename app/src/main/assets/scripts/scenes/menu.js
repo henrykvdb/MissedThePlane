@@ -55,6 +55,14 @@ class MenuScene extends Phaser.Scene {
             scene.downvote.setTint("0xffffff"); scene.upvote.setTint("0x777777")
         })
 
+        if (this.scene.get('GameScene').ui != undefined) {
+            var upvote = this.scene.get('GameScene').ui.currentVote
+            if (upvote != undefined) {
+                this.upvote.setTint(upvote ? "0xffffff" : "0x777777")
+                this.downvote.setTint(upvote ? "0x777777" : "0xffffff")
+            }
+        }
+
         this.mainMenu = this.add.sprite(SIZE_X / 2, SIZE_Y / 2 - 0.5 * BUTTON_SPACING, 'menu', 'button_main_menu').setScale(0.6 * MIN_XY / 600).setInteractive().setDepth(100)
         this.mainMenu.on('pointerdown', () => scene.switchToMainMenu())
 
@@ -74,7 +82,7 @@ class MenuScene extends Phaser.Scene {
         this.mainRemoveAds.on('pointerdown', () => Android.purchaseAdUnlock())
 
         this.mainSettings = this.add.sprite(SIZE_X - getXY(0.04), SIZE_Y - getXY(0.04), 'menu', 'button_settings').setOrigin(1, 1).setScale(0.25 * MIN_XY / 600).setInteractive().setDepth(100)
-        this.mainSettings.on('pointerdown', () => scene.openSideMenu(false)) //TODO settings
+        this.mainSettings.on('pointerdown', () => scene.openSideMenu(false))
 
         this.pauseText = this.add.bitmapText(SIZE_X / 2, SIZE_Y / 2 - 1.5 * BUTTON_SPACING, 'voxel_font', 'Game paused', 50 * MIN_XY / 600).setDepth(100).setOrigin(0.5, 0.5)
 

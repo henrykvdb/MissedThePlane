@@ -78,7 +78,7 @@ class BrowserScene extends Phaser.Scene {
 var createPanel = function (scene) {
     var sizer = scene.rexUI.add.sizer({ orientation: 'y', space: { item: 30 } })
     PUBLIC_LEVELS[scene.sortOn].forEach(level => sizer.add(new LevelCard(scene, level, false)))
-    if (PUBLIC_LEVELS[scene.sortOn].length >= 50) sizer.add(new NextCard(scene, PUBLIC_LEVELS[scene.sortOn][PUBLIC_LEVELS[scene.sortOn].length - 1]))
+    if (PUBLIC_LEVELS[scene.sortOn].length >= 5) sizer.add(new NextCard(scene, PUBLIC_LEVELS[scene.sortOn][PUBLIC_LEVELS[scene.sortOn].length - 1]))
     return sizer
 }
 
