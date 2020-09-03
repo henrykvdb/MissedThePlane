@@ -75,32 +75,8 @@ class BrowserScene extends Phaser.Scene {
             panel: {
                 child: createPanel(scene),
                 mask: { padding: 1 },
-            },
-
-            slider: {
-                track: scene.rexUI.add.roundRectangle(0, 0, getXY(0.04), getXY(0.02), getXY(0.02), COLOR_DARK),
-                thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.03), COLOR_LIGHT),
-            },
+            }
         }).layout()
-
-        // Improve default scrollbar
-        var hideScrollTween
-        var thumb = panel.childrenMap.slider.childrenMap.thumb; thumb.alpha = 0; thumb.x = SIZE_X - getXY(0.02)
-        var track = panel.childrenMap.slider.childrenMap.track; track.alpha = 0; track.x = SIZE_X - getXY(0.02)
-        panel.on('scroll', function (panel) {
-            thumb.x = SIZE_X - getXY(0.02); track.x = SIZE_X - getXY(0.02)
-            if (hideScrollTween) hideScrollTween.restart()
-            else hideScrollTween = scene.tweens.addCounter({
-                from: 1,
-                to: 0,
-                duration: 700,
-                ease: Phaser.Math.Easing.Cubic.In,
-                onUpdate: function (tween) {
-                    thumb.alpha = tween.getValue()
-                    track.alpha = tween.getValue()
-                }
-            })
-        })
     }
 
     // Strips all levels from user created text, such as author and level name
