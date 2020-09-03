@@ -45,11 +45,6 @@ class BrowserScene extends Phaser.Scene {
 
     createBrowser(scene) {
         if (this.loadingText) this.loadingText.destroy()
-
-        // Todo replace with age check
-        if (false) {
-            PUBLIC_LEVELS[scene.sortOn] = this.cleanseLevels(PUBLIC_LEVELS[scene.sortOn])
-        }
         PUBLIC_LEVELS[scene.sortOn].isNewPage = scene.newPageRequest
 
         const BUTTON_SPACING = getXY(0.3)
@@ -77,15 +72,6 @@ class BrowserScene extends Phaser.Scene {
                 mask: { padding: 1 },
             }
         }).layout()
-    }
-
-    // Strips all levels from user created text, such as author and level name
-    cleanseLevels(levels) {
-        levels.forEach(level => {
-            level.name = "Level " + level.id.substring(0, 3)
-            level.authorName = level.authorName.substring(0, 3)
-        })
-        return levels
     }
 }
 
@@ -171,6 +157,12 @@ class CustomCard {
 class LevelCard extends CustomCard {
     constructor(scene, levelData, shouldCheck) {
         super()
+        // Todo replace with age check
+        if (false) {
+            levelData.name = "Level " + levelData.id.substring(0, 3)
+            levelData.authorName = levelData.authorName.substring(0, 3)
+        }
+
         const WIDTH = SIZE_X * CARD_WIDTH
         const HEIGHT = SIZE_Y * CARD_HEIGHT
         if (!shouldCheck && scene.cardOverflow == undefined) {
