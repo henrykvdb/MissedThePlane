@@ -87,10 +87,10 @@ function getTimeLetter(oldSeconds) {
     if (seconds < 0) seconds = -seconds
     if (seconds > 60 * 60 * 24 * 30.5 * 12) return Math.floor(seconds / (60 * 60 * 24 * 30.5 * 12)) + "y"
     else if (seconds > 60 * 60 * 24 * 30.5) return Math.floor(seconds / (60 * 60 * 24 * 30.5)) + "m"
-    else if (seconds > 60 * 60 * 24 * 7) return Math.floor(seconds / (60 * 60 * 24 * 7)) + "w"
-    else if (seconds > 60 * 60 * 24) return Math.floor(seconds / (60 * 60 * 24)) + "d"
-    else if (seconds > 60 * 60) return Math.floor(seconds / (60 * 60)) + "h"
-    else if (seconds > 60) return Math.floor(seconds / (60)) + "m"
+    else if (seconds > 60 * 60 * 24 * 7)    return Math.floor(seconds / (60 * 60 * 24 * 7)) + "w"
+    else if (seconds > 60 * 60 * 24)        return Math.floor(seconds / (60 * 60 * 24)) + "d"
+    else if (seconds > 60 * 60)             return Math.floor(seconds / (60 * 60)) + "h"
+    else if (seconds > 60)                  return Math.floor(seconds / (60)) + "m"
     else return seconds + "s"
 }
 

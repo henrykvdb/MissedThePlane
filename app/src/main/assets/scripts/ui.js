@@ -13,7 +13,7 @@ class UI {
         this.buttonNext.on('pointerdown', function (pointer) {
             if (!playTesting) {
                 scene.scene.restart({ levelIndex: ++scene.levelIndex })
-                if (getAndroid()) Android.showAd()
+                if (getAndroid() && scene.levelIndex > 3) Android.showAd()
             }
             else scene.returnToEditor(true)
         })
