@@ -1,6 +1,7 @@
 package com.missedtheplane
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -35,12 +36,17 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
         webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true
         webView.settings.allowFileAccessFromFileURLs = true
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         webView.addJavascriptInterface(JavaScriptInterface(this, webView), "Android")
         webView.loadUrl("file:///android_asset/index.html")
 
         setupBillingClient(false)
         setupAds()
+    }
+
+    // "Break" webview back behavior
+    override fun onBackPressed() {
+        moveTaskToBack(true)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
