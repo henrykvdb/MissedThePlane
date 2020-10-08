@@ -88,6 +88,9 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     fun showAd() {
+        // Don't show an ad if ads are disabled
+        if (!showAds) return
+
         ad.show()
     }
 
