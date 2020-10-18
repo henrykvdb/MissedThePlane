@@ -85,13 +85,33 @@ var createPanel = function (scene) {
 function getTimeLetter(oldSeconds) {
     var seconds = new Date().getTime() / 1000 - oldSeconds
     if (seconds < 0) seconds = -seconds
-    if (seconds > 60 * 60 * 24 * 30.5 * 12) return Math.floor(seconds / (60 * 60 * 24 * 30.5 * 12)) + "y"
-    else if (seconds > 60 * 60 * 24 * 30.5) return Math.floor(seconds / (60 * 60 * 24 * 30.5)) + "m"
-    else if (seconds > 60 * 60 * 24 * 7)    return Math.floor(seconds / (60 * 60 * 24 * 7)) + "w"
-    else if (seconds > 60 * 60 * 24)        return Math.floor(seconds / (60 * 60 * 24)) + "d"
-    else if (seconds > 60 * 60)             return Math.floor(seconds / (60 * 60)) + "h"
-    else if (seconds > 60)                  return Math.floor(seconds / (60)) + "m"
-    else return seconds + "s"
+    if (seconds > 60 * 60 * 24 * 30.5 * 12){
+        var value = Math.floor(seconds / (60 * 60 * 24 * 30.5 * 12))
+        return (value>1)? value + " yrs" : value + " yr"
+    }
+    else if (seconds > 60 * 60 * 24 * 30.5){
+        var someDate = new Date(1970, 0, 1) // Epoch
+        someDate.setSeconds(oldSeconds)
+        return someDate.toLocaleString('default', { month: 'long' }).slice(0,3).toLowerCase()
+    }
+    else if (seconds > 60 * 60 * 24 * 7){
+        var value = Math.floor(seconds / (60 * 60 * 24 * 7))
+        return (value>1)? value + " wks" : value + " wk"
+    }
+    else if (seconds > 60 * 60 * 24){
+        var value = Math.floor(seconds / (60 * 60 * 24))
+        return (value>1)? value + " days" : value + " day"
+    }
+    else if (seconds > 60 * 60){
+        var value = Math.floor(seconds / (60 * 60))
+        return (value>1)? value + " hrs" : value + " hr"
+    }
+    else if (seconds > 60){
+        var value = Math.floor(seconds / (60))
+        return (value>1)? value + " mins" : value + " min"
+    }
+    else if (s > 1) return seconds + " secs"
+    else return seconds + " sec"
 }
 
 const CARD_WIDTH = 0.7
