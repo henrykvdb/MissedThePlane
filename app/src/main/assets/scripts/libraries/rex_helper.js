@@ -119,8 +119,8 @@ function createInputDialog(scene, depth, title, negative, positive) {
 
     // Create keys
     var keys = []
-    var reference = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_®<', key
-    for (var i = 0, cnt = reference.length; i < cnt; i++) {
+    var reference = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_<`', key
+    for (var i = 0; i < reference.length; i++) {
         key = reference[i]
         keys[key] = scene.rexUI.add.label({
             background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, getXY(0.01)).setStrokeStyle(getXY(0.005), COLOR_LIGHT),
@@ -137,7 +137,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
         buttons: [
             [keys['Q'], keys['W'], keys['E'], keys['R'], keys['T'], keys['Y'], keys['U'], keys['J'], undefined],
             [keys['A'], keys['S'], keys['D'], keys['F'], keys['G'], keys['H'], undefined, undefined, keys['<']],
-            [keys['Z'], keys['X'], keys['C'], keys['V'], keys['B'], keys['N'], undefined, undefined, keys['®']],
+            [keys['Z'], keys['X'], keys['C'], keys['V'], keys['B'], keys['N'], undefined, undefined, keys['`']],
             [keys['I'], keys['O'], keys['P'], keys['K'], keys['L'], keys['M'], undefined, undefined, keys['_']],
             Array(8).fill(undefined), Array(8).fill(undefined), Array(8).fill(undefined), Array(8).fill(undefined), Array(8).fill(undefined)
         ],
@@ -174,7 +174,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
                 word = word.substring(0, word.length - 1)
             }
         }
-        else if (key === '®') {
+        else if (key === '`') {
             caps = !caps
         } else {
             if (!caps) key = key.toLowerCase()
@@ -184,10 +184,10 @@ function createInputDialog(scene, depth, title, negative, positive) {
         field.text = word
         scene.userInput = word
     }).on('button.over', function (button, groupName, index) {
-        if (keys["®"] == button && !caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
+        if (keys["`"] == button && !caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
         else button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
     }).on('button.out', function (button, groupName, index) {
-        if (keys["®"] == button && caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
+        if (keys["`"] == button && caps) button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_DARK)
         else button.getElement('background').setStrokeStyle(getXY(0.005), COLOR_LIGHT)
     })
 
@@ -248,7 +248,7 @@ function createInputDialog(scene, depth, title, negative, positive) {
     for (var i = 0, cnt = reference.length; i < cnt; i++) {
         key = reference[i]
         var btn = keys[key]
-        if (key == '<' || key == '_' || key == '®') btn.x += -10 - btn.width / 2
+        if (key == '<' || key == '_' || key == '`') btn.x += -10 - btn.width / 2
         else btn.x += 10 + btn.width
         keys[key].setDepth(depth + 10)
     }
