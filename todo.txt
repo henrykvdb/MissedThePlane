@@ -1,5 +1,4 @@
 Should do
-+ Switch from test ads to actual admob id -> indicated in mainactivity with TODO
 - UI
     - Decorate main menu
     ~ Tutorial: New controls explanation
@@ -7,8 +6,10 @@ Should do
     ~ Maybe some story? explain why plane is flying
 - More levels
 - Safety checks everywhere: what if level can't be loaded, error during editing, etc
+- Update depricated stuff in MainActivity
 
 Nice to have
+- Remove ad unlock button if premium
 - Smoother UI / animations
 - Level editor plane/pilot position = closest valid position if touch position is not valid
 - Show selected tile when walking (highlight/arrow model on target tile?)
