@@ -74,7 +74,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
     @JavascriptInterface
     fun showAd() {
         context.runOnUiThread {
-            context.showAd()
+            context.showInterstitial()
         }
     }
 
