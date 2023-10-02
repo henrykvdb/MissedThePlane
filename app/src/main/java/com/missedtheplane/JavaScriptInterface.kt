@@ -10,7 +10,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.GlobalScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.*
@@ -132,7 +132,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
      * create a new user in the database and saves the automatically generated id to shared prefs */
     @JavascriptInterface
     fun getNewUserIdIfNeeded() {
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             if (getUserId() != null) return@launch
             log("No user id found, creating a new one in the database.")
             val newUserData = hashMapOf("highestLevel" to -1, "levels" to emptyMap<Int, String>(), "name" to null)
@@ -145,7 +145,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
      *  Checks if the user isn't on a higher level already, and if we even have a highest level field already */
     @JavascriptInterface
     fun setHighestLevel(campaignIndex: Int) {
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             val userId = getUserId()
             val userData = getDocument("users", userId) ?: return@launch
             if (userData["highestLevel"] == null || campaignIndex > (userData["highestLevel"] as Long).toInt())
@@ -157,7 +157,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
     @JavascriptInterface
     fun publishLevel(levelSlot: String, levelString: String, levelName: String): Boolean {
         val userId = getUserId()
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             try {
                 var levelId = getLevelId(levelSlot)
                 val levelData = getLevelData(levelId)
@@ -194,7 +194,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
     /** Updates a given level in a certain user slot, and if it doesn't exist yet, create it */
     @JavascriptInterface
     fun updateLevel(levelSlot: String, levelString: String) {
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             var levelId: String? = ""
             if (slotExists(levelSlot)) levelId = getLevelId(levelSlot)
             else levelId = createLevel(levelSlot, levelString)  // The user doesn't have a level id linked to this slot, we assume he simply made a new level
@@ -209,7 +209,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
     /** 'Deletes' a level in the database (marks it deleted), as well as freeing the spot in the user document */
     @JavascriptInterface
     fun deleteLevel(levelSlot: String) {
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             val levelId = getLevelId(levelSlot)
             val levelData = getLevelData(levelId)
             if (levelId == null || levelData == null || levelData["deleted"] as Boolean) return@launch
@@ -285,7 +285,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
     @JavascriptInterface
     fun playLevel(levelId: String, cleared: Boolean) {
         val userId = getUserId()
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             val actualId = userId + levelId // yeah...
             val playerStatus = getDocument("userPlays", actualId)
             val levelData = getLevelData(levelId)
@@ -328,7 +328,7 @@ class JavaScriptInterface(private val context: MainActivity, private val webView
     fun voteForLevel(levelId: String, upvote: Boolean) {
         val userId = getUserId()
         log("received vote: $upvote")
-        GlobalScope.launch {
+        context.lifecycleScope.launch {
             val actualId = userId + levelId // yeah...
             val playerStatus = getDocument("userPlays", actualId)
             if (playerStatus == null) {

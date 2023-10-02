@@ -36,8 +36,7 @@ private val PRODUCT_LIST = listOf(
 
 open class BaseActivityAds : AppCompatActivity(), PurchasesUpdatedListener {
     //Advertisements
-    private val consentInformation: ConsentInformation =
-        UserMessagingPlatform.getConsentInformation(this)
+    private lateinit var consentInformation: ConsentInformation
     private var isMobileAdsInitializeCalled = AtomicBoolean(false)
     private var interstitialAd: AdManagerInterstitialAd? = null
     private var adIsLoading: Boolean = false
@@ -49,19 +48,9 @@ open class BaseActivityAds : AppCompatActivity(), PurchasesUpdatedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // For testing purposes, you can force a DebugGeography of EEA or NOT_EEA.
-        val debugSettings =
-            ConsentDebugSettings.Builder(this)
-                // .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                // Check your logcat output for the hashed device ID e.g.
-                // "Use new ConsentDebugSettings.Builder().addTestDeviceHashedId("ABCDEF012345")" to use
-                // the debug functionality.
-                .addTestDeviceHashedId("TEST-DEVICE-HASHED-ID")
-                .build()
-        val params = ConsentRequestParameters.Builder().setConsentDebugSettings(debugSettings).build()
-
-
         // Requesting an update to consent information should be called on every app launch.
+        val params = ConsentRequestParameters.Builder().build()
+        consentInformation = UserMessagingPlatform.getConsentInformation(this)
         consentInformation.requestConsentInfoUpdate(
             this,
             params,

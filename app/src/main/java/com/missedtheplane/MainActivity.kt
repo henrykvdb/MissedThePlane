@@ -1,12 +1,21 @@
 package com.missedtheplane
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import android.webkit.WebViewClient
+import androidx.activity.OnBackPressedCallback
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.webkit.WebViewAssetLoader
+import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
+import androidx.webkit.WebViewAssetLoader.ResourcesPathHandler
 import com.android.billingclient.api.*
 import com.google.android.gms.ads.*
 
@@ -17,9 +26,12 @@ fun log(msg: String) {
 
 @SuppressLint("SetJavaScriptEnabled")
 class MainActivity : BaseActivityAds() {
-    private lateinit var billingClient: BillingClient
     private lateinit var webView: WebView
-    private val skuList = listOf("remove_ads")
+    private var onBackCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            moveTaskToBack(true);
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,15 +42,24 @@ class MainActivity : BaseActivityAds() {
         webView.settings.javaScriptEnabled = true
         webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true
-        webView.settings.allowFileAccessFromFileURLs = true
+
+        val assetLoader = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", AssetsPathHandler(this))
+            .addPathHandler("/res/", ResourcesPathHandler(this))
+            .build()
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                return assetLoader.shouldInterceptRequest(request.url)
+            }
+        }
+
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         webView.addJavascriptInterface(JavaScriptInterface(this, webView), "Android")
-        webView.loadUrl("file:///android_asset/index.html")
-    }
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
-    // "Break" webview back behavior
-    override fun onBackPressed() {
-        moveTaskToBack(true)
+        // Make back button not finish() application
+        onBackPressedDispatcher.addCallback(this, onBackCallback)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -61,6 +82,7 @@ class MainActivity : BaseActivityAds() {
 
     override fun onDestroy() {
         webView.destroy()
+        onBackCallback.remove()
         super.onDestroy()
     }
 
@@ -70,12 +92,10 @@ class MainActivity : BaseActivityAds() {
     }
 
     fun hideUi() {
-        window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                    View.SYSTEM_UI_FLAG_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 }
