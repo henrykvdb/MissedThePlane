@@ -119,19 +119,30 @@ class UI {
     }
 
     showTutorial(index) {
-        var LEVELS_WITH_TUTORIAL = [1, 2]
-        var SHOW_TIMES = { 1: 6000, 2: 8000 }
+        var LEVELS_WITH_TUTORIAL = [0, 1, 2]
+        var SHOW_TIMES = { 0: 8000, 1: 6000, 2: 8000 }
         if (!LEVELS_WITH_TUTORIAL.includes(index)) return // Add all levels with tutorials here
+
         var tutorialElements = []
         tutorialElements.push(this.scene.add.rectangle(0, 0, SIZE_X, SIZE_Y, 0x000000).setAlpha(0.6).setDepth(150).setOrigin(0).setInteractive())
+        if (index == 0) {
+            var mtp1 = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.14), 'voxel_font', "You missed the plane...", 42 * MIN_XY / 600).setDepth(150).setOrigin(0.5, 0)
+            var mtp2 = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.24), 'voxel_font', "...and you're the pilot!", 42 * MIN_XY / 600).setDepth(150).setOrigin(0.5, 0).setAlpha(0)
+            var ap1 = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.64), 'voxel_font', "Autopilot keeps it in the air,", 42 * MIN_XY / 600).setDepth(150).setOrigin(0.5, 0).setAlpha(0)
+            var ap2 = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.74), 'voxel_font', "but you need to help it!", 42 * MIN_XY / 600).setDepth(150).setOrigin(0.5, 0).setAlpha(0)
+            this.scene.tweens.add({ targets: [mtp2], alpha: 1, duration: 1000, ease: 'Power2', delay: 1500});
+            this.scene.tweens.add({ targets: [ap1, ap2], alpha: 1, duration: 1000, ease: 'Power2', delay: 4500});
+            tutorialElements.push(mtp1, mtp2, ap1, ap2)
+        }
+
         if (index == 1) {
-            var title = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.14), 'voxel_font', "Plane turns RIGHT before a mountain", 42 * MIN_XY / 600)
+            var title = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.14), 'voxel_font', "Autopilot turns RIGHT before a mountain", 42 * MIN_XY / 600)
             title.setDepth(150).setOrigin(0.5, 0)
             tutorialElements.push(title)
             this.scene.anims.create({
                 key: 'tutorial1',
                 frames: [{ key: 'tutorial', frame: 'turn0' }, { key: 'tutorial', frame: 'turn1' }, { key: 'tutorial', frame: 'turn2' }, { key: 'tutorial', frame: 'turn3' }, { key: 'tutorial', frame: 'turn4' }, { key: 'tutorial', frame: 'turn5' }],
-                frameRate: 5,
+                frameRate: 4,
                 hideOnComplete: false,
                 repeat: -1
             })
@@ -139,6 +150,7 @@ class UI {
             tutorialCard.anims.play('tutorial1')
             tutorialElements.push(tutorialCard)
         }
+
         if (index == 2) {
             var title = this.scene.add.bitmapText(SIZE_X / 2, getXY(0.14), 'voxel_font', "Buttons toggle adjacent tiles", 42 * MIN_XY / 600)
             tutorialElements.push(this.scene.add.bitmapText(SIZE_X - getXY(0.03), SIZE_Y / 2, 'voxel_font', "Use with", 42 * MIN_XY / 600).setOrigin(1, 1).setDepth(150))
